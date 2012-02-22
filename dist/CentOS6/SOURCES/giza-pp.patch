@@ -1,0 +1,12 @@
+diff -Naur giza-pp/GIZA++-v2/Makefile giza-pp.new/GIZA++-v2/Makefile
+--- giza-pp/GIZA++-v2/Makefile	2011-09-25 02:15:56.000000000 +0800
++++ giza-pp.new/GIZA++-v2/Makefile	2012-02-22 18:51:23.121287851 +0800
+@@ -16,7 +16,7 @@
+ ifeq ($(shell uname),Darwin)
+ 	LDFLAGS =
+ else
+-	LDFLAGS = -static
++	LDFLAGS = 
+ endif
+ 
+ include Makefile.src

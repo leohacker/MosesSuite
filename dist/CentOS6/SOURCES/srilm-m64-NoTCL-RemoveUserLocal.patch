@@ -1,0 +1,63 @@
+diff -Nuar srilm-1.6.0-beta.old/common/Makefile.common.variables srilm-1.6.0-beta.new/common/Makefile.common.variables
+--- srilm-1.6.0-beta.old/common/Makefile.common.variables	2011-02-10 06:38:58.000000000 +0800
++++ srilm-1.6.0-beta.new/common/Makefile.common.variables	2011-08-04 01:01:23.587706653 +0800
+@@ -67,10 +67,10 @@
+ DEMANGLE_FILTER = 2>&1 | c++filt
+ 
+ # Path to GNU awk; used in editing scripts 
+-GAWK = /usr/local/bin/gawk
++GAWK = /usr/bin/gawk
+ 
+ # Path to Perl; used in editing scripts 
+-PERL = /usr/local/bin/perl
++PERL = /usr/bin/perl
+ 
+ # Keep the source and object files in separate directories.
+ OUTPUT_OPTION = -o $@
+diff -Nuar srilm-1.6.0-beta.old/common/Makefile.machine.i686 srilm-1.6.0-beta.new/common/Makefile.machine.i686
+--- srilm-1.6.0-beta.old/common/Makefile.machine.i686	2010-06-02 22:44:52.000000000 +0800
++++ srilm-1.6.0-beta.new/common/Makefile.machine.i686	2011-08-04 01:02:09.440455460 +0800
+@@ -13,8 +13,8 @@
+ #
+ 
+    # Use the GNU C compiler.
+-   GCC_FLAGS = -m32 -mtune=pentium3 -Wall -Wno-unused-variable -Wno-uninitialized
+-   CC = $(GCC_PATH)gcc $(GCC_FLAGS)
++   GCC_FLAGS = -m64 -mtune=generic -Wall -Wno-unused-variable -Wno-uninitialized
++   CC = $(GCC_PATH)gcc $(GCC_FLAGS) -Wimplicit-int
+    CXX = $(GCC_PATH)g++ $(GCC_FLAGS) -DINSTANTIATE_TEMPLATES
+ 
+    # Optional compilation flags.
+@@ -49,8 +49,9 @@
+    RLD_FLAG = -R
+ 
+    # Tcl support (standard in Linux)
+-   TCL_INCLUDE = 
+-   TCL_LIBRARY = -ltcl
++   # TCL_INCLUDE = 
++   # TCL_LIBRARY = -ltcl
++   NO_TCL = X
+ 
+    # No ranlib
+    RANLIB = :
+diff -Nuar srilm-1.6.0-beta.old/Makefile srilm-1.6.0-beta.new/Makefile
+--- srilm-1.6.0-beta.old/Makefile	2011-02-10 06:38:58.000000000 +0800
++++ srilm-1.6.0-beta.new/Makefile	2011-08-04 01:01:23.591707638 +0800
+@@ -126,7 +126,7 @@
+ 	ginstall -m 444 $(WWW_DOCS) $(WWW_DIR)/docs
+ 	ginstall -m 444 man/html/*.[1-9].html $(WWW_DIR)/manpages
+ 
+-TAR = /usr/local/gnu/bin/tar
++TAR = /bin/tar
+ 
+ package:	$(PACKAGE_DIR)/EXCLUDE
+ 	(cd misc/src; $(MAKE) $(MAKE_VARS) $(VERSION_HEADER))
+diff -Nuar srilm-1.6.0-beta.old/sbin/compare-outputs srilm-1.6.0-beta.new/sbin/compare-outputs
+--- srilm-1.6.0-beta.old/sbin/compare-outputs	2006-08-12 07:52:53.000000000 +0800
++++ srilm-1.6.0-beta.new/sbin/compare-outputs	2011-08-04 01:01:23.592689976 +0800
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/gawk -f 
++#!/usr/bin/gawk -f 
+ #
+ # compare test outputs allowing for small numerical differences
+ #
