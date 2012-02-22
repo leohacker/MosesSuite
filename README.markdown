@@ -6,3 +6,5 @@ Moses Suite is developed for supporting OpenSource Machine Translation framework
 And this project will be an experimental project for myself to apply whole agile development process. One person for all roles in a scrum team :) Just for fun!
 
 And if you find this project very interesting, don't hesitate to join me :D
+
+Licence: Open Source LGPL
