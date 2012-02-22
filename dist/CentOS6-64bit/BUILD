@@ -18,6 +18,7 @@ Notes: Because of the storage limitaion for free account in github.com, I can't 
 GIZAPP
 ------
 URL: http://code.google.com/p/giza-pp/
+Version: stable (?)
 SOURCE: gizapp.tgz
 This version is released on Sep 24 2011, and no version number was specified. I guess this should be a stable version, give it verion 1.0.6 in spec file.
 
@@ -27,6 +28,7 @@ Since there is no static library libm in CentOS6 64bit, we have to remove the li
 SRILM
 -----
 URL: http://www.speech.sri.com/projects/srilm/
+Verison: 1.6.0
 SOURCE: srilm-1.6.0.tar.gz
 
 Patch0: srilm-m64-NoTCL-RemoveUserLocal.patch
@@ -34,3 +36,9 @@ Some trival patchs for 64bit system, and make it installed to /usr/ instead of /
 
 IRSTLM
 ------
+URL: http://hlt.fbk.eu/en/irstlm
+Version: 5.70.04
+SOURCE: irstlm-5.70.04.tgz
+
+Patch0: irstlm-script-makefile.am.patch
+Make the scripts can be copied into DEST directory.
