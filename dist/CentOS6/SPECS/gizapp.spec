@@ -1,4 +1,4 @@
-%define dist    mosessuite
+%define dist    MosesSuite
 %define release 1
 %define version v1.0.6
 
