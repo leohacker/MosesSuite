@@ -1,0 +1,44 @@
+#+STARTUP: overview indent hidestars odd
+#+TODO: TODO(t) Active(a) Pause(p) | DONE(d) CANCELED(c)
+#+COLUMNS: %60ITEM %TODO %PRIORITY %TAGS
+
+* Overview
+Sprint goal: 
+ - Migrate the corpus clean tool.
+
+Schedule:
+ - Sprint period: 2012-02-20 to 2012-03-02
+ - Daily scrum: 10:00 - 10:30 
+ - Sprint demo: 2012-03-01 Bi-Weekly meeting
+
+Team:
+ - Leo Jiang(Product owner)
+ - Leo Jiang(scrum master)
+ - Leo Jiang(80%)
+
+* Sprint backlog
+|-----+-------+------+-----+-----------------------------+-------------+------------+-------------+-----------+-------|
+|  ID | State | Name | Imp | Demo Step / Acceptance Test | Story Point | Sub-Module | Parent/Epic | Requester | Notes |
+|-----+-------+------+-----+-----------------------------+-------------+------------+-------------+-----------+-------|
+| 001 |       |      |     |                             |             |            |             |           |       |
+|-----+-------+------+-----+-----------------------------+-------------+------------+-------------+-----------+-------|
+|     |       |      |     |                             |             |            |             |           |       |
+|-----+-------+------+-----+-----------------------------+-------------+------------+-------------+-----------+-------|
+
+* Story Tasks
+** 001: Corpus Admin upload the local corpus file into corpus management system. 
+*** TODO write the test case.
+*** TODO design the UI.
+*** TODO implement the code.
+*** TODO Acceptance Test.
+*** TODO CI 
+
+** 002: Corpus Admin can browse the corpus file in browsing window.
+*** TODO write test case
+*** design the browsing window.
+*** implement the code.
+*** acceptance test.
+*** CI
+
+
+

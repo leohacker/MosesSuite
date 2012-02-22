@@ -1,0 +1,1 @@
+Using a org-mode table to organize all stories in storylist.org, and using a script to filter the backlogs into backlog.org file to sprint meeting. We select the backlogs in backlog.org file and copy them into sprintlog.org.
