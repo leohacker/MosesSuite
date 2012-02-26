@@ -1,13 +1,13 @@
 How to build 
 ------------
-Before build the moses suite packages for CentOS6.0 64bit system, please install the necessary development tools, library and header files. 
+Before building the moses suite packages for CentOS6.0 64bit system, please install the necessary development tools, library and header files. 
 
 $ yum groupinstall "Development tools" "Additional Development"
 
-And install the prerequisite package prompted when building failed.
+And install the prerequisite packages prompted when building failed.
 
-Gerenal Instruction
--------------------
+Gerenal Instructions
+--------------------
 0. download the official source tarball and put it into SOURCES folder under rpmbuild tree.
 1. put the patch files into SOURCES folder under rpmbuild tree.
 2. put the spec file into SPECS folder.
