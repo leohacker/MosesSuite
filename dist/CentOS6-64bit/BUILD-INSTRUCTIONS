@@ -42,3 +42,10 @@ SOURCE: irstlm-5.70.04.tgz
 
 Patch0: irstlm-script-makefile.am.patch
 Make the scripts can be copied into DEST directory.
+
+Moses
+-----
+URL: http://www.statmt.org/moses/
+Version: 20120224
+SOURCE: mosesdecoder-20120224.tar.bz2
+Clone the source code from upstream, git clone git://github.com/moses-smt/mosesdecoder.git, and rename the directory by appending timestamp, then update the spec to build the binary RPM package.
