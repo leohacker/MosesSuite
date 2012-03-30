@@ -4,7 +4,7 @@
 %define release_date 20120224
 
 Summary: 	Statistical Machine Translation System
-Name: 		moses
+Name: 		moses-core
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite
@@ -75,6 +75,9 @@ rm -rf %{buildroot}
 #/tools/moses/scripts/
 
 %changelog
+* Fri Mar 30 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- Change the package name from 'moses' to 'mosescore'.
+
 * Sun Feb 26 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - Using the bjam to compile in spec file.
 
