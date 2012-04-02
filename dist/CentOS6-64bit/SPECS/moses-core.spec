@@ -18,7 +18,7 @@ Source2:	mteval-v11b.pl.tar.gz
 #Patch1:		mert-moses.pl.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	boost, boost-devel, xmlrpc-c, xmlrpc-c-devel, zlib, zlib-devel, gizapp, srilm
-Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib 
+Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib, perl-GD, perl-XML-Twig
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
@@ -51,10 +51,10 @@ cp -a scripts $RPM_BUILD_ROOT/tools/
 cp -a bin $RPM_BUILD_ROOT/tools/
 cd mosesdecoder
 ./bjam -a -j4 --with-srilm=/tools/srilm --with-xmlrpc-c --with-giza=/tools/gizapp/bin --prefix=$RPM_BUILD_ROOT/tools/moses
-#make DESTDIR=$RPM_BUILD_ROOT install
 # compile and install the moses-scripts
-#cd scripts 
-#make DESTDIR=$RPM_BUILD_ROOT release
+cd scripts 
+mkdir -p $RPM_BUILD_ROOT/tools/moses/scripts
+../bjam --with-giza=/tools/gizapp/bin --install-scripts=$RPM_BUILD_ROOT/tools/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -72,9 +72,12 @@ rm -rf %{buildroot}
 /tools/moses/bin/
 #/tools/moses/include/
 /tools/moses/lib/
-#/tools/moses/scripts/
+/tools/moses/scripts/
 
 %changelog
+* Mon Apr 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- include the scripts in.
+
 * Fri Mar 30 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - Change the package name from 'moses' to 'mosescore'.
 
