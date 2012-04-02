@@ -7,14 +7,15 @@ Name: 		irstlm
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite
+Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	Open Source LGPL
 Group: 		NLP Tools
 Source: 	irstlm-%{version}.tgz
 Patch0:		irstlm-script-makefile.am.patch
-URL:		http://hlt.fbk.eu/en/irstlm
 Buildroot: 	%{_tmppath}/%{name}-root
 #BuildRequires: tcl-devel
 BuildRequires: 	gcc-c++ >= 4.1
+URL:		http://hlt.fbk.eu/en/irstlm
 
 %description 
 The IRST Language Modeling Toolkit features algorithms and data structures 

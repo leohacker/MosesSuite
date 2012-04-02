@@ -7,13 +7,14 @@ Summary: 	GIZA++ and mkcls
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite
+Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		NLP Tools
 Source: 	giza-pp.tgz
 Patch0:		giza-pp.patch
 BuildRequires: 	gcc gcc-c++
 Buildroot: 	%{_tmppath}/%{name}-root
-URL:		https://github.com/leohacker/MosesSuite
+URL:		http://code.google.com/p/giza-pp/
 
 %description
 GIZA++ is a statical machine translation toolkit that is used to train IBM 

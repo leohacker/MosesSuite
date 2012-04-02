@@ -2,15 +2,15 @@
 %define release 1
 %define version v1.0
 
-Name: 		corpus-filesystem
-Summary: 	File system of corpus management for MosesSuite.
+Name: 		moses-suite-filesystem
+Summary: 	File system of MosesSuite.
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		NLP Tools
-Source:		corpus-fs.tar.gz
+Source:		moses-suite-filesystem.tar.gz
 Buildroot: 	%{_tmppath}/%{name}-root
 Requires:	moses-core
 URL:		http://github.com/leohacker/MosesSuite/
@@ -20,7 +20,7 @@ Setup the file system, or directory hierarchy for corpus management in moses
 suite.
 
 %prep
-%setup -q -n corpus-fs
+%setup -q -n moses-suite-filesystem
 
 %build
 
@@ -49,5 +49,8 @@ rm -rf %{buildroot}
 /tools/bin/create-corpus-dir.sh
 
 %changelog
+* Mon Apr 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- rename the name for package and source tarball.
+
 * Fri Mar 30 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - create the rpm spec.

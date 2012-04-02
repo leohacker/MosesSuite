@@ -7,6 +7,7 @@ Summary: 	SRI Language Modeling Toolkit
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite
+Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	SRILM Research Community License
 Group: 		NLP Tools
 Source: 	srilm-%{version}.tar.gz
@@ -16,6 +17,7 @@ Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	gcc >= 3.4.3 
 BuildRequires: 	tcsh
 Requires: 	gawk, gzip, perl, tcsh
+URL:		http://www.speech.sri.com/projects/srilm/
 
 %description 
 RILM is a toolkit for building and applying statistical language models (LMs), 
