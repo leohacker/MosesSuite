@@ -18,7 +18,7 @@ Source2:	mteval-v11b.pl.tar.gz
 #Patch1:		mert-moses.pl.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	boost, boost-devel, xmlrpc-c, xmlrpc-c-devel, zlib, zlib-devel, gizapp, srilm
-Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib, perl-GD, perl-XML-Twig
+Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib, perl-CGI, perl-GD, perl-XML-Twig
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
