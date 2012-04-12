@@ -1,5 +1,5 @@
 %define dist MosesSuite
-%define release 1
+%define release 2
 %define version 1.6.0
 
 Name: 		srilm

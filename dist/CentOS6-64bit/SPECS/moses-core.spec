@@ -1,6 +1,6 @@
 %define dist MosesSuite
 %define version 1.0
-%define release 1
+%define release 2
 %define release_date 20120224
 
 Summary: 	Statistical Machine Translation System
@@ -75,6 +75,9 @@ rm -rf %{buildroot}
 /tools/moses/scripts/
 
 %changelog
+* Thu Apr 12 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- remove the .git directory from source tarball.
+
 * Mon Apr 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - include the scripts in.
 

@@ -1,6 +1,6 @@
 %define dist    MosesSuite
 %define release 1
-%define version v1.0.6
+%define version v1.0.7
 
 Name: 		gizapp
 Summary: 	GIZA++ and mkcls
@@ -10,8 +10,8 @@ Vendor: 	MosesSuite
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		NLP Tools
-Source: 	giza-pp.tgz
-Patch0:		giza-pp.patch
+Source: 	giza-pp-%{version}.tar.gz
+#Patch0:		giza-pp.patch
 BuildRequires: 	gcc gcc-c++
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://code.google.com/p/giza-pp/
@@ -32,7 +32,7 @@ pp. 19-51 March 2003.
 
 %prep
 %setup -q -n giza-pp
-%patch0 -p1
+#%patch0 -p1
 
 %build
 make
@@ -62,6 +62,9 @@ rm -rf %{buildroot}
 /tools/gizapp/bin/snt2cooc.out
 
 %changelog
+* Thu Apr 12 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- we don't need the patch file now since upstream had removed the static flag in makefile.
+
 * Wed Feb 22 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - update the source code to giza-pp.tgz from upstream, and patch the makefile because there is no 64bit static library on CentOS6.
 
