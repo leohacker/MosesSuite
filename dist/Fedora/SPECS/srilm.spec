@@ -1,15 +1,16 @@
-%define dist MosesSuite
+%define dist    fc16
 %define release 3
 %define version 1.6.0
+%define tag     moses
 
 Name: 		srilm
 Summary: 	SRI Language Modeling Toolkit
 Version: 	%{version}
-Release: 	%{release}.%{dist}
-Vendor: 	MosesSuite
+Release: 	%{release}.%{tag}.%{dist}
+Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	SRILM Research Community License
-Group: 		NLP Tools
+Group: 		Moses Suite
 Source: 	srilm-%{version}.tar.gz
 Patch0: 	srilm-NoTCL-RemoveUserLocal.patch
 Buildroot: 	%{_tmppath}/%{name}-root

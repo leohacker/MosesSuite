@@ -1,15 +1,16 @@
-%define dist MosesSuite
+%define dist    fc16
 %define release 2
 %define version 5.70.04
+%define tag     moses
 
 Summary: 	IRST Language Modeling Toolkit
 Name: 		irstlm
 Version: 	%{version}
-Release: 	%{release}.%{dist}
-Vendor: 	MosesSuite
+Release: 	%{release}.%{tag}.%{dist}
+Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
-License: 	Open Source LGPL
-Group: 		NLP Tools
+License: 	LGPL
+Group: 		Moses Suite
 Source: 	irstlm-%{version}.tgz
 Patch0:		irstlm-script-makefile.am.patch
 Buildroot: 	%{_tmppath}/%{name}-root

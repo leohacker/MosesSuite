@@ -1,16 +1,17 @@
-%define dist MosesSuite
+%define dist    fc16
 %define version 1.0
 %define release 4
 %define release_date 20120224
+%define tag     moses
 
 Summary: 	Statistical Machine Translation System
 Name: 		moses-core
 Version: 	%{version}
-Release: 	%{release}.%{dist}
-Vendor: 	MosesSuite
+Release: 	%{release}.%{tag}.%{dist}
+Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
-Group: 		NLP Tools
+Group: 		Moses Suite
 Source0: 	mosesdecoder-%{release_date}.tar.bz2
 #Source2:	mteval-v11b.pl.tar.gz
 Buildroot: 	%{_tmppath}/%{name}-root
