@@ -1,0 +1,18 @@
+diff -Naur irstlm-5.60.02.old/scripts/Makefile.am irstlm-5.60.02.new/scripts/Makefile.am
+--- irstlm-5.60.02.old/scripts/Makefile.am	2010-10-26 00:47:40.000000000 +0800
++++ irstlm-5.60.02.new/scripts/Makefile.am	2011-08-04 09:27:30.000000000 +0800
+@@ -5,12 +5,12 @@
+ 
+ install:
+ 	for p in $(sh_programs) $(perl_programs) ; do \
+-		cp $$p $(wrapperbindir) ;\
++		cp $$p $(DESTDIR)$(wrapperbindir) ;\
+ 	done
+ 
+ uninstall:
+ 	for p in $(sh_programs) $(perl_programs) ; do \
+-                rm -f $(wrapperbindir)/$$p ;\
++                rm -f $(DESTDIR)$(wrapperbindir)/$$p ;\
+         done
+ 
+ EXTRA_DIST = $(dist_programs)

@@ -1,0 +1,52 @@
+diff -Naur srilm-1.6.0.old/common/Makefile.common.variables srilm-1.6.0.new/common/Makefile.common.variables
+--- srilm-1.6.0.old/common/Makefile.common.variables	2012-04-12 21:38:16.000000000 +0800
++++ srilm-1.6.0.new/common/Makefile.common.variables	2012-04-25 16:17:07.212730669 +0800
+@@ -67,10 +67,10 @@
+ DEMANGLE_FILTER = 2>&1 | c++filt
+ 
+ # Path to GNU awk; used in editing scripts 
+-GAWK = /usr/local/bin/gawk
++GAWK = /usr/bin/gawk
+ 
+ # Path to Perl; used in editing scripts 
+-PERL = /usr/local/bin/perl
++PERL = /usr/bin/perl
+ 
+ # Keep the source and object files in separate directories.
+ OUTPUT_OPTION = -o $@
+diff -Naur srilm-1.6.0.old/common/Makefile.machine.i686 srilm-1.6.0.new/common/Makefile.machine.i686
+--- srilm-1.6.0.old/common/Makefile.machine.i686	2012-04-12 21:38:24.000000000 +0800
++++ srilm-1.6.0.new/common/Makefile.machine.i686	2012-04-25 16:19:00.842736222 +0800
+@@ -49,8 +49,9 @@
+    RLD_FLAG = -R
+ 
+    # Tcl support (standard in Linux)
+-   TCL_INCLUDE = 
+-   TCL_LIBRARY = -ltcl
++   # TCL_INCLUDE = 
++   # TCL_LIBRARY = -ltcl
++   NO_TCL = X
+ 
+    # No ranlib
+    RANLIB = :
+diff -Naur srilm-1.6.0.old/Makefile srilm-1.6.0.new/Makefile
+--- srilm-1.6.0.old/Makefile	2012-04-12 21:37:02.000000000 +0800
++++ srilm-1.6.0.new/Makefile	2012-04-25 16:17:07.213730678 +0800
+@@ -126,7 +126,7 @@
+ 	ginstall -m 444 $(WWW_DOCS) $(WWW_DIR)/docs
+ 	ginstall -m 444 man/html/*.[1-9].html $(WWW_DIR)/manpages
+ 
+-TAR = /usr/local/gnu/bin/tar
++TAR = /bin/tar
+ 
+ package:	$(PACKAGE_DIR)/EXCLUDE
+ 	(cd misc/src; $(MAKE) $(MAKE_VARS) $(VERSION_HEADER))
+diff -Naur srilm-1.6.0.old/sbin/compare-outputs srilm-1.6.0.new/sbin/compare-outputs
+--- srilm-1.6.0.old/sbin/compare-outputs	2012-04-12 21:37:02.000000000 +0800
++++ srilm-1.6.0.new/sbin/compare-outputs	2012-04-25 16:17:07.213730678 +0800
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/gawk -f 
++#!/usr/bin/gawk -f 
+ #
+ # compare test outputs allowing for small numerical differences
+ #
