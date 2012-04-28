@@ -21,6 +21,8 @@ URL:		http://github.com/leohacker/MosesSuite/
 Setup the file system, or directory hierarchy for corpus management in moses
 suite.
 
+Also include a tool for setting up directory tree for language pair corpus.
+
 %prep
 %setup -q -n moses-suite-filesystem
 
@@ -48,7 +50,7 @@ rm -rf %{buildroot}
 /data/
 /data/corpus
 /data/engines
-/tools/bin/create-corpus-dir.sh
+/tools/bin/moses-suite-corpus-setuptree.sh
 
 %changelog
 * Mon Apr 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
