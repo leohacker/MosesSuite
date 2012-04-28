@@ -1,6 +1,6 @@
 %define dist    fc16
 %define version 1.0
-%define release 4
+%define release 5
 %define release_date 20120224
 %define tag     moses
 
@@ -17,8 +17,8 @@ Source0: 	mosesdecoder-%{release_date}.tar.bz2
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	ccache, glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
-BuildRequires: 	gizapp, srilm 
-Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+BuildRequires: 	gizapp
+Requires: 	boost, xmlrpc-c, gizapp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
@@ -42,7 +42,7 @@ rm -rf %{buildroot}
 cd %{_builddir}
 mkdir -p $RPM_BUILD_ROOT/tools/
 cd mosesdecoder
-./bjam -a --notrace -j4 --with-srilm=/tools/srilm --with-xmlrpc-c --with-giza=/tools/gizapp/bin --prefix=$RPM_BUILD_ROOT/tools/moses --includedir=$RPM_BUILD_ROOT/tools/moses/include --install-scripts=$RPM_BUILD_ROOT/tools/moses/scripts
+./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=/tools/gizapp/bin --prefix=$RPM_BUILD_ROOT/tools/moses --includedir=$RPM_BUILD_ROOT/tools/moses/include --install-scripts=$RPM_BUILD_ROOT/tools/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -58,6 +58,9 @@ rm -rf %{buildroot}
 /tools/moses/
 
 %changelog
+* Sat Apr 28 2012 Leo Jiang - 1.0-5.moses.fc16
+- remove the support for SRILM.
+
 * Thu Apr 26 2012 Leo Jiang - 1.0-4.MosesSuite
 - correct the parameter list for bjam.
 
