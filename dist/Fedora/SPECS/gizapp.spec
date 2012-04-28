@@ -1,15 +1,16 @@
-%define dist    MosesSuite
+%define dist    fc16
 %define release 2
 %define version v1.0.7
+%define tag     moses     
 
 Name: 		gizapp
 Summary: 	GIZA++ and mkcls
 Version: 	%{version}
-Release: 	%{release}.%{dist}
-Vendor: 	MosesSuite
+Release: 	%{release}.%{tag}.%{dist}
+Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
-Group: 		NLP Tools
+Group: 		Moses Suite
 Source: 	giza-pp-%{version}.tar.gz
 BuildRequires: 	glibc-devel, glibc-headers
 BuildRequires:  libstdc++-devel 
