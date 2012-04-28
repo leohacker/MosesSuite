@@ -15,7 +15,7 @@ Source: 	irstlm-%{version}.tgz
 Patch0:		irstlm-script-makefile.am.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires:  autoconf, automake, libtool, m4
-BuildRequires:  ccache, zlib-devel, libstdc++-devel
+BuildRequires:  zlib-devel, libstdc++-devel
 BuildRequires:  glibc-common, glibc-devel, glibc-headers
 BuildRequires: 	gcc-c++ >= 4.1
 URL:		http://hlt.fbk.eu/en/irstlm

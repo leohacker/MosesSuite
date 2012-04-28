@@ -15,7 +15,7 @@ Group: 		Moses Suite
 Source0: 	mosesdecoder-%{release_date}.tar.bz2
 #Source2:	mteval-v11b.pl.tar.gz
 Buildroot: 	%{_tmppath}/%{name}-root
-BuildRequires: 	ccache, glibc-devel, glibc-headers, libstdc++-devel 
+BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
 BuildRequires: 	gizapp
 Requires: 	boost, xmlrpc-c, gizapp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch

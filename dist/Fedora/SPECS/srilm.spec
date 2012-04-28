@@ -14,7 +14,7 @@ Group: 		Moses Suite
 Source: 	srilm-%{version}.tar.gz
 Patch0: 	srilm-NoTCL-RemoveUserLocal.patch
 Buildroot: 	%{_tmppath}/%{name}-root
-BuildRequires: 	tcsh, ccache, glibc-devel, glibc-headers, libstdc++-devel 
+BuildRequires: 	tcsh, glibc-devel, glibc-headers, libstdc++-devel 
 Requires: 	tcsh
 URL:		http://www.speech.sri.com/projects/srilm/
 
