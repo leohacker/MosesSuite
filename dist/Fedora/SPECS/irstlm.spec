@@ -1,12 +1,11 @@
 %define dist    fc16
-%define release 2
+%define release 3
 %define version 5.70.04
-%define tag     moses
 
 Summary: 	IRST Language Modeling Toolkit
 Name: 		irstlm
 Version: 	%{version}
-Release: 	%{release}.%{tag}.%{dist}
+Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
@@ -33,12 +32,12 @@ such as the SRILM Toolkit.
 
 %build
 ./regenerate-makefiles.sh
-./configure --prefix=/tools/irstlm --enable-caching
+%{configure} --prefix=%{moses_suite_root}/irstlm --enable-caching
 make
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/tools/irstlm
+mkdir -p %{buildroot}/%{moses_suite_root}/irstlm
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
@@ -52,9 +51,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-/tools/irstlm
+%{moses_suite_root}/irstlm
 
 %changelog
+* Sun Apr 29 2012 Leo Jiang - 5.70.04-3.fc16
+- remove tag and replace installation path with rpmmacros.
+
 * Wed Apr 25 2012 Leo Jiang - 5.70.04-2.MosesSuite
 - build for Fedora16.
 
