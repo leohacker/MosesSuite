@@ -1,17 +1,16 @@
 %define dist    fc16
-%define release 2
-%define version v1.0.7
-%define tag     moses
+%define release 3
+%define version 1.0.7
 
 Name: 		gizapp
 Summary: 	GIZA++ and mkcls
 Version: 	%{version}
-Release: 	%{release}.%{tag}.%{dist}
+Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		Moses Suite
-Source: 	giza-pp-%{version}.tar.gz
+Source: 	giza-pp-v%{version}.tar.gz
 BuildRequires: 	glibc-devel, glibc-headers
 BuildRequires:  libstdc++-devel
 Requires:	tcsh, libstdc++
@@ -40,11 +39,11 @@ make
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/GIZA++ %{buildroot}%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/*.out %{buildroot}%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/*.sh %{buildroot}%{moses_suite_root}/gizapp/bin
-install -m 755 mkcls-v2/mkcls %{buildroot}%{moses_suite_root}/gizapp/bin
+mkdir -p %{buildroot}/%{moses_suite_root}/gizapp/bin
+install -m 755 GIZA++-v2/GIZA++ %{buildroot}/%{moses_suite_root}/gizapp/bin
+install -m 755 GIZA++-v2/*.out %{buildroot}/%{moses_suite_root}/gizapp/bin
+install -m 755 GIZA++-v2/*.sh %{buildroot}/%{moses_suite_root}/gizapp/bin
+install -m 755 mkcls-v2/mkcls %{buildroot}/%{moses_suite_root}/gizapp/bin
 
 %clean
 rm -rf %{buildroot}
@@ -60,6 +59,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/gizapp/bin/
 
 %changelog
+* Sun Apr 29 2012 Leo Jiang - 1.0.7-3.fc16
+- remove the macro tag and replace the installation path with macro moses_suite_root.
+
 * Wed Apr 25 2012 Leo Jiang - v1.0.7-2.MosesSuite
 - build for Fedora16.
 
