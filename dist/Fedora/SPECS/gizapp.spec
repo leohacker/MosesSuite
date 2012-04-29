@@ -56,6 +56,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
+%{moses_suite_root}/gizapp/
 %{moses_suite_root}/gizapp/bin/
 
 %changelog

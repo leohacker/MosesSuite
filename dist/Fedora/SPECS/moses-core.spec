@@ -1,24 +1,23 @@
 %define dist    fc16
 %define version 1.0
-%define release 5
+%define release 6
 %define release_date 20120224
-%define tag     moses
 
 Summary: 	Statistical Machine Translation System
 Name: 		moses-core
 Version: 	%{version}
-Release: 	%{release}.%{tag}.%{dist}
+Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
 Group: 		Moses Suite
 Source0: 	mosesdecoder-%{release_date}.tar.bz2
-#Source2:	mteval-v11b.pl.tar.gz
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
 BuildRequires: 	gizapp
 Requires: 	boost, xmlrpc-c, gizapp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+Conflicts:      moses-core-srilm, moses-core-irstlm
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
@@ -28,21 +27,15 @@ a collection of translated texts (parallel corpus). An efficient search
 algorithm finds quickly the highest probability translation among the 
 exponential number of choices. 
 
-Moses and moses scripts included.
-
 %prep
-#%setup -q -T -b 2 -n bin
-
 %setup -q -T -b 0 -n mosesdecoder
 
 %build
 
 %install
 rm -rf %{buildroot}
-cd %{_builddir}
-mkdir -p $RPM_BUILD_ROOT/tools/
-cd mosesdecoder
-./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=/tools/gizapp/bin --prefix=$RPM_BUILD_ROOT/tools/moses --includedir=$RPM_BUILD_ROOT/tools/moses/include --install-scripts=$RPM_BUILD_ROOT/tools/moses/scripts
+install -m 755 -d %{buildroot}/%{moses_suite_root}/moses
+./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=%{moses_suite_root}/gizapp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -55,9 +48,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-/tools/moses/
+%{moses_suite_root}/moses/
 
 %changelog
+* Sun Apr 29 2012 Leo Jiang - 1.0-6.fc16
+- remove tag and replace installation path with rpmmacro.
+
 * Sat Apr 28 2012 Leo Jiang - 1.0-5.moses.fc16
 - remove the support for SRILM.
 

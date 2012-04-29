@@ -1,10 +1,10 @@
 %define dist    fc16
 %define version 1.0
-%define release 6
+%define release 7
 %define release_date 20120224
 
-Summary: 	Statistical Machine Translation System with SRILM support
-Name: 		moses-core-srilm
+Summary: 	Statistical Machine Translation System with IRSTLM support
+Name: 		moses-core-irstlm
 Version: 	%{version}
 Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite Project
@@ -15,9 +15,9 @@ Source0: 	mosesdecoder-%{release_date}.tar.bz2
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
-BuildRequires: 	gizapp, srilm 
-Requires: 	boost, xmlrpc-c, gizapp, srilm, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
-Conflicts:      moses-core, moses-core-irstlm
+BuildRequires: 	gizapp, irstlm
+Requires: 	boost, xmlrpc-c, gizapp, irstlm, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+Conflicts:      moses-core, moses-core-srilm
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
@@ -27,7 +27,7 @@ a collection of translated texts (parallel corpus). An efficient search
 algorithm finds quickly the highest probability translation among the 
 exponential number of choices. 
 
-This version of Mosos Core package is compiled with SRILM support.
+This version of Mosos Core package is compiled with IRSTLM support.
 
 %prep
 %setup -q -T -b 0 -n mosesdecoder
@@ -37,7 +37,7 @@ This version of Mosos Core package is compiled with SRILM support.
 %install
 rm -rf %{buildroot}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/moses
-./bjam -a --notrace -j4 --with-srilm=%{moses_suite_root}/srilm --with-xmlrpc-c --with-giza=%{moses_suite_root}/gizapp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
+./bjam -a --notrace -j4 --with-irstlm=%{moses_suite_root}/irstlm --with-xmlrpc-c --with-giza=%{moses_suite_root}/gizapp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -53,6 +53,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/moses/
 
 %changelog
+* Sun Apr 29 2012 Leo Jiang - 1.0-7.fc16
+- build with irstlm support.
+
 * Sun Apr 29 2012 Leo Jiang - 1.0-6.fc16
 - remove tag and replace installation path with rpmmacros.
 
