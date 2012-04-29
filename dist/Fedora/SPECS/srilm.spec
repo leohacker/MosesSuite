@@ -1,12 +1,11 @@
 %define dist    fc16
-%define release 3
+%define release 4
 %define version 1.6.0
-%define tag     moses
 
 Name: 		srilm
 Summary: 	SRI Language Modeling Toolkit
 Version: 	%{version}
-Release: 	%{release}.%{tag}.%{dist}
+Release: 	%{release}.%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	SRILM Research Community License
@@ -32,21 +31,21 @@ make SRILM=$PWD World
 
 %install
 rm -rf %{buildroot}
-install -m 755 -d %{buildroot}/tools/srilm 
-install -m 755 -d %{buildroot}/tools/srilm/bin
-install -m 755 -d %{buildroot}/tools/srilm/sbin
-install -m 755 -d %{buildroot}/tools/srilm/lib/i686
-install -m 755 -d %{buildroot}/tools/srilm/include
-install -m 755 -d %{buildroot}/tools/srilm/doc
-cp -a bin/ %{buildroot}/tools/srilm/
-cp -a sbin/ %{buildroot}/tools/srilm/
-cp -a lib/ %{buildroot}/tools/srilm/
-cp -a include/ %{buildroot}/tools/srilm/
-cp -a doc/ %{buildroot}/tools/srilm/
-install -m 755 doc/* %{buildroot}/tools/srilm/doc/
-install -m 444 Copyright %{buildroot}/tools/srilm/
-install -m 444 CHANGES %{buildroot}/tools/srilm/
-install -m 444 License %{buildroot}/tools/srilm/
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm 
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/bin
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/sbin
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/lib/i686
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/include
+install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/doc
+cp -a bin/ %{buildroot}/%{moses_suite_root}/srilm/
+cp -a sbin/ %{buildroot}/%{moses_suite_root}/srilm/
+cp -a lib/ %{buildroot}/%{moses_suite_root}/srilm/
+cp -a include/ %{buildroot}/%{moses_suite_root}/srilm/
+cp -a doc/ %{buildroot}/%{moses_suite_root}/srilm/
+install -m 755 doc/* %{buildroot}/%{moses_suite_root}/srilm/doc/
+install -m 444 Copyright %{buildroot}/%{moses_suite_root}/srilm/
+install -m 444 CHANGES %{buildroot}/%{moses_suite_root}/srilm/
+install -m 444 License %{buildroot}/%{moses_suite_root}/srilm/
 
 %clean
 rm -rf %{buildroot}
@@ -59,9 +58,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-/tools/srilm
+%{moses_suite_root}/srilm
 
 %changelog
+* Sun Apr 29 2012 Leo Jiang - 1.6.0-4.fc16
+- remove tag and replace the installation path with rpm macros.
+
 * Wed Apr 25 2012 Leo Jiang - 1.6.0-3.MosesSuite
 - modify this spec for building on Fedora16.
 
