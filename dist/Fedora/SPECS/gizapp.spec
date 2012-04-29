@@ -39,7 +39,7 @@ make
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/%{moses_suite_root}/gizapp/bin
+install -m 755 -d %{buildroot}/%{moses_suite_root}/gizapp/bin
 install -m 755 GIZA++-v2/GIZA++ %{buildroot}/%{moses_suite_root}/gizapp/bin
 install -m 755 GIZA++-v2/*.out %{buildroot}/%{moses_suite_root}/gizapp/bin
 install -m 755 GIZA++-v2/*.sh %{buildroot}/%{moses_suite_root}/gizapp/bin
