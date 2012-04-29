@@ -32,12 +32,12 @@ such as the SRILM Toolkit.
 
 %build
 ./regenerate-makefiles.sh
-%{configure} --prefix=%{moses_suite_root}/irstlm --enable-caching
+./configure --prefix=%{moses_suite_root}/irstlm --enable-caching
 make
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/%{moses_suite_root}/irstlm
+install -m 755 -d %{buildroot}/%{moses_suite_root}/irstlm
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
