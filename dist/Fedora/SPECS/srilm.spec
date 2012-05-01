@@ -31,21 +31,22 @@ make SRILM=$PWD World
 
 %install
 rm -rf %{buildroot}
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm 
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/bin
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/sbin
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/lib/i686
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/include
-install -m 755 -d %{buildroot}/%{moses_suite_root}/srilm/doc
-cp -a bin/ %{buildroot}/%{moses_suite_root}/srilm/
-cp -a sbin/ %{buildroot}/%{moses_suite_root}/srilm/
-cp -a lib/ %{buildroot}/%{moses_suite_root}/srilm/
-cp -a include/ %{buildroot}/%{moses_suite_root}/srilm/
-cp -a doc/ %{buildroot}/%{moses_suite_root}/srilm/
-install -m 755 doc/* %{buildroot}/%{moses_suite_root}/srilm/doc/
-install -m 444 Copyright %{buildroot}/%{moses_suite_root}/srilm/
-install -m 444 CHANGES %{buildroot}/%{moses_suite_root}/srilm/
-install -m 444 License %{buildroot}/%{moses_suite_root}/srilm/
+%define prefix %{buildroot}/%{moses_suite_root}
+install -m 755 -d %{prefix}/srilm 
+install -m 755 -d %{prefix}/srilm/bin
+install -m 755 -d %{prefix}/srilm/sbin
+install -m 755 -d %{prefix}/srilm/lib/i686
+install -m 755 -d %{prefix}/srilm/include
+install -m 755 -d %{prefix}/srilm/doc
+cp -a bin/ %{prefix}/srilm/
+cp -a sbin/ %{prefix}/srilm/
+cp -a lib/ %{prefix}/srilm/
+cp -a include/ %{prefix}/srilm/
+cp -a doc/ %{prefix}/srilm/
+install -m 755 doc/* %{prefix}/srilm/doc/
+install -m 444 Copyright %{prefix}/srilm/
+install -m 444 CHANGES %{prefix}/srilm/
+install -m 444 License %{prefix}/srilm/
 
 %clean
 rm -rf %{buildroot}

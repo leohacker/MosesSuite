@@ -39,11 +39,12 @@ make
 
 %install
 rm -rf %{buildroot}
-install -m 755 -d %{buildroot}/%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/GIZA++ %{buildroot}/%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/*.out %{buildroot}/%{moses_suite_root}/gizapp/bin
-install -m 755 GIZA++-v2/*.sh %{buildroot}/%{moses_suite_root}/gizapp/bin
-install -m 755 mkcls-v2/mkcls %{buildroot}/%{moses_suite_root}/gizapp/bin
+%define prefix %{buildroot}/%{moses_suite_root}
+install -m 755 -d %{prefix}/gizapp/bin
+install -m 755 GIZA++-v2/GIZA++ %{prefix}/gizapp/bin
+install -m 755 GIZA++-v2/*.out %{prefix}/gizapp/bin
+install -m 755 GIZA++-v2/*.sh %{prefix}/gizapp/bin
+install -m 755 mkcls-v2/mkcls %{prefix}/gizapp/bin
 
 %clean
 rm -rf %{buildroot}
