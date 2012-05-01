@@ -16,6 +16,7 @@ BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
 BuildRequires: 	moses-suite-devel, giza-pp
 Requires: 	boost, xmlrpc-c, giza-pp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+Provides:       moses-core
 Conflicts:      moses-core-srilm, moses-core-irstlm
 URL:		https://github.com/leohacker/MosesSuite
 

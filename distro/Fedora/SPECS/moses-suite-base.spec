@@ -11,6 +11,7 @@ License: 	GNU GPL v2
 Group: 		Moses Suite
 Source:		%{name}-%{version}.tar.gz
 BuildArch:      noarch
+BuildRequires:  moses-suite-devel
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/
 

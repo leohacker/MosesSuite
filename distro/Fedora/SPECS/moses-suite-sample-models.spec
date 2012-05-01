@@ -1,12 +1,10 @@
-%define dist    fc16
 %define version 1.0
 %define release 1
-%define tag     moses
 
 Summary:        Sample models for Moses
 Name:           moses-suite-sample-models
 Version:        %{version}
-Release:        %{release}.%{tag}.%{dist}
+Release:        %{release}%{dist}
 Vendor:         MosesSuite Project
 Packager:       Leo Jiang <leo.jiang.dev@gmail.com>
 URL:            https://github.com/leohacker/MosesSuite/
@@ -15,10 +13,8 @@ Group:          Moses Suite
 Source0:        sample-models.tgz
 Buildroot:      %{_tmppath}/%{name}-root
 Buildarch:      noarch
-
-
-#BuildRequires:  
-#Requires:       
+BuildRequires:  moses-suite-devel
+Requires:       moses-core
 
 %description
 Pre-built sample models for moses and several scripts for moses installation
@@ -30,15 +26,15 @@ verification.
 %build
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/data/engines/
-#make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf %{buildroot}
+install -m 755 -d %{buildroot}/%{moses_data_root}/engines/
 cd %{_builddir}
-cp -a sample-models $RPM_BUILD_ROOT/data/engines/
+cp -a sample-models $RPM_BUILD_ROOT/%{moses_data_root}/engines/
 
 %files
-#%doc
-/data/engines/sample-models
-
+%defattr(-,moses,moses)
+%{moses_data_root}/engines/sample-models
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 1.0-2
+- rebuilt
