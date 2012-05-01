@@ -9,7 +9,7 @@ Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		Moses Suite
-Source:		%{name}.tar.gz
+Source:		%{name}-%{version}.tar.gz
 BuildArch:      noarch
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/

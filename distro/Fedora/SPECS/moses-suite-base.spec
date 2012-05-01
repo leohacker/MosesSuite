@@ -9,30 +9,37 @@ Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		Moses Suite
-Source:		%{name}.tar.gz
+Source:		%{name}-%{version}.tar.gz
 BuildArch:      noarch
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/
 
 %description
-Moses suite configuration and generated rpm macros file for moses according to
-this configuration file.
+Setup system configuration file and data directory hierarchy for Moses Suite. 
 
 %prep
 %setup -q -n %{name}
 
 %build
-./generate-rpmmacros.sh
+# setup the root directory as rpm macros defined.
+sed -i -e "s|MOSES_DATA_ROOT=|MOSES_DATA_ROOT=%{moses_data_root}|" moses-suite.conf
 
 %install
 rm -rf %{buildroot}
-install -m 755 -d %{buildroot}/%{moses_suite_root}
-install -m 755 -d %{buildroot}/etc/rpm/
-install -m 644 macros.moses %{buildroot}/etc/rpm/
-install -m 644 moses-suite.conf %{buildroot}/etc/
+install -m 755 -d %{buildroot}/etc
+install -m 644 moses-suite.conf %{buildroot}/etc/moses-suite.conf
+install -m 755 -d %{buildroot}/%{moses_data_root}
+install -m 755 -d %{buildroot}/%{moses_data_root}/corpus
+install -m 755 -d %{buildroot}/%{moses_data_root}/engines
 
 %clean
-#rm -rf %{buildroot}
+rm -rf %{buildroot}
+
+%pre
+# create user moses:moses for moses suite.
+if ! grep "moses" /etc/passwd > /dev/null; then
+    useradd moses > /dev/null
+fi
 
 %post
 
@@ -42,17 +49,13 @@ install -m 644 moses-suite.conf %{buildroot}/etc/
 
 %files
 %defattr(-,root,root)
-#%{moses_suite_root}/
-#%{moses_data_root}/
-/etc/rpm/macros.moses
 /etc/moses-suite.conf
+%defattr(-,moses,moses)
+%{moses_data_root}/
 
 %changelog
-* Tue May 01 2012 Leo Jiang - 1.0-2
-- rename the package to moses-suite-base.
+* Tue May 02 2012 Leo Jiang - 1.0-2
+- add user moses if not exists, set the permission of data folder for user moses.
 
-* Mon Apr 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
-- rename the name for package and source tarball.
-
-* Fri Mar 30 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+* Tue May 02 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - create the rpm spec.
