@@ -1,12 +1,11 @@
-%define dist    fc16
 %define version 1.0
-%define release 7
+%define release 8
 %define release_date 20120224
 
 Summary: 	Statistical Machine Translation System with IRSTLM support
 Name: 		moses-core-irstlm
 Version: 	%{version}
-Release: 	%{release}.%{dist}
+Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
@@ -15,8 +14,8 @@ Source0: 	mosesdecoder-%{release_date}.tar.bz2
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
-BuildRequires: 	gizapp, irstlm
-Requires: 	boost, xmlrpc-c, gizapp, irstlm, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+BuildRequires: 	moses-suite-devel, giza-pp, irstlm
+Requires: 	boost, xmlrpc-c, giza-pp, irstlm, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
 Conflicts:      moses-core, moses-core-srilm
 URL:		https://github.com/leohacker/MosesSuite
 
@@ -37,7 +36,7 @@ This version of Mosos Core package is compiled with IRSTLM support.
 %install
 rm -rf %{buildroot}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/moses
-./bjam -a --notrace -j4 --with-irstlm=%{moses_suite_root}/irstlm --with-xmlrpc-c --with-giza=%{moses_suite_root}/gizapp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
+./bjam -a --notrace -j4 --with-irstlm=%{moses_suite_root}/irstlm --with-xmlrpc-c --with-giza=%{moses_suite_root}/giza-pp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -53,6 +52,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/moses/
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 1.0-8
+- add moses-suite-devel as build requires.
+
 * Sun Apr 29 2012 Leo Jiang - 1.0-7.fc16
 - build with irstlm support.
 

@@ -1,12 +1,11 @@
-%define dist    fc16
 %define version 1.0
-%define release 6
+%define release 7
 %define release_date 20120224
 
 Summary: 	Statistical Machine Translation System
 Name: 		moses-core
 Version: 	%{version}
-Release: 	%{release}.%{dist}
+Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
@@ -15,8 +14,8 @@ Source0: 	mosesdecoder-%{release_date}.tar.bz2
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
-BuildRequires: 	gizapp
-Requires: 	boost, xmlrpc-c, gizapp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
+BuildRequires: 	moses-suite-devel, giza-pp
+Requires: 	boost, xmlrpc-c, giza-pp, zlib, perl-CGI, perl-GD, perl-XML-Twig, perl-Switch
 Conflicts:      moses-core-srilm, moses-core-irstlm
 URL:		https://github.com/leohacker/MosesSuite
 
@@ -35,7 +34,7 @@ exponential number of choices.
 %install
 rm -rf %{buildroot}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/moses
-./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=%{moses_suite_root}/gizapp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
+./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=%{moses_suite_root}/giza-pp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -51,6 +50,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/moses/
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 1.0-7
+- add moses-suite-devel as build requires.
+
 * Sun Apr 29 2012 Leo Jiang - 1.0-6.fc16
 - remove tag and replace installation path with rpmmacro.
 

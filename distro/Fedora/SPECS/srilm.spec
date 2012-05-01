@@ -1,24 +1,24 @@
-%define dist    fc16
-%define release 4
+%define release 5
 %define version 1.6.0
 
 Name: 		srilm
 Summary: 	SRI Language Modeling Toolkit
 Version: 	%{version}
-Release: 	%{release}.%{dist}
+Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	SRILM Research Community License
 Group: 		Moses Suite
-Source: 	srilm-%{version}.tar.gz
+Source: 	%{name}-%{version}.tar.gz
 Patch0: 	srilm-NoTCL-RemoveUserLocal.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	tcsh, glibc-devel, glibc-headers, libstdc++-devel 
+BuildRequires:  moses-suite-devel
 Requires: 	tcsh
 URL:		http://www.speech.sri.com/projects/srilm/
 
 %description 
-RILM is a toolkit for building and applying statistical language models (LMs), 
+SRILM is a toolkit for building and applying statistical language models (LMs), 
 primarily for use in speech recognition, statistical tagging and segmentation, 
 and machine translation.
 
@@ -31,22 +31,22 @@ make SRILM=$PWD World
 
 %install
 rm -rf %{buildroot}
-%define prefix %{buildroot}/%{moses_suite_root}
-install -m 755 -d %{prefix}/srilm 
-install -m 755 -d %{prefix}/srilm/bin
-install -m 755 -d %{prefix}/srilm/sbin
-install -m 755 -d %{prefix}/srilm/lib/i686
-install -m 755 -d %{prefix}/srilm/include
-install -m 755 -d %{prefix}/srilm/doc
-cp -a bin/ %{prefix}/srilm/
-cp -a sbin/ %{prefix}/srilm/
-cp -a lib/ %{prefix}/srilm/
-cp -a include/ %{prefix}/srilm/
-cp -a doc/ %{prefix}/srilm/
-install -m 755 doc/* %{prefix}/srilm/doc/
-install -m 444 Copyright %{prefix}/srilm/
-install -m 444 CHANGES %{prefix}/srilm/
-install -m 444 License %{prefix}/srilm/
+%define destdir %{buildroot}/%{moses_suite_root}
+install -m 755 -d %{destdir}/srilm 
+install -m 755 -d %{destdir}/srilm/bin
+install -m 755 -d %{destdir}/srilm/sbin
+install -m 755 -d %{destdir}/srilm/lib/i686
+install -m 755 -d %{destdir}/srilm/include
+install -m 755 -d %{destdir}/srilm/doc
+cp -a bin/ %{destdir}/srilm/
+cp -a sbin/ %{destdir}/srilm/
+cp -a lib/ %{destdir}/srilm/
+cp -a include/ %{destdir}/srilm/
+cp -a doc/ %{destdir}/srilm/
+install -m 755 doc/* %{destdir}/srilm/doc/
+install -m 444 Copyright %{destdir}/srilm/
+install -m 444 CHANGES %{destdir}/srilm/
+install -m 444 License %{destdir}/srilm/
 
 %clean
 rm -rf %{buildroot}
@@ -62,6 +62,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/srilm
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 1.6.0-5
+- add moses-suite-devel as build requires.
+
 * Sun Apr 29 2012 Leo Jiang - 1.6.0-4.fc16
 - remove tag and replace the installation path with rpm macros.
 

@@ -1,18 +1,18 @@
-%define dist    fc16
-%define release 3
+%define release 4
 %define version 1.0.7
 
-Name: 		gizapp
+Name: 		giza-pp
 Summary: 	GIZA++ and mkcls
 Version: 	%{version}
-Release: 	%{release}.%{dist}
+Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GNU GPL v2
 Group: 		Moses Suite
-Source: 	giza-pp-v%{version}.tar.gz
+Source: 	%{name}-v%{version}.tar.gz
 BuildRequires: 	glibc-devel, glibc-headers
 BuildRequires:  libstdc++-devel
+BuildRequires:  moses-suite-devel
 Requires:	tcsh, libstdc++
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://code.google.com/p/giza-pp/
@@ -32,19 +32,19 @@ Statistical Alignment Models", Computational Linguistics, volume 29, number 1,
 pp. 19-51 March 2003.
 
 %prep
-%setup -q -n giza-pp
+%setup -q -n %{name}
 
 %build
 make
 
 %install
 rm -rf %{buildroot}
-%define prefix %{buildroot}/%{moses_suite_root}
-install -m 755 -d %{prefix}/gizapp/bin
-install -m 755 GIZA++-v2/GIZA++ %{prefix}/gizapp/bin
-install -m 755 GIZA++-v2/*.out %{prefix}/gizapp/bin
-install -m 755 GIZA++-v2/*.sh %{prefix}/gizapp/bin
-install -m 755 mkcls-v2/mkcls %{prefix}/gizapp/bin
+%define destdir %{buildroot}/%{moses_suite_root}
+install -m 755 -d %{destdir}/giza-pp/bin
+install -m 755 GIZA++-v2/GIZA++ %{destdir}/giza-pp/bin
+install -m 755 GIZA++-v2/*.out %{destdir}/giza-pp/bin
+install -m 755 GIZA++-v2/*.sh %{destdir}/giza-pp/bin
+install -m 755 mkcls-v2/mkcls %{destdir}/giza-pp/bin
 
 %clean
 rm -rf %{buildroot}
@@ -57,10 +57,14 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{moses_suite_root}/gizapp/
-%{moses_suite_root}/gizapp/bin/
+%{moses_suite_root}/
+#%{moses_suite_root}/giza-pp/
+#%{moses_suite_root}/giza-pp/bin/
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 1.0.7-4
+- rename the package and add the moses-suite-devel as build requires.
+
 * Sun Apr 29 2012 Leo Jiang - 1.0.7-3.fc16
 - remove the macro tag and replace the installation path with macro moses_suite_root.
 

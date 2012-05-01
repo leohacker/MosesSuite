@@ -1,22 +1,22 @@
-%define dist    fc16
-%define release 3
+%define release 4
 %define version 5.70.04
 
 Summary: 	IRST Language Modeling Toolkit
 Name: 		irstlm
 Version: 	%{version}
-Release: 	%{release}.%{dist}
+Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
 Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	LGPL
 Group: 		Moses Suite
-Source: 	irstlm-%{version}.tgz
+Source: 	%{name}-%{version}.tgz
 Patch0:		irstlm-script-makefile.am.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires:  autoconf, automake, libtool, m4
 BuildRequires:  zlib-devel, libstdc++-devel
 BuildRequires:  glibc-common, glibc-devel, glibc-headers
 BuildRequires: 	gcc-c++ >= 4.1
+BuildRequires:  moses-suite-devel
 URL:		http://hlt.fbk.eu/en/irstlm
 
 %description 
@@ -27,7 +27,7 @@ called Moses, and is compatible with language models created with other tools,
 such as the SRILM Toolkit.
 
 %prep
-%setup -q -n irstlm-%{version}
+%setup -q -n %{name}-%{version}
 %patch0 -p1
 
 %build
@@ -51,9 +51,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{moses_suite_root}/irstlm
+%{moses_suite_root}/irstlm/
 
 %changelog
+* Tue May 01 2012 Leo Jiang - 5.70.04-4
+- add moses-suite-devel as build requires.
+
 * Sun Apr 29 2012 Leo Jiang - 5.70.04-3.fc16
 - remove tag and replace installation path with rpmmacros.
 
