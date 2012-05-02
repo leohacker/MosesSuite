@@ -23,7 +23,7 @@ Setup system configuration file and data directory hierarchy for Moses Suite.
 
 %build
 # setup the root directory as rpm macros defined.
-sed -i -e "s|MOSES_DATA_ROOT=|MOSES_DATA_ROOT=%{moses_data_root}|" moses-suite.conf
+sed -i -e "s|MOSES_DATA_ROOT=$|MOSES_DATA_ROOT=%{moses_data_root}|" moses-suite.conf
 
 %install
 rm -rf %{buildroot}
@@ -32,6 +32,7 @@ install -m 644 moses-suite.conf %{buildroot}/etc/moses-suite.conf
 install -m 755 -d %{buildroot}/%{moses_data_root}
 install -m 755 -d %{buildroot}/%{moses_data_root}/corpus
 install -m 755 -d %{buildroot}/%{moses_data_root}/engines
+install -m 755 -d %{buildroot}/%{moses_suite_root}/bin
 
 %clean
 rm -rf %{buildroot}
@@ -40,6 +41,14 @@ rm -rf %{buildroot}
 # create user moses:moses for moses suite.
 if ! grep "moses" /etc/passwd > /dev/null; then
     useradd moses > /dev/null
+    echo "User moses added, DON'T forget to setup password."
+fi
+
+if ! grep "moses/bin" /home/moses/.bash_profile > /dev/null; then
+    echo "" >> /home/moses/.bash_profile
+    echo "# Setup env variable PATH for moses suite." >> /home/moses/.bash_profile
+    echo 'export PATH=%{moses_suite_root}/bin:%{moses_suite_root}/moses/bin:$PATH' >> /home/moses/.bash_profile
+    echo "Add moses suite path into user bash profile."
 fi
 
 %post
@@ -51,6 +60,8 @@ fi
 %files
 %defattr(-,root,root)
 /etc/moses-suite.conf
+%{moses_suite_root}/bin
+
 %defattr(-,moses,moses)
 %{moses_data_root}/
 
