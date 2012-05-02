@@ -2,8 +2,8 @@
 %define release 8
 %define release_date 20120224
 
-Summary: 	Statistical Machine Translation System
-Name: 		moses-core
+Summary: 	Statistical Machine Translation System with SRILM support
+Name: 		moses-core-srilm
 Version: 	%{version}
 Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
@@ -14,10 +14,10 @@ Source0: 	mosesdecoder-%{release_date}.tar.bz2
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires: 	boost-devel, xmlrpc-c-devel, zlib-devel 
-BuildRequires: 	moses-suite-devel, giza-pp
-Requires: 	boost, xmlrpc-c, giza-pp, zlib, perl-CGI, perl-GD, perl-XML-Twig 
+BuildRequires: 	moses-suite-devel, giza-pp, srilm 
+Requires: 	boost, xmlrpc-c, giza-pp, srilm, zlib, perl-CGI, perl-GD, perl-XML-Twig
 Provides:       moses-core
-Conflicts:      moses-core-srilm, moses-core-irstlm
+Conflicts:      moses-core, moses-core-irstlm
 URL:		https://github.com/leohacker/MosesSuite
 
 %description 
@@ -27,15 +27,17 @@ a collection of translated texts (parallel corpus). An efficient search
 algorithm finds quickly the highest probability translation among the 
 exponential number of choices. 
 
+This version of Mosos Core package is compiled with SRILM support.
+
 %prep
-%setup -q -n mosesdecoder
+%setup -q -T -b 0 -n mosesdecoder
 
 %build
 
 %install
 rm -rf %{buildroot}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/moses
-./bjam -a --notrace -j4 --with-xmlrpc-c --with-giza=%{moses_suite_root}/giza-pp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
+./bjam -a --notrace -j4 --with-srilm=%{moses_suite_root}/srilm --with-xmlrpc-c --with-giza=%{moses_suite_root}/giza-pp/bin --prefix=$RPM_BUILD_ROOT/%{moses_suite_root}/moses --includedir=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/include --install-scripts=$RPM_BUILD_ROOT/%{moses_suite_root}/moses/scripts
 
 %clean
 rm -rf %{buildroot}
@@ -52,16 +54,16 @@ rm -rf %{buildroot}
 
 %changelog
 * Thu May 03 2012 Moses - 1.0-8
-- remove perl-Switch from requires since there is no this package in CentOS6.0 repos.
+- remove perl-Switch from Requires since there is no this package in centos6.0 repos.
 
 * Tue May 01 2012 Leo Jiang - 1.0-7
 - add moses-suite-devel as build requires.
 
 * Sun Apr 29 2012 Leo Jiang - 1.0-6.fc16
-- remove tag and replace installation path with rpmmacro.
+- remove tag and replace installation path with rpmmacros.
 
 * Sat Apr 28 2012 Leo Jiang - 1.0-5.moses.fc16
-- remove the support for SRILM.
+- append "srilm" to the name.
 
 * Thu Apr 26 2012 Leo Jiang - 1.0-4.MosesSuite
 - correct the parameter list for bjam.
