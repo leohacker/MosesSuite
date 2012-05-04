@@ -1,4 +1,4 @@
-%define release 2
+%define release 3
 %define version 1.0
 
 Name: 		moses-suite-base
@@ -51,6 +51,11 @@ if ! grep "moses/bin" /home/moses/.bash_profile > /dev/null; then
     echo "Add moses suite path into user bash profile."
 fi
 
+if ! grep "IRSTLM" /home/moses/.bash_profile > /dev/null; then
+    echo 'export IRSTLM=%{moses_suite_root}/irstlm' >> /home/moses/.bash_profile
+    echo "Add env variable for IRSTLM."
+fi
+
 %post
 
 %preun
@@ -66,6 +71,9 @@ fi
 %{moses_data_root}/
 
 %changelog
+* Fri May 04 2012 Leo Jiang - 1.0-3
+- add the env IRSTLM into user moses's bash_profile.
+
 * Tue May 02 2012 Leo Jiang - 1.0-2
 - add user moses if not exists, set the permission of data folder for user moses.
 
