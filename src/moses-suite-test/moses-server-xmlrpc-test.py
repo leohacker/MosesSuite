@@ -2,9 +2,14 @@
 
 # Simple test case for testing xmlrpc support in moses server which should 
 # run with sample models.
-# Author: Leo Jiang <leo.jiang.dev@gmail.com>
-# Copyright 2012, Leo Jiang
-# License: GPL 
+#
+# Project:      MosesSuite
+# URL:          http://github.com/leohacker/MosesSuite
+# Author:       Leo Jiang <leo.jiang.dev@gmail.com>
+# Copyright:    2012, Leo Jiang
+# License:      GPL 
+#
+# Please launch the moses server with port 9090 first.
 
 import sys
 import xmlrpclib

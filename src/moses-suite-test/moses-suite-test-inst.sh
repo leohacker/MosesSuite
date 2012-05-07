@@ -1,8 +1,21 @@
 #!/bin/bash
-#set -x
+
+# Test moses installation.
+# 
+# Project:      Moses Suite
+# URL:          http://github.com/leohacker/MosesSuite
+# Author:       Leo Jiang <leo.jiang.dev@gmail.com>
+# Copyright:    2012, Leo Jiang
+# License:      GPL
+
+# set -x
+
+# source the configuration to get the value of env MOSES_DATA_ROOT.
 source /etc/moses-suite.conf
 
-cd ${MOSES_DATA_ROOT}/engines/sample-models
+# Keep this directory consistent with definition in moses-suite-test.spec .
+cd ${MOSES_DATA_ROOT}/translation_models/test/sample-models
+
 echo "Test moses decoder"
 echo "=================="
 moses -f phrase-model/moses.ini < phrase-model/in > ~/out
@@ -46,7 +59,11 @@ echo "========================"
 echo "launch moses server"
 echo "-------------------"
 mosesserver -f phrase-model/moses.ini --server-port 9090 &
+pid_mosesserver=$!
+
+# wait server launch completed.
 sleep 10s
+
 echo
 echo
 echo "run python xmlrpc client"
@@ -57,7 +74,7 @@ ret=$?
 echo ""
 echo "kill the moses server process"
 echo "-----------------------------"
-pkill mosesserver
+kill -9 $pid_mosesserver
 
 if [ $ret == 0 ]; then
     test_xmlrpc="Passed"
@@ -73,4 +90,3 @@ echo "[Moses] Phrase model: $test_phrase"
 echo "[Moses chart] String2Tree: $test_string2tree"
 echo "[Moses chart] Tree2Tree: $test_tree2tree"
 echo "[Moses server] xmlrpc: $test_xmlrpc"
-

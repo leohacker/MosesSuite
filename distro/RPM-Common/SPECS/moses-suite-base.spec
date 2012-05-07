@@ -1,8 +1,8 @@
-%define release 3
+%define release 4
 %define version 1.0
 
 Name: 		moses-suite-base
-Summary: 	Base package of Moses Suite.
+Summary: 	Moses Suite base package
 Version: 	%{version}
 Release: 	%{release}%{dist}
 Vendor: 	MosesSuite Project
@@ -16,7 +16,8 @@ Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/
 
 %description
-Setup system configuration file and data directory hierarchy for Moses Suite. 
+Setup system configuration file and root directory for moses suite scripts,
+corpus and translation_models.
 
 %prep
 %setup -q -n %{name}
@@ -31,7 +32,7 @@ install -m 755 -d %{buildroot}/etc
 install -m 644 moses-suite.conf %{buildroot}/etc/moses-suite.conf
 install -m 755 -d %{buildroot}/%{moses_data_root}
 install -m 755 -d %{buildroot}/%{moses_data_root}/corpus
-install -m 755 -d %{buildroot}/%{moses_data_root}/engines
+install -m 755 -d %{buildroot}/%{moses_data_root}/translation_models
 install -m 755 -d %{buildroot}/%{moses_suite_root}/bin
 
 %clean
@@ -65,12 +66,15 @@ fi
 %files
 %defattr(-,root,root)
 /etc/moses-suite.conf
-%{moses_suite_root}/bin
+%{moses_suite_root}/bin/
 
 %defattr(-,moses,moses)
 %{moses_data_root}/
 
 %changelog
+* Mon May 07 2012 Leo Jiang - 1.0-4
+- change the directory name.
+
 * Fri May 04 2012 Leo Jiang - 1.0-3
 - add the env IRSTLM into user moses's bash_profile.
 
