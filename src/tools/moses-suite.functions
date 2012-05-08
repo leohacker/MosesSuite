@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Functions definition in Moses Suite.
+# 
+# Project:      Moses Suite
+# URL:          http://github.com/leohacker/MosesSuite
+# Author:       Leo Jiang <leo.jiang.dev@gmail.com>
+# Copyright:    Leo Jiang, 2012
+# License:      GPL
+
+# setup directory tree for translation model $1.
+function setup_tm_tree() {
+    cd $1
+    mkdir -p corpus/{lm,training,tuning,recaser,evaluation}
+    mkdir {lm,tuning,recaser,evaluation}
+}
+
+echo "Done: source moses sutie shell functions."
