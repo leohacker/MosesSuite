@@ -1,4 +1,4 @@
-%define release 4
+%define release 5
 %define version 5.70.04
 
 Summary: 	IRST Language Modeling Toolkit
@@ -17,6 +17,7 @@ BuildRequires:  zlib-devel, libstdc++-devel
 BuildRequires:  glibc-common, glibc-devel, glibc-headers
 BuildRequires: 	gcc-c++ >= 4.1
 BuildRequires:  moses-suite-devel
+Requires:       moses-suite-base
 URL:		http://hlt.fbk.eu/en/irstlm
 
 %description 
@@ -54,6 +55,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/irstlm/
 
 %changelog
+* Tue May 08 2012 Leo Jiang - 5.70.04-5
+- add moses-suite-base as dependence.
+
 * Tue May 01 2012 Leo Jiang - 5.70.04-4
 - add moses-suite-devel as build requires.
 

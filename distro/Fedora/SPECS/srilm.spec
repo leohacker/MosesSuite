@@ -1,4 +1,4 @@
-%define release 5
+%define release 6
 %define version 1.6.0
 
 Name: 		srilm
@@ -15,6 +15,7 @@ Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	tcsh, glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires:  moses-suite-devel
 Requires: 	tcsh
+Requires:       moses-suite-base
 URL:		http://www.speech.sri.com/projects/srilm/
 
 %description 
@@ -62,6 +63,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/srilm
 
 %changelog
+* Tue May 08 2012 Leo Jiang - 1.6.0-6
+- add moses-suite-base as requires.
+
 * Tue May 01 2012 Leo Jiang - 1.6.0-5
 - add moses-suite-devel as build requires.
 

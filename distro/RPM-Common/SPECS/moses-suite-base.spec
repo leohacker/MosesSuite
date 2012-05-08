@@ -1,4 +1,4 @@
-%define release 4
+%define release 5
 %define version 1.0
 
 Name: 		moses-suite-base
@@ -16,15 +16,19 @@ Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/
 
 %description
-Setup system configuration file and root directory for moses suite scripts,
-corpus and translation_models.
+Setup a directory hierarchy for moses suite tools(giza++, language models,
+moses core, and other scripts, etc), corpus and translation_models. Set these 
+root directories as system wide environments to allow scripts to locate any 
+data or programs.
 
 %prep
 %setup -q -n %{name}
 
 %build
-# setup the root directory as rpm macros defined.
+# setup the root directories as rpm macros defined.
 sed -i -e "s|MOSES_DATA_ROOT=$|MOSES_DATA_ROOT=%{moses_data_root}|" moses-suite.conf
+sed -i -e "s|MOSES_SUITE_ROOT=$|MOSES_SUITE_ROOT=%{moses_suite_root}|" moses-suite.conf
+
 
 %install
 rm -rf %{buildroot}
@@ -33,6 +37,7 @@ install -m 644 moses-suite.conf %{buildroot}/etc/moses-suite.conf
 install -m 755 -d %{buildroot}/%{moses_data_root}
 install -m 755 -d %{buildroot}/%{moses_data_root}/corpus
 install -m 755 -d %{buildroot}/%{moses_data_root}/translation_models
+install -m 755 -d %{buildroot}/%{moses_suite_root}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/bin
 
 %clean
@@ -52,11 +57,6 @@ if ! grep "moses/bin" /home/moses/.bash_profile > /dev/null; then
     echo "Add moses suite path into user bash profile."
 fi
 
-if ! grep "IRSTLM" /home/moses/.bash_profile > /dev/null; then
-    echo 'export IRSTLM=%{moses_suite_root}/irstlm' >> /home/moses/.bash_profile
-    echo "Add env variable for IRSTLM."
-fi
-
 %post
 
 %preun
@@ -66,12 +66,15 @@ fi
 %files
 %defattr(-,root,root)
 /etc/moses-suite.conf
-%{moses_suite_root}/bin/
+%{moses_suite_root}
 
 %defattr(-,moses,moses)
 %{moses_data_root}/
 
 %changelog
+* Tue May 08 2012 Leo Jiang - 1.0-5
+- set the path of moses suite into moses-suite.conf .
+
 * Mon May 07 2012 Leo Jiang - 1.0-4
 - change the directory name.
 

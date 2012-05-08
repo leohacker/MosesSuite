@@ -1,4 +1,4 @@
-%define release 4
+%define release 5
 %define version 1.0.7
 
 Name: 		giza-pp
@@ -14,6 +14,7 @@ BuildRequires: 	glibc-devel, glibc-headers
 BuildRequires:  libstdc++-devel
 BuildRequires:  moses-suite-devel
 Requires:	tcsh, libstdc++
+Requires:       moses-suite-base
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://code.google.com/p/giza-pp/
 
@@ -57,11 +58,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{moses_suite_root}/
-#%{moses_suite_root}/giza-pp/
-#%{moses_suite_root}/giza-pp/bin/
+%{moses_suite_root}/giza-pp/
 
 %changelog
+* Tue May 08 2012 Leo Jiang - 1.0.7-5
+- add moses-suite-base as dependence.
+
 * Tue May 01 2012 Leo Jiang - 1.0.7-4
 - rename the package and add the moses-suite-devel as build requires.
 
