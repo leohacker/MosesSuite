@@ -8,10 +8,14 @@
 # Copyright:    2012, Leo Jiang
 # License:      GPL
 
-# set -x
+source moses-suite.functions
+if [ $? != 0 ]; then
+    echo "Failed to source moses-suite.functions."
+    exit 1
+fi
 
 # source the configuration to get the value of env MOSES_DATA_ROOT.
-source /etc/moses-suite.conf
+source_moses_conf
 
 # Keep this directory consistent with definition in moses-suite-test.spec .
 cd ${MOSES_DATA_ROOT}/translation_models/test/sample-models
