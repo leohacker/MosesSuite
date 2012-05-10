@@ -1,7 +1,7 @@
 %define version 1.0
-%define release 1
+%define release 2
 
-Summary:        Moses Suite tese case
+Summary:        Moses Suite test cases of moses core, srilm training and irstlm trainning.
 Name:           moses-suite-test
 Version:        %{version}
 Release:        %{release}%{dist}
@@ -15,7 +15,7 @@ Source1:        sample-models.tgz
 Buildroot:      %{_tmppath}/%{name}-root
 Buildarch:      noarch
 BuildRequires:  moses-suite-devel
-Requires:       moses-core
+Requires:       moses-core, moses-suite-tools
 
 %description
 Pre-built sample models and several scripts for moses suite installation 
@@ -68,5 +68,8 @@ rm -rf %{moses_data_root}/translation_models/test/sample-models/*
 %{moses_data_root}/translation_models/test/
 
 %changelog
+* Wed May 09 2012 Leo Jiang - 1.0-2
+- add srilm test.
+
 * Tue May 01 2012 Leo Jiang - 1.0-2
 - init spec.
