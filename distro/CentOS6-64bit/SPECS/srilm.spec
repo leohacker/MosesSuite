@@ -14,7 +14,7 @@ Patch0: 	srilm-m64-NoTCL-RemoveUserLocal.patch
 Buildroot: 	%{_tmppath}/%{name}-root
 BuildRequires: 	tcsh, glibc-devel, glibc-headers, libstdc++-devel 
 BuildRequires:  moses-suite-devel
-Requires:       moses-suute-base
+Requires:       moses-suite-base
 Requires: 	tcsh
 URL:		http://www.speech.sri.com/projects/srilm/
 
