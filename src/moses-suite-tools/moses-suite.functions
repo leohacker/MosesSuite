@@ -40,14 +40,14 @@ function check_file() {
 
 function check_var() {
     # $1: Env Variable.
-    echo -n "Check Variable: $1         "
+    echo -n "Check Variable: $1     "
     var="$1"
     if [ -z ${!var} ]; then     # indirect reference.
         echo "Variable $1 must be specified."
         echo
         exit $E_NOVAR
     else
-        echo ":${!var}" 
+        echo "${!var}" 
     fi
 }
 
@@ -56,8 +56,8 @@ function source_moses_conf() {
     check_file "/etc/moses-suite.conf" "Moses Suite system config file."
     source /etc/moses-suite.conf
 
-    check_var "${MOSES_SUITE_ROOT}"
-    check_var "${MOSES_DATA_ROOT}"
+    check_var "MOSES_SUITE_ROOT"
+    check_var "MOSES_DATA_ROOT"
 }
 
 # setup directory tree for translation model $1.
@@ -68,4 +68,5 @@ function setup_tm_tree() {
     popd > /dev/null
 }
 
+source_moses_conf
 echo "Done: source moses sutie shell functions."

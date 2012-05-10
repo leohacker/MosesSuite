@@ -44,12 +44,15 @@ install -m 644 nc-test2007.fr ${test_root}/training-srilm/nc-test2007.fr
 install -m 644 nc-test2007-src.fr.sgm ${test_root}/training-srilm/nc-test2007-src.fr.sgm
 install -m 644 nc-test2007-ref.en.sgm ${test_root}/training-srilm/nc-test2007-ref.en.sgm
 
+install -m 644 news-commentary-v7.fr-en.en ${test_root}/training-irstlm/news-commentary-v7.fr-en.en
+install -m 644 news-commentary-v7.fr-en.fr ${test_root}/training-irstlm/news-commentary-v7.fr-en.fr
+
 install -m 755 -d %{buildroot}/%{moses_suite_root}/bin
 install -m 755 moses-suite-test-inst.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-inst.sh
 install -m 755 moses-server-xmlrpc-test.py %{buildroot}/%{moses_suite_root}/bin/moses-server-xmlrpc-test.py
 
 install -m 755 moses-suite-test-srilm.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-srilm.sh
-#install -m 755 moses-suite-test-irstlm.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-irstlm.sh
+install -m 755 moses-suite-test-irstlm.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-irstlm.sh
 
 
 %clean
@@ -63,6 +66,7 @@ rm -rf %{moses_data_root}/translation_models/test/sample-models/*
 %{moses_suite_root}/bin/moses-suite-test-inst.sh
 %{moses_suite_root}/bin/moses-server-xmlrpc-test.py
 %{moses_suite_root}/bin/moses-suite-test-srilm.sh
+%{moses_suite_root}/bin/moses-suite-test-irstlm.sh
 
 %defattr(-,moses,moses)
 %{moses_data_root}/translation_models/test/

@@ -24,7 +24,11 @@ SCRIPTS_ROOT=${MOSES_SUITE_ROOT}/moses/scripts
 check_dir "${SCRIPTS_ROOT}" "Moses script root directory."
 
 TM_ROOT=${MOSES_DATA_ROOT}/translation_models/test/training-srilm
-check_dir "${TM_ROOT}"  "root directory of translation model"
+check_dir "${TM_ROOT}"  "root directory of translation model training-srilm."
+if [ ! -w "${TM_ROOT}" ]; then
+    echo "No permission for writing the directory ${TM_ROOT}"
+    exit $E_ACCES
+fi  
 
 setup_tm_tree ${TM_ROOT}
 
@@ -53,8 +57,6 @@ check_file  "$moses"            "moses core executable"
 check_dir   "$mertdir"          "mert directory"
 check_file  "$mert_moses"       "script mert-moses"
 check_file  "$reuse_weights"    "script reuse-weights"
-
-# TODO: check filter-model-given-input.pl
 
 filter_model_given_input=${SCRIPTS_ROOT}/training/filter-model-given-input.pl
 check_file  "$filter_model_given_input" "script of filter model with given input"
