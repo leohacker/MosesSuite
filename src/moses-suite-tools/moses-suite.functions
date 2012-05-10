@@ -8,31 +8,64 @@
 # Copyright:    Leo Jiang, 2012
 # License:      GPL
 
+# -- Return Value  --
+E_NOENT=2                       # no such file or directory.
+E_INVAL=22                      # invalid argument list.
+E_ACCES=13                      # permission denied.
+E_NOVAR=1
+E_FAILED=1
+
+# -- Functions --
+function check_dir() {
+    # $1: directory path.
+    # $2: directory directory.
+    echo "Check Directory ($2): \"$1\""
+    if [ ! -d "$1" ]; then
+        echo "No such directory: $1"
+        echo 
+        exit $E_NOENT
+    fi  
+}
+
+function check_file() {
+    # $1: file path.
+    # $2: file description.
+    echo "Check File ($2): \"$1\""
+    if [ ! -f "$1" ]; then
+        echo "No such file: $1"
+        echo
+        exit $E_NOENT
+    fi  
+}
+
+function check_var() {
+    # $1: Env Variable.
+    echo -n "Check Variable: $1         "
+    var="$1"
+    if [ -z ${!var} ]; then     # indirect reference.
+        echo "Variable $1 must be specified."
+        echo
+        exit $E_NOVAR
+    else
+        echo ":${!var}" 
+    fi
+}
+
+# source system config.
+function source_moses_conf() {
+    check_file "/etc/moses-suite.conf" "Moses Suite system config file."
+    source /etc/moses-suite.conf
+
+    check_var "${MOSES_SUITE_ROOT}"
+    check_var "${MOSES_DATA_ROOT}"
+}
+
 # setup directory tree for translation model $1.
 function setup_tm_tree() {
     pushd $1 > /dev/null
     mkdir -p corpus/{lm,training,tuning,recaser,evaluation}
     mkdir {lm,tuning,recaser,evaluation}
     popd > /dev/null
-}
-
-function source_moses_conf() {
-    if [ ! -f "/etc/moses-suite.conf" ]; then
-        echo "File /etc/moses-suite.conf not exists."
-        echo "Please re-install moses-suite-base or create this config file manually."
-        exit 1
-    fi
-    source /etc/moses-suite.conf
-    if [ -z "${MOSES_SUITE_ROOT}" ]; then
-        echo "MOSES_SUITE_ROOT not set."
-        exit 1
-    fi
-    if [ -z "${MOSES_DATA_ROOT}" ]; then
-        echo "MOSES_DATA_ROOT not set."
-        exit 1
-    fi
-    echo $MOSES_SUITE_ROOT
-    echo $MOSES_DATA_ROOT
 }
 
 echo "Done: source moses sutie shell functions."

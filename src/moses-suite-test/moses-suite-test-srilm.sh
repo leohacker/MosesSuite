@@ -21,30 +21,49 @@ fi
 source_moses_conf
 
 SCRIPTS_ROOT=${MOSES_SUITE_ROOT}/moses/scripts
+check_dir "${SCRIPTS_ROOT}" "Moses script root directory."
+
 TM_ROOT=${MOSES_DATA_ROOT}/translation_models/test/training-srilm
+check_dir "${TM_ROOT}"  "root directory of translation model"
+
 setup_tm_tree ${TM_ROOT}
 
-# Check the location of scritps and executable program in case they are 
-# changed after upgrading will cause the following commands failed.
-# ======================================================================
-moses=${MOSES_SUITE_ROOT}/moses/bin/moses
-mertdir=${MOSES_SUITE_ROOT}/moses/bin
-
+# Check the location of scritps and executable program.
+# =====================================================
 tokenizer=${SCRIPTS_ROOT}/tokenizer/tokenizer.perl
 lowercaser=${SCRIPTS_ROOT}/tokenizer/lowercase.perl
 detokenizer=${SCRIPTS_ROOT}/tokenizer/detokenizer.perl
+clean_corpus_n=${SCRIPTS_ROOT}/training/clean-corpus-n.perl
 
-# TODO: check clean-corpus-n.perl
+check_file "$tokenizer"     "European language tokenizer"
+check_file "$lowercaser"    "lowercaser"
+check_file "$detokenizer"   "detokenizer"
+check_file "$clean_corpus_n"    "script clean long sentence"
 
 ngram_count=${MOSES_SUITE_ROOT}/srilm/bin/i686/ngram-count
 train_model=${SCRIPTS_ROOT}/training/train-model.perl
+moses=${MOSES_SUITE_ROOT}/moses/bin/moses
+mertdir=${MOSES_SUITE_ROOT}/moses/bin
 mert_moses=${SCRIPTS_ROOT}/training/mert-moses.pl
 reuse_weights=${SCRIPTS_ROOT}/ems/support/reuse-weights.perl
 
+check_file  "$ngram_count"      "srilm script ngram-count"
+check_file  "$train_model"      "script train-model "
+check_file  "$moses"            "moses core executable"
+check_dir   "$mertdir"          "mert directory"
+check_file  "$mert_moses"       "script mert-moses"
+check_file  "$reuse_weights"    "script reuse-weights"
+
 # TODO: check filter-model-given-input.pl
+
+filter_model_given_input=${SCRIPTS_ROOT}/training/filter-model-given-input.pl
+check_file  "$filter_model_given_input" "script of filter model with given input"
+
 train_recaser=${SCRIPTS_ROOT}/recaser/train-recaser.perl
 recaser=${SCRIPTS_ROOT}/recaser/recase.perl
 
+check_file  "$train_recaser"    "script train-recaser"
+check_file  "$recaser"          "script recaser"
 
 # Prepare SRILM Corpus
 # ============================================
@@ -72,7 +91,7 @@ $lowercaser < news-commentary.tok.fr > news-commentary.lowercased.fr
 $lowercaser < news-commentary.tok.en > news-commentary.lowercased.en
 
 # filter out the long senstence.
-${SCRIPTS_ROOT}/training/clean-corpus-n.perl news-commentary.lowercased fr en news-commentary.clean 1 40
+$clean_corpus_n news-commentary.lowercased fr en news-commentary.clean 1 40
 
 # prepare lm corpus, same as full length lowercased corpus.
 # ---------------------------------------------------------
@@ -114,7 +133,7 @@ if [ -d ${TM_ROOT}/evaluation/filtered.nc-test2007 ]; then
     rm -rf ${TM_ROOT}/evaluation/filtered.nc-test2007
 fi
 
-${SCRIPTS_ROOT}/training/filter-model-given-input.pl ${TM_ROOT}/evaluation/filtered.nc-test2007 ${TM_ROOT}/tuning/moses-tuned.ini ${TM_ROOT}/corpus/evaluation/nc-test2007.lowercased.fr
+$filter_model_given_input ${TM_ROOT}/evaluation/filtered.nc-test2007 ${TM_ROOT}/tuning/moses-tuned.ini ${TM_ROOT}/corpus/evaluation/nc-test2007.lowercased.fr
 
 # Decoding Test Corpus
 # ========================================================
