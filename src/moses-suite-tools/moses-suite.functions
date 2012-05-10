@@ -10,9 +10,29 @@
 
 # setup directory tree for translation model $1.
 function setup_tm_tree() {
-    cd $1
+    pushd $1 > /dev/null
     mkdir -p corpus/{lm,training,tuning,recaser,evaluation}
     mkdir {lm,tuning,recaser,evaluation}
+    popd > /dev/null
+}
+
+function source_moses_conf() {
+    if [ ! -f "/etc/moses-suite.conf" ]; then
+        echo "File /etc/moses-suite.conf not exists."
+        echo "Please re-install moses-suite-base or create this config file manually."
+        exit 1
+    fi
+    source /etc/moses-suite.conf
+    if [ -z "${MOSES_SUITE_ROOT}" ]; then
+        echo "MOSES_SUITE_ROOT not set."
+        exit 1
+    fi
+    if [ -z "${MOSES_DATA_ROOT}" ]; then
+        echo "MOSES_DATA_ROOT not set."
+        exit 1
+    fi
+    echo $MOSES_SUITE_ROOT
+    echo $MOSES_DATA_ROOT
 }
 
 echo "Done: source moses sutie shell functions."
