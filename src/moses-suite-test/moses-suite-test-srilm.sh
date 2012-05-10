@@ -36,7 +36,7 @@ detokenizer=${SCRIPTS_ROOT}/tokenizer/detokenizer.perl
 
 # TODO: check clean-corpus-n.perl
 
-ngram_count=${MOSES_SUITE_ROOT}/srilm/bin/`uname -m`/ngram-count
+ngram_count=${MOSES_SUITE_ROOT}/srilm/bin/i686/ngram-count
 train_model=${SCRIPTS_ROOT}/training/train-model.perl
 mert_moses=${SCRIPTS_ROOT}/training/mert-moses.pl
 reuse_weights=${SCRIPTS_ROOT}/ems/support/reuse-weights.perl
