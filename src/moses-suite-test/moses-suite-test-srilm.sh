@@ -30,8 +30,6 @@ if [ ! -w "${TM_ROOT}" ]; then
     exit $E_ACCES
 fi  
 
-setup_tm_tree ${TM_ROOT}
-
 # Check the location of scritps and executable program.
 # =====================================================
 tokenizer=${SCRIPTS_ROOT}/tokenizer/tokenizer.perl
@@ -70,6 +68,8 @@ check_file  "$recaser"          "script recaser"
 # Prepare SRILM Corpus
 # ============================================
 cd ${TM_ROOT}
+mkdir -p corpus/{lm,training,tuning,evaluation,recaser}
+mkdir {lm,training,tuning,evalution,recaser}
 
 # Extra step for test-srilm.
 # --------------------------
@@ -122,11 +122,11 @@ cd ${TM_ROOT}
 ${ngram_count} -order 3 -interpolate -kndiscount -unk -text corpus/lm/news-commentary.lowercased.en -lm lm/news-commentary.lm
 
 # train phrase model
-${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT} --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.lm >& ${TM_ROOT}/training.out
+${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT} --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.lm >& ${TM_ROOT}/training/training.out
 
 # Tuning 
 # ===========================================
-${mert_moses} ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.fr ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags "-v 0" >& ${TM_ROOT}/tuning/mert.out 
+${mert_moses} ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.fr ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags "-threads 4 -v 0" &> ${TM_ROOT}/tuning/mert.out 
 ${reuse_weights} ${TM_ROOT}/tuning/mert/moses.ini < ${TM_ROOT}/model/moses.ini > ${TM_ROOT}/tuning/moses-tuned.ini
 
 # Filter Transaltion Model according to evaluation corpus
