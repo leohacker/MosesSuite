@@ -29,10 +29,12 @@ if [ ! -w "${TM_ROOT}" ]; then
     echo "No permission for writing the directory ${TM_ROOT}"
     exit $E_ACCES
 fi  
+echo "Clean the directory: $TM_ROOT"
+rm -rf ${TM_ROOT}/*
+
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
 check_var IRSTLM
 
-setup_tm_tree ${TM_ROOT}
 
 # Check the location of scritps and executable program.
 # =====================================================
@@ -50,14 +52,12 @@ check_file "$clean_corpus_n"    "script clean long sentence"
 check_file "$train_truecaser"   "script train truecase"
 check_file "$truecaser"     "truecaser"
 
-ngram_count=${MOSES_SUITE_ROOT}/srilm/bin/i686/ngram-count
 train_model=${SCRIPTS_ROOT}/training/train-model.perl
 moses=${MOSES_SUITE_ROOT}/moses/bin/moses
 mertdir=${MOSES_SUITE_ROOT}/moses/bin
 mert_moses=${SCRIPTS_ROOT}/training/mert-moses.pl
 reuse_weights=${SCRIPTS_ROOT}/ems/support/reuse-weights.perl
 
-check_file  "$ngram_count"      "srilm script ngram-count"
 check_file  "$train_model"      "script train-model "
 check_file  "$moses"            "moses core executable"
 check_dir   "$mertdir"          "mert directory"
@@ -76,13 +76,15 @@ check_file  "$recaser"          "script recaser"
 # Prepare IRSTLM Corpus
 # ============================================
 cd ${TM_ROOT}
+mkdir -p corpus/{lm,training,tuning,evaluation,truecaser}
+mkdir {lm,training,tuning,evaluation,truecaser}
 
 # Extra step for test-irstlm.
 # --------------------------
 cp news-commentary-v7.fr-en.fr corpus/training/
 cp news-commentary-v7.fr-en.en corpus/training/
-#cp nc-dev2007.fr corpus/tuning/
-#cp nc-dev2007.en corpus/tuning/
+cp news-test2008.fr corpus/tuning/
+cp news-test2008.en corpus/tuning/
 #cp nc-test2007.fr corpus/evaluation/
 #cp nc-test2007-ref.en.sgm corpus/evaluation/
 #cp nc-test2007-src.fr.sgm corpus/evaluation/
@@ -91,36 +93,28 @@ cp news-commentary-v7.fr-en.en corpus/training/
 # ------------------------
 cd ${TM_ROOT}/corpus/training/
 # tokenize the training corpus.
-$tokenizer  -l fr < news-commentary-v7.fr-en.fr > news-commentary.tok.fr
 $tokenizer  -l en < news-commentary-v7.fr-en.en > news-commentary.tok.en
-
-## lowercase the tokenized corpus.
-#$lowercaser < news-commentary.tok.fr > news-commentary.lowercased.fr
-#$lowercaser < news-commentary.tok.en > news-commentary.lowercased.en
+$tokenizer  -l fr < news-commentary-v7.fr-en.fr > news-commentary.tok.fr
 
 # truecase the corpus.
-$train_truecaser --model truecase-model.en --corpus news-commentary.tok.en
-$train_truecaser --model truecase-model.fr --corpus news-commentary.tok.fr
+cd ${TM_ROOT}/truecaser/
+$train_truecaser --model truecase-model.en --corpus ${TM_ROOT}/corpus/training/news-commentary.tok.en
+$train_truecaser --model truecase-model.fr --corpus ${TM_ROOT}/corpus/training/news-commentary.tok.fr
 
-$truecaser --model truecase-model.fr < news-commentary.tok.fr > news-commentary.true.fr
-$truecaser --model truecase-model.en < news-commentary.tok.en > news-commentary.true.en
+cd ${TM_ROOT}/corpus/training/
+$truecaser --model ${TM_ROOT}/truecaser/truecase-model.fr < news-commentary.tok.fr > news-commentary.true.fr
+$truecaser --model ${TM_ROOT}/truecaser/truecase-model.en < news-commentary.tok.en > news-commentary.true.en
 
 $clean_corpus_n news-commentary.true fr en news-commentary.clean 1 80
 
-# prepare lm corpus, same as full length lowercased corpus.
-# ---------------------------------------------------------
-#cd ${TM_ROOT}/corpus/
-#cp training/news-commentary.lowercased.fr lm/news-commentary.lowercased.fr
-#cp training/news-commentary.lowercased.en lm/news-commentary.lowercased.en
+# prepare tuning corpus.
+# ----------------------
+cd ${TM_ROOT}/corpus/tuning
+$tokenizer -l fr < news-test2008.fr > news-test2008.tok.fr
+$tokenizer -l en < news-test2008.en > news-test2008.tok.en
+$truecaser --model ${TM_ROOT}/truecaser/truecase-model.fr < news-test2008.tok.fr > news-test2008.true.fr
+$truecaser --model ${TM_ROOT}/truecaser/truecase-model.en < news-test2008.tok.en > news-test2008.true.en
 
-## prepare tuning corpus.
-## ----------------------
-#cd ${TM_ROOT}/corpus/tuning
-#$tokenizer -l fr < nc-dev2007.fr > nc-dev2007.tok.fr
-#$tokenizer -l en < nc-dev2007.en > nc-dev2007.tok.en
-#$lowercaser < nc-dev2007.tok.fr > nc-dev2007.lowercased.fr
-#$lowercaser < nc-dev2007.tok.en > nc-dev2007.lowercased.en
-#
 ## prepare evaluation corpus.
 ## --------------------------
 #cd ${TM_ROOT}/corpus/evaluation
@@ -133,7 +127,8 @@ cd ${TM_ROOT}
 # use irstlm to build lm.
 $IRSTLM/bin/add-start-end.sh < corpus/training/news-commentary.true.en > lm/news-commentary.sb.en
 cd lm
-$IRSTLM/bin/build-lm.sh -i news-commentary.sb.en -t /tmp -p -s improved-kneser-ney -o news-commentary.lm.en
+mkdir tmp
+$IRSTLM/bin/build-lm.sh -i news-commentary.sb.en -t ./tmp -p -s improved-kneser-ney -o news-commentary.lm.en
 $IRSTLM/bin/compile-lm --text yes news-commentary.lm.en.gz news-commentary.arpa.en
 
 # binarise the output irstlm lm file using KenLM.
@@ -143,11 +138,11 @@ echo "is this an English sentence ?" | ${MOSES_SUITE_ROOT}/moses/bin/query news-
 
 # train phrase model
 cd ${TM_ROOT}
-${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT} --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.blm.en:8 >& ${TM_ROOT}/training.out
+${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT} --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.blm.en:8 >& ${TM_ROOT}/training/training.out
 
-## Tuning 
-## ===========================================
-#${mert_moses} ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.fr ${TM_ROOT}/corpus/tuning/nc-dev2007.lowercased.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags "-v 0" >& ${TM_ROOT}/tuning/mert.out 
+# Tuning 
+# ===========================================
+${mert_moses} ${TM_ROOT}/corpus/tuning/news-test2008.true.fr ${TM_ROOT}/corpus/tuning/news-test2008.true.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags="-threads 4 -v 0" &> ${TM_ROOT}/tuning/mert.out 
 #${reuse_weights} ${TM_ROOT}/tuning/mert/moses.ini < ${TM_ROOT}/model/moses.ini > ${TM_ROOT}/tuning/moses-tuned.ini
 #
 ## Filter Transaltion Model according to evaluation corpus
