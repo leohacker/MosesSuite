@@ -36,6 +36,7 @@ cp -a sample-models ${test_root}
 
 install -m 755 -d ${test_root}/training-srilm/
 install -m 755 -d ${test_root}/training-irstlm/
+
 install -m 644 news-commentary08.fr-en.en ${test_root}/training-srilm/news-commentary08.fr-en.en
 install -m 644 news-commentary08.fr-en.fr ${test_root}/training-srilm/news-commentary08.fr-en.fr
 install -m 644 nc-dev2007.fr ${test_root}/training-srilm/nc-dev2007.fr
@@ -46,8 +47,10 @@ install -m 644 nc-test2007-ref.en.sgm ${test_root}/training-srilm/nc-test2007-re
 
 install -m 644 news-commentary-v7.fr-en.en ${test_root}/training-irstlm/news-commentary-v7.fr-en.en
 install -m 644 news-commentary-v7.fr-en.fr ${test_root}/training-irstlm/news-commentary-v7.fr-en.fr
-install -m 644 news-test2008.en ${test_root}/training-irstlm/news-test2008.en
 install -m 644 news-test2008.fr ${test_root}/training-irstlm/news-test2008.fr
+install -m 644 news-test2008.en ${test_root}/training-irstlm/news-test2008.en
+install -m 644 newstest2011.fr ${test_root}/training-irstlm/newstest2011.fr
+install -m 644 newstest2011.en ${test_root}/training-irstlm/newstest2011.en
 
 install -m 755 -d %{buildroot}/%{moses_suite_root}/bin
 install -m 755 moses-suite-test-inst.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-inst.sh
@@ -55,7 +58,6 @@ install -m 755 moses-server-xmlrpc-test.py %{buildroot}/%{moses_suite_root}/bin/
 
 install -m 755 moses-suite-test-srilm.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-srilm.sh
 install -m 755 moses-suite-test-irstlm.sh %{buildroot}/%{moses_suite_root}/bin/moses-suite-test-irstlm.sh
-
 
 %clean
 rm -rf %{buildroot}
