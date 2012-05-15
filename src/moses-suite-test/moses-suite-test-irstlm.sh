@@ -30,7 +30,7 @@ if [ ! -w "${TM_ROOT}" ]; then
     exit $E_ACCES
 fi  
 echo "Clean the directory: $TM_ROOT"
-rm -rf ${TM_ROOT}/{model,lm,training,tuning,truecaser,evaluation,corpus}
+rm -rf ${TM_ROOT}/{model,lm,training,tuning,truecase-model,evaluation,corpus}
 
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
 check_var IRSTLM
@@ -86,7 +86,7 @@ check_file "$multi_bleu" "script of bleu"
 # ============================================
 cd ${TM_ROOT}
 mkdir -p corpus/{lm,training,tuning,evaluation,truecaser}
-mkdir {lm,training,tuning,evaluation,truecaser}
+mkdir {lm,training,tuning,evaluation,truecase-model}
 
 # Extra step for test-irstlm.
 # --------------------------
@@ -104,14 +104,15 @@ cd ${TM_ROOT}/corpus/training/
 $tokenizer  -l en < news-commentary-v7.fr-en.en > news-commentary.tok.en
 $tokenizer  -l fr < news-commentary-v7.fr-en.fr > news-commentary.tok.fr
 
-# truecase the corpus.
-cd ${TM_ROOT}/truecaser/
+# train the truecase model.
+cd ${TM_ROOT}/truecase-model/
 $train_truecaser --model truecase-model.en --corpus ${TM_ROOT}/corpus/training/news-commentary.tok.en
 $train_truecaser --model truecase-model.fr --corpus ${TM_ROOT}/corpus/training/news-commentary.tok.fr
 
+# truecase the training corpus.
 cd ${TM_ROOT}/corpus/training/
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.fr < news-commentary.tok.fr > news-commentary.true.fr
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.en < news-commentary.tok.en > news-commentary.true.en
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.fr < news-commentary.tok.fr > news-commentary.true.fr
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.en < news-commentary.tok.en > news-commentary.true.en
 
 $clean_corpus_n news-commentary.true fr en news-commentary.clean 1 80
 
@@ -120,16 +121,16 @@ $clean_corpus_n news-commentary.true fr en news-commentary.clean 1 80
 cd ${TM_ROOT}/corpus/tuning
 $tokenizer -l fr < news-test2008.fr > news-test2008.tok.fr
 $tokenizer -l en < news-test2008.en > news-test2008.tok.en
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.fr < news-test2008.tok.fr > news-test2008.true.fr
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.en < news-test2008.tok.en > news-test2008.true.en
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.fr < news-test2008.tok.fr > news-test2008.true.fr
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.en < news-test2008.tok.en > news-test2008.true.en
 
 # prepare evaluation corpus.
 # --------------------------
 cd ${TM_ROOT}/corpus/evaluation
 $tokenizer -l fr < newstest2011.fr > newstest2011.tok.fr
 $tokenizer -l en < newstest2011.en > newstest2011.tok.en
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.fr < newstest2011.tok.fr > newstest2011.true.fr
-$truecaser --model ${TM_ROOT}/truecaser/truecase-model.en < newstest2011.tok.en > newstest2011.true.en
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.fr < newstest2011.tok.fr > newstest2011.true.fr
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.en < newstest2011.tok.en > newstest2011.true.en
 
 # Build Language Model and Train Phrase Model
 # ===========================================
@@ -148,11 +149,11 @@ echo "is this an English sentence ?" | ${MOSES_SUITE_ROOT}/moses/bin/query news-
 
 # train phrase model
 cd ${TM_ROOT}
-${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT} --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.blm.en:8 >& ${TM_ROOT}/training/training.out
+${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT}/training --model-dir ${TM_ROOT}/model --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/news-commentary.clean -f fr -e en -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/news-commentary.blm.en:8 >& ${TM_ROOT}/training/training.out
 
 # Tuning 
 # ======
-${mert_moses} ${TM_ROOT}/corpus/tuning/news-test2008.true.fr ${TM_ROOT}/corpus/tuning/news-test2008.true.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert-work --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags="-threads 4 -v 0" &> ${TM_ROOT}/tuning/mert.out 
+${mert_moses} ${TM_ROOT}/corpus/tuning/news-test2008.true.fr ${TM_ROOT}/corpus/tuning/news-test2008.true.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert-work --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags="-threads 4 -v 0" &> ${TM_ROOT}/tuning/tuning.out 
 
 mkdir bin-model
 ${processPhraseTable} -ttable 0 0 ${TM_ROOT}/model/phrase-table.gz -nscores 5 -out ${TM_ROOT}/bin-model/phrase-table
@@ -161,6 +162,7 @@ cp ${TM_ROOT}/tuning/mert-work/moses.ini ${TM_ROOT}/bin-model/moses.ini
 cd bin-model
 sed -i -e "/phrase-table/s|^0|1|" moses.ini
 sed -i -e "s|model/phrase-table.gz|bin-model/phrase-table|" moses.ini
+sed -i -e "s|model/reordering-table.wbe-msd-bidirectional-fe.gz|bin-model/reordering-table|" moses.ini
 
 ##${reuse_weights} ${TM_ROOT}/tuning/mert/moses.ini < ${TM_ROOT}/model/moses.ini > ${TM_ROOT}/tuning/moses-tuned.ini
 
