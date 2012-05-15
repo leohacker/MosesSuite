@@ -60,5 +60,3 @@ function source_moses_conf() {
     check_var "MOSES_SUITE_ROOT"
     check_var "MOSES_DATA_ROOT"
 }
-
-echo "Done: source moses sutie shell functions."
