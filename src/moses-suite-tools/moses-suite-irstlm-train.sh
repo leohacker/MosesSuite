@@ -111,8 +111,8 @@ mkdir {lm,training,tuning,evaluation,truecase-model}
 cd ${TM_ROOT}/corpus/training/
 cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${src} .
 cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${target} .
+
 # tokenize the training corpus.
-# TODO
 #$tokenizer  -l en < corpus-v7.fr-en.en > corpus.tok.en
 #$tokenizer  -l fr < corpus-v7.fr-en.fr > corpus.tok.fr
 cp corpus.${src} corpus.tok.${src}

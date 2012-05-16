@@ -1,5 +1,5 @@
 %define version 1.0
-%define release 2
+%define release 3
 
 Summary:        Moses Suite test cases of moses core, srilm training and irstlm trainning.
 Name:           moses-suite-test
@@ -76,6 +76,9 @@ rm -rf %{moses_data_root}/translation_models/test/sample-models/*
 %{moses_data_root}/translation_models/test/
 
 %changelog
+* Wed May 16 2012 Leo Jiang - 1.0-3
+- add irstlm test.
+
 * Wed May 09 2012 Leo Jiang - 1.0-2
 - add srilm test.
 

@@ -29,6 +29,7 @@ rm -rf %{buildroot}
 install -m 755 -d %{buildroot}/%{moses_suite_root}
 install -m 755 -d %{buildroot}/%{moses_suite_root}/bin/
 install -m 755 moses-suite.functions %{buildroot}/%{moses_suite_root}/bin/
+install -m 755 moses-suite-irstlm-train.sh %{buildroot}/%{moses_suite_root}/bin/
 
 %clean
 rm -rf %{buildroot}
@@ -38,6 +39,9 @@ rm -rf %{buildroot}
 %{moses_suite_root}/bin/
 
 %changelog
+* Wed May 16 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+- Add a basic training script for irstlm.
+
 * Fri May 11 2012 Leo Jiang - 1.0-2
 - remove the tm-setuptree script and the function in function script.
 
