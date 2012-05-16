@@ -52,6 +52,8 @@ SCRIPTS_ROOT=${MOSES_SUITE_ROOT}/moses/scripts
 check_dir "${SCRIPTS_ROOT}" "Moses script root directory."
 
 TM_ROOT=${MOSES_DATA_ROOT}/translation_models/${SRC}-${TARGET}/${id}
+mkdir -p ${TM_ROOT}
+
 check_dir "${TM_ROOT}"  "root directory of translation model"
 if [ ! -w "${TM_ROOT}" ]; then
     echo "No permission for writing the directory ${TM_ROOT}"
@@ -150,7 +152,7 @@ $clean_corpus_n corpus.true ${src} ${target} corpus.clean 1 80
 # ===========================================
 cd ${TM_ROOT}
 # use irstlm to build lm.
-$IRSTLM/bin/add-start-${target}d.sh < corpus/training/corpus.true.${target} > lm/corpus.sb.${target}
+$IRSTLM/bin/add-start-end.sh < corpus/training/corpus.true.${target} > lm/corpus.sb.${target}
 cd lm
 mkdir tmp
 $IRSTLM/bin/build-lm.sh -i corpus.sb.${target} -t ./tmp -p -s improved-kneser-ney -o corpus.lm.${target}
