@@ -163,7 +163,7 @@ ${MOSES_SUITE_ROOT}/moses/bin/build_binary corpus.arpa.${target} corpus.blm.${ta
 
 # train phrase model
 cd ${TM_ROOT}
-${train_model} -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT}/training --model-dir ${TM_ROOT}/model --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/corpus.clean -f ${src} -e ${target} -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/corpus.blm.${target}:8 >& ${TM_ROOT}/training/training.out
+${train_model} -mgiza -mgiza-cpus 4 -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT}/training --model-dir ${TM_ROOT}/model --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/corpus.clean -f ${src} -e ${target} -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/corpus.blm.${target}:8 >& ${TM_ROOT}/training/training.out
 
 ## Tuning 
 ## ======

@@ -12,7 +12,7 @@ Group: 		Moses Suite
 Source:		%{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  moses-suite-devel
-Requires:       moses-suite-base
+Requires:       moses-suite-base,  moses-core, mgizapp, irstlm
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://github.com/leohacker/MosesSuite/
 
