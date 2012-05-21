@@ -60,7 +60,7 @@ if [ ! -w "${TM_ROOT}" ]; then
     exit $E_ACCES
 fi  
 echo "Clean the directory: $TM_ROOT"
-rm -rf ${TM_ROOT}/{model,lm,training,tuning,truecase-model,evaluation,corpus}
+rm -rf ${TM_ROOT}/{bin-model,model,lm,training,tuning,truecase-model,evaluation,corpus}
 
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
 check_var IRSTLM
@@ -111,6 +111,8 @@ mkdir {lm,training,tuning,evaluation,truecase-model}
 # prepare training corpus.
 # ------------------------
 cd ${TM_ROOT}/corpus/training/
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${src} "corpus ${src}"
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${target} "corps ${target}"
 cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${src} .
 cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${target} .
 
@@ -159,7 +161,7 @@ $IRSTLM/bin/build-lm.sh -i corpus.sb.${target} -t ./tmp -p -s improved-kneser-ne
 $IRSTLM/bin/compile-lm --text yes corpus.lm.${target}.gz corpus.arpa.${target}
 
 # binarise the output irstlm lm file using KenLM.
-${MOSES_SUITE_ROOT}/moses/bin/build_binary corpus.arpa.${target} corpus.blm.${target}
+${MOSES_SUITE_ROOT}/moses/bin/build_binary -i corpus.arpa.${target} corpus.blm.${target}
 
 # train phrase model
 cd ${TM_ROOT}
