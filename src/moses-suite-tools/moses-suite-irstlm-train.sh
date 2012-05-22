@@ -105,27 +105,39 @@ check_file "$multi_bleu" "script of bleu"
 # Prepare IRSTLM Corpus
 # ============================================
 cd ${TM_ROOT}
-mkdir -p corpus/{lm,training,tuning,evaluation,truecaser}
+mkdir -p corpus/{lm,training,tuning,evaluation,truecase}
 mkdir {lm,training,tuning,evaluation,truecase-model}
 
 # prepare training corpus.
 # ------------------------
-cd ${TM_ROOT}/corpus/training/
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${src} "corpus ${src}"
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${target} "corps ${target}"
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${src} .
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/corpus.${target} .
+corpus_truecase=corpus_case
+corpus_lm=corpus_lm
+corpus_training=corpus_training
+corpus_tuning=corpus_tuning
+corpus_eval=corpus_eval
 
-# tokenize the training corpus.
-#$tokenizer  -l en < corpus-v7.fr-en.en > corpus.tok.en
-#$tokenizer  -l fr < corpus-v7.fr-en.fr > corpus.tok.fr
-cp corpus.${src} corpus.tok.${src}
-cp corpus.${target} corpus.tok.${target}
+cd ${TM_ROOT}/corpus/truecase/
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${src} "truecase corpus ${src}"
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${target} "truecase corpus ${target}"
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${src} .
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${target} .
 
 # train the truecase model.
 cd ${TM_ROOT}/truecase-model/
-$train_truecaser --model truecase-model.${target} --corpus ${TM_ROOT}/corpus/training/corpus.tok.${target}
-$train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/training/corpus.tok.${src}
+$train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${src}
+$train_truecaser --model truecase-model.${target} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${target}
+
+cd ${TM_ROOT}/corpus/lm/
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${src} "lm corpus ${src}"
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${target} "lm corpus ${target}"
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${src} .
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${target} .
+
+cd ${TM_ROOT}/corpus/training/
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${src} "corpus ${src}"
+check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${target} "corps ${target}"
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${src} corpus.tok.${src}
+cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${target} corpus.tok.${target}
 
 # truecase the training corpus.
 cd ${TM_ROOT}/corpus/training/
