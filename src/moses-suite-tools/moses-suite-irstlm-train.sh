@@ -64,7 +64,7 @@ fi
 echo "Clean the directory: $TM_ROOT"
 rm -rf ${TM_ROOT}/{bin-model,model,lm,training,tuning,truecase-model,evaluation,corpus}
 
-CORPUS_ROOT=${CORPUS_ROOT}
+CORPUS_ROOT=${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}
 check_dir "${CORPUS_ROOT}" "root directory of corpus in corpus repository."
 
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
@@ -116,7 +116,7 @@ mkdir {lm,training,tuning,evaluation,truecase-model}
 # prepare training corpus.
 # ------------------------
 corpus_truecase=corpus_case
-corpus_lm=corpus_lm
+#corpus_lm=corpus_lm
 corpus_training=corpus_training
 corpus_tuning=corpus_tuning
 corpus_eval=corpus_eval
@@ -132,11 +132,11 @@ cd ${TM_ROOT}/truecase-model/
 $train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${src}
 $train_truecaser --model truecase-model.${target} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${target}
 
-cd ${TM_ROOT}/corpus/lm/
-check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${src} "lm corpus ${src}"
-check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${target} "lm corpus ${target}"
-cp ${CORPUS_ROOT}/lm/${corpus_lm}.${src} .
-cp ${CORPUS_ROOT}/lm/${corpus_lm}.${target} .
+#cd ${TM_ROOT}/corpus/lm/
+#check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${src} "lm corpus ${src}"
+#check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${target} "lm corpus ${target}"
+#cp ${CORPUS_ROOT}/lm/${corpus_lm}.${src} .
+#cp ${CORPUS_ROOT}/lm/${corpus_lm}.${target} .
 
 cd ${TM_ROOT}/corpus/training/
 check_file ${CORPUS_ROOT}/training/${corpus_training}.${src} "training corpus ${src}"
@@ -179,8 +179,8 @@ $truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${target} < corpus_t
 # prepare evaluation corpus.
 # --------------------------
 cd ${TM_ROOT}/corpus/evaluation
-check_file ${CORPUS_ROOT}/eval/${corpus_eval}.${src} "eval corpus ${src}"
-check_file ${CORPUS_ROOT}/eval/${corpus_eval}.${target} "eval corps ${target}"
+check_file ${CORPUS_ROOT}/evaluation/${corpus_eval}.${src} "eval corpus ${src}"
+check_file ${CORPUS_ROOT}/evaluation/${corpus_eval}.${target} "eval corps ${target}"
 
 cp ${CORPUS_ROOT}/evaluation/${corpus_eval}.${src} corpus_eval.tok.${src}
 cp ${CORPUS_ROOT}/evaluation/${corpus_eval}.${target} corpus_eval.tok.${target}
