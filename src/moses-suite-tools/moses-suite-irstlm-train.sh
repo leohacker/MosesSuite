@@ -13,6 +13,8 @@
 
 # May 16 2012   A simple script to train model with settings described same as moses core website.
 
+export LC_ALL=C
+
 # source common functions.
 source moses-suite.functions
 if [ $? != 0 ]; then
@@ -61,6 +63,9 @@ if [ ! -w "${TM_ROOT}" ]; then
 fi  
 echo "Clean the directory: $TM_ROOT"
 rm -rf ${TM_ROOT}/{bin-model,model,lm,training,tuning,truecase-model,evaluation,corpus}
+
+CORPUS_ROOT=${CORPUS_ROOT}
+check_dir "${CORPUS_ROOT}" "root directory of corpus in corpus repository."
 
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
 check_var IRSTLM
@@ -117,50 +122,70 @@ corpus_tuning=corpus_tuning
 corpus_eval=corpus_eval
 
 cd ${TM_ROOT}/corpus/truecase/
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${src} "truecase corpus ${src}"
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${target} "truecase corpus ${target}"
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${src} .
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/truecase/${corpus_truecase}.${target} .
+check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} "truecase corpus ${src}"
+check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${target} "truecase corpus ${target}"
+cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} .
+cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${target} .
 
-# train the truecase model.
+# train truecase model.
 cd ${TM_ROOT}/truecase-model/
 $train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${src}
 $train_truecaser --model truecase-model.${target} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${target}
 
 cd ${TM_ROOT}/corpus/lm/
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${src} "lm corpus ${src}"
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${target} "lm corpus ${target}"
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${src} .
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/lm/${corpus_lm}.${target} .
+check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${src} "lm corpus ${src}"
+check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${target} "lm corpus ${target}"
+cp ${CORPUS_ROOT}/lm/${corpus_lm}.${src} .
+cp ${CORPUS_ROOT}/lm/${corpus_lm}.${target} .
 
 cd ${TM_ROOT}/corpus/training/
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${src} "corpus ${src}"
-check_file ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${target} "corps ${target}"
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${src} corpus.tok.${src}
-cp ${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}/training/${corpus_training}.${target} corpus.tok.${target}
+check_file ${CORPUS_ROOT}/training/${corpus_training}.${src} "training corpus ${src}"
+check_file ${CORPUS_ROOT}/training/${corpus_training}.${target} "training corps ${target}"
+cp ${CORPUS_ROOT}/training/${corpus_training}.${src} corpus.tok.${src}
+cp ${CORPUS_ROOT}/training/${corpus_training}.${target} corpus.tok.${target}
 
-# truecase the training corpus.
+# truecase training corpus.
 cd ${TM_ROOT}/corpus/training/
 $truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus.tok.${src} > corpus.true.${src}
 $truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${target} < corpus.tok.${target} > corpus.true.${target}
 
+# Everything lowercased.  TODO: still right for truecase ?
+
+# clean training corpus.
+
+# One sentence per line, no empty lines.
+# Sentences longer than 100 words (and their corresponding translations) 
+# have to be eliminated (note that a shorter sentence length limit will speed up training.
+
+# TODO: read the source code of clean_corpus_n
+# clean_corpus_n perform the following steps:
+# 1. removes empty lines
+# 2. removes redundant space characters
+# 3. drops lines (and their corresponding lines), that are empty, too short, 
+# too long or violate the 9-1 sentence ratio limit of GIZA++ 
 $clean_corpus_n corpus.true ${src} ${target} corpus.clean 1 80
 
-## prepare tuning corpus.
-## ----------------------
-#cd ${TM_ROOT}/corpus/tuning
-#$tokenizer -l fr < news-test2008.fr > news-test2008.tok.fr
-#$tokenizer -l en < news-test2008.en > news-test2008.tok.en
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.fr < news-test2008.tok.fr > news-test2008.true.fr
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.en < news-test2008.tok.en > news-test2008.true.en
-#
-## prepare evaluation corpus.
-## --------------------------
-#cd ${TM_ROOT}/corpus/evaluation
-#$tokenizer -l fr < newstest2011.fr > newstest2011.tok.fr
-#$tokenizer -l en < newstest2011.en > newstest2011.tok.en
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.fr < newstest2011.tok.fr > newstest2011.true.fr
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.en < newstest2011.tok.en > newstest2011.true.en
+# prepare tuning corpus.
+# ----------------------
+cd ${TM_ROOT}/corpus/tuning
+check_file ${CORPUS_ROOT}/tuning/${corpus_tuning}.${src} "tuning corpus ${src}"
+check_file ${CORPUS_ROOT}/tuning/${corpus_tuning}.${target} "tuning corps ${target}"
+
+cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${src} corpus_tuning.tok.${src}
+cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${target} corpus_tuning.tok.${target}
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus_tuning.tok.${src} > corpus_tuning.true.${src}
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${target} < corpus_tuning.tok.${target} > corpus_tuning.true.${target}
+
+# prepare evaluation corpus.
+# --------------------------
+cd ${TM_ROOT}/corpus/evaluation
+check_file ${CORPUS_ROOT}/eval/${corpus_eval}.${src} "eval corpus ${src}"
+check_file ${CORPUS_ROOT}/eval/${corpus_eval}.${target} "eval corps ${target}"
+
+cp ${CORPUS_ROOT}/evaluation/${corpus_eval}.${src} corpus_eval.tok.${src}
+cp ${CORPUS_ROOT}/evaluation/${corpus_eval}.${target} corpus_eval.tok.${target}
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus_eval.tok.${src} > corpus_eval.true.${src}
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${target} < corpus_eval.tok.${target} > corpus_eval.true.${target}
 
 # Build Language Model and Train Phrase Model
 # ===========================================
@@ -176,25 +201,53 @@ $IRSTLM/bin/compile-lm --text yes corpus.lm.${target}.gz corpus.arpa.${target}
 ${MOSES_SUITE_ROOT}/moses/bin/build_binary -i corpus.arpa.${target} corpus.blm.${target}
 
 # train phrase model
+# --parallel                parallel run some steps of nine steps if multiple processors.
+# -mgiza -mgiza-cpus        using multi-threads version of giza++ and specify the number of CPU.
+# --parts n                 training on large corpora.
+# --parallel                run the two directions of GIZA++ as independent processes.
+
 cd ${TM_ROOT}
-${train_model} -mgiza -mgiza-cpus 4 -scripts-root-dir ${SCRIPTS_ROOT} --root-dir ${TM_ROOT}/training --model-dir ${TM_ROOT}/model --corpus-dir ${TM_ROOT}/corpus/training/ --corpus ${TM_ROOT}/corpus/training/corpus.clean -f ${src} -e ${target} -alignment grow-diag-final-and -reordering msd-bidirectional-fe -lm 0:3:${TM_ROOT}/lm/corpus.blm.${target}:8 >& ${TM_ROOT}/training/training.out
+${train_model} \
+    --parallel \
+    -mgiza -mgiza-cpus 4 \
+    --scripts-root-dir ${SCRIPTS_ROOT} \
+    --root-dir ${TM_ROOT}/training \
+    --model-dir ${TM_ROOT}/model \
+    --corpus-dir ${TM_ROOT}/corpus/training/ \
+    --corpus ${TM_ROOT}/corpus/training/corpus.clean \
+    --f ${src} --e ${target} \
+    --alignment grow-diag-final-and \
+    --reordering msd-bidirectional-fe \
+    --lm 0:3:${TM_ROOT}/lm/corpus.blm.${target}:8 \
+    &> ${TM_ROOT}/training/training.out
 
-## Tuning 
-## ======
-#${mert_moses} ${TM_ROOT}/corpus/tuning/news-test2008.true.fr ${TM_ROOT}/corpus/tuning/news-test2008.true.en $moses ${TM_ROOT}/model/moses.ini --working-dir ${TM_ROOT}/tuning/mert-work --mertdir $mertdir --rootdir ${SCRIPTS_ROOT} --decoder-flags="-threads 4 -v 0" &> ${TM_ROOT}/tuning/tuning.out 
+# Tuning 
+# ======
+${mert_moses} \
+    ${TM_ROOT}/corpus/tuning/corpus_tuning.true.${src} \
+    ${TM_ROOT}/corpus/tuning/corpus_tuning.true.${target} \
+    $moses ${TM_ROOT}/model/moses.ini \
+    --decoder-flags="-threads 4 -v 0" \
+    --working-dir ${TM_ROOT}/tuning/mert-work \
+    --mertdir $mertdir \
+    --rootdir ${SCRIPTS_ROOT} \
+    &> ${TM_ROOT}/tuning/tuning.out 
 
+# Create binary model
+# ===================
+check_file "${TM_ROOT}/tuning/mert-work/moses.ini" "tuned moses config"
+
+cd ${TM_ROOT}
 mkdir bin-model
 ${processPhraseTable} -ttable 0 0 ${TM_ROOT}/model/phrase-table.gz -nscores 5 -out ${TM_ROOT}/bin-model/phrase-table
 ${processLexicalTable} -in ${TM_ROOT}/model/reordering-table.wbe-msd-bidirectional-fe.gz -out ${TM_ROOT}/bin-model/reordering-table
 
-#cp ${TM_ROOT}/tuning/mert-work/moses.ini ${TM_ROOT}/bin-model/moses.ini
-cp ${TM_ROOT}/model/moses.ini ${TM_ROOT}/bin-model/moses.ini
+cp ${TM_ROOT}/tuning/mert-work/moses.ini ${TM_ROOT}/bin-model/moses.ini
+#cp ${TM_ROOT}/model/moses.ini ${TM_ROOT}/bin-model/moses.ini
 cd bin-model
 sed -i -e "/phrase-table/s|^0|1|" moses.ini
 sed -i -e "s|model/phrase-table.gz|bin-model/phrase-table|" moses.ini
 sed -i -e "s|model/reordering-table.wbe-msd-bidirectional-fe.gz|bin-model/reordering-table|" moses.ini
-
-##${reuse_weights} ${TM_ROOT}/tuning/mert/moses.ini < ${TM_ROOT}/model/moses.ini > ${TM_ROOT}/tuning/moses-tuned.ini
 
 # Evaluation
 # ==========
