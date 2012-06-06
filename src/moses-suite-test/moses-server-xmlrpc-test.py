@@ -1,4 +1,5 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 
 # Simple test case for testing xmlrpc support in moses server which should 
 # run with sample models.
@@ -16,7 +17,7 @@ import xmlrpclib
 
 try:
     proxy = xmlrpclib.ServerProxy("http://localhost:9090/RPC2")
-    text_translate = proxy.translate({"text":"das ist ein kleines haus"})["text"] 
+    text_translate = proxy.translate({"text":"das ist ein kleines haus"})["text"]
     #text_translate = proxy.translate({"text":"This string from chinese"})["text"] 
 except IOError as e:
     print e
