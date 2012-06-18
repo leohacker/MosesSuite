@@ -19,6 +19,11 @@ from corpustools.config import CleanConfig
 
 
 def main(argv=sys.argv):    # pylint: disable=W0102
+    config = argv2conf(argv)
+    clean_corpus(config)
+
+
+def argv2conf(argv):
     usage = "Usage: %prog [options] corpus_directory corpus_filename src_lang tgt_lang clean_step_config"
     num_args = 5
     version = "%prog 0.2 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
@@ -69,7 +74,7 @@ def main(argv=sys.argv):    # pylint: disable=W0102
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
 
-    clean_corpus(clean_config)
+    return clean_config
 
 
 def clean_corpus(config):
