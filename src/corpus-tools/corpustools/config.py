@@ -1,21 +1,32 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+
+# pylint: disable=C0301,C0103,C0111
+# pylint: disable-msg=R0902
+# pylint: disable-msg=W0201
+
 """Config module for corpus tools.
 
-This module define the class CorpusToolsConfig to access the configuration of 
+This module define the class CorpusToolsConfig to access the configuration of
 corpus tools. The instance will read the system-wide and user configuration
 automatically, then you specify a configuration file to read.
+
+CleanConfig define the configuration of clean steps.
 """
 
+import errno
 import json
-import os.path
+import os
+import sys
+from os import path
 import ConfigParser
+
 
 class CorpusToolsConfig(object):
     """Class for reading corpus tools config.
 
     /etc/corpustools.conf   system wide configuration.
-    ~/.corpustools.conf      user configuration.
+    ~/.corpustools.conf     user configuration.
     -c config               specify the config file in command line.
     """
     SYSTEM_CONFIG = "/etc/corpustools.conf"
@@ -24,8 +35,8 @@ class CorpusToolsConfig(object):
     def __init__(self):
         """Read the system wide and default user configuration."""
         self.config = ConfigParser.SafeConfigParser()
-        configfiles = [ CorpusToolsConfig.SYSTEM_CONFIG,
-                        os.path.expanduser(CorpusToolsConfig.USER_CONFIG) ]
+        configfiles = [CorpusToolsConfig.SYSTEM_CONFIG,
+                       path.expanduser(CorpusToolsConfig.USER_CONFIG)]
 
         for configfile in configfiles:
             self.readfile(configfile)
@@ -60,6 +71,7 @@ class CorpusToolsConfig(object):
                 print name + " = " + value
             print ""
 
+
 class CleanConfig(object):
     def __init__(self, filename):
         self._steps = None
@@ -79,8 +91,18 @@ class CleanConfig(object):
     def steps(self, step_list):
         self._steps = step_list
 
-    def has_steps(self):
+    # TODO: check more situations.
+    def validate_steps(self):
         return False if self._steps is None else True
+
+    @property
+    def corpus_name(self):
+        """The corpus filename without language extension."""
+        return self._corpus_name
+
+    @corpus_name.setter
+    def corpus_name(self, value):
+        self._corpus_name = value
 
     @property
     def source_lang(self):
@@ -117,20 +139,47 @@ class CleanConfig(object):
         self._outfile_dir = value
 
     @property
-    def corpus_name(self):
-        """The corpus filename without language extension."""
-        return self._corpus_name
-
-    @corpus_name.setter
-    def corpus_name(self, value):
-        self._corpus_name = value
-
-    @property
     def working_dir(self):
-        """The working directory for corpus clean tool to store intermediate
-        files."""
+        """The working directory for corpus clean tool to store intermediate files."""
         return self._working_dir
 
     @working_dir.setter
     def working_dir(self, value):
         self._working_dir = value
+
+    @property
+    def log(self):
+        """The log file for clean steps."""
+        return self._log
+
+    @log.setter
+    def log(self, value):
+        self._log = value
+
+    def validate_paths(self):
+        """Check the existence of files and directories specified in clean configuration."""
+        result = True
+
+        if not path.isdir(self.infile_dir):
+            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.infile_dir + "\n")
+            result = False
+
+        if not path.isdir(self.outfile_dir):
+            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.outfile_dir + "\n")
+            result = False
+
+        if not path.isdir(self.working_dir):
+            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.working_dir + "\n")
+            result = False
+
+        source_path = path.join(self.infile_dir, '.'.join(self.corpus_name, self.source_lang))
+        target_path = path.join(self.infile_dir, '.'.join(self.corpus_name, self.target_lang))
+        if not path.isfile(source_path):
+            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + source_path + "\n")
+            result = False
+        if not path.isfile(target_path):
+            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
+            result = False
+
+        return result
+
