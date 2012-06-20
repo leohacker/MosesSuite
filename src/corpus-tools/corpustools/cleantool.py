@@ -65,11 +65,11 @@ def argv2conf(argv):
     clean_config.source_lang = args[2]
     clean_config.target_lang = args[3]
     clean_config.infile_dir  = args[0]
-    clean_config.outfile_dir = clean_config.infile_dir if options.outfile_dir is None else options.outfile_dir
+    clean_config.outfile_dir = clean_config.infile_dir if options.output_dir is None else options.output_dir
     clean_config.working_dir = clean_config.infile_dir if options.working_dir is None else options.working_dir
 
     clean_config.log = options.log if options.log is not None else \
-                        path.join(options.working_dir, '.'.join(clean_config.corpus_name, "clean", "log"))
+                        path.join(clean_config.working_dir, '.'.join([clean_config.corpus_name, "clean", "log"]))
 
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)

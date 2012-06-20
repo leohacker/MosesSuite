@@ -172,13 +172,20 @@ class CleanConfig(object):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.working_dir + "\n")
             result = False
 
-        source_path = path.join(self.infile_dir, '.'.join(self.corpus_name, self.source_lang))
-        target_path = path.join(self.infile_dir, '.'.join(self.corpus_name, self.target_lang))
+        source_path = path.join(self.infile_dir, '.'.join([self.corpus_name, self.source_lang]))
+        target_path = path.join(self.infile_dir, '.'.join([self.corpus_name, self.target_lang]))
         if not path.isfile(source_path):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + source_path + "\n")
             result = False
         if not path.isfile(target_path):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
+            result = False
+
+        try:
+            fp = open(self.log, 'w')
+            fp.close()
+        except IOError as e:
+            print e
             result = False
 
         return result
