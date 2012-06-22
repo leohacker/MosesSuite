@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 # pylint: disable=C0301,C0103,C0111
@@ -73,15 +72,16 @@ class CorpusToolsConfig(object):
 
 
 class CleanConfig(object):
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self._steps = None
-        try:
-            fp = open(filename, 'r')
-            self._steps = json.load(fp)
-        except IOError as e:
-            print e
-        except ValueError as e:
-            print e
+        if filename is not None:
+            try:
+                fp = open(filename, 'r')
+                self._steps = json.load(fp)
+            except IOError as e:
+                print e
+            except ValueError as e:
+                print e
 
     @property
     def steps(self):
@@ -189,4 +189,12 @@ class CleanConfig(object):
             result = False
 
         return result
+
+    def corpus_w(self, lang, ext=None):
+        """Return corpus name with specified lang and ext in working directory."""
+        assert lang == self.source_lang or lang == self.target_lang
+        namelist = [self.corpus_name, lang]
+        if ext is not None:
+             namelist.insert(1, ext)
+        return path.join(self.working_dir, '.'.join(namelist))
 

@@ -78,16 +78,50 @@ def argv2conf(argv):
 
 
 def clean_corpus(config):
-    source_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.source_lang]))
-    target_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.target_lang]))
-
     # prepare the corpus in working directory.
     if not path.samefile(config.infile_dir, config.working_dir):
+        source_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.source_lang]))
+        target_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.target_lang]))
         shutil.copy(source_corpus, config.working_dir)
         shutil.copy(target_corpus, config.working_dir)
 
+    # backup the original corpus.
+    source_corpus = config.corpus_w(config.source_lang)
+    target_corpus = config.corpus_w(config.target_lang)
+    shutil.copy(source_corpus, config.corpus_w(config.source_lang, 'orig'))
+    shutil.copy(target_corpus, config.corpus_w(config.target_lang, 'orig'))
+
+    # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
+    # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
     for step in config.steps:
-        print step["name"]
+        if step["name"] == "lowercase":
+            module_name = "corpustools.case.lowercase"
+        elif step["name"] == "tokenize":
+            module_name = "corpustools.token.tokenzie"
+        else:
+            module_name = "corpustools.clean." + step["name"]
+        try:
+            __import__(module_name)
+            module = sys.modules[module_name]
+            if 'predicate' in module.__dict__:
+                predicate_clean(config, step, module.predicate)
+            else:
+                module.run(config, step)
+        except ImportError as e:
+            print e
+
+    # suffix the final output with ext name 'clean'.
+    shutil.copy(source_corpus, config.corpus_w(config.source_lang, 'clean'))
+    shutil.copy(target_corpus, config.corpus_w(config.target_lang, 'clean'))
+
+    # copy the final cleaned corpus into output directory.
+    if not path.samefile(config.working_dir, config.outfile_dir):
+        shutil.copy(config.corpus_w(config.source_lang, 'clean'), config.outfile_dir) 
+        shutil.copy(config.corpus_w(config.target_lang, 'clean'), config.outfile_dir) 
+
+
+def predicate_clean(config, step, predicate):
+    predicate(config.corpus_w(config.source_lang), config.corpus_w(config.target_lang), step)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
