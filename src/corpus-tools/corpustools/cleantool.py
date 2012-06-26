@@ -110,6 +110,7 @@ def clean_corpus(config):
                 module.run(config, step)
         except ImportError as e:
             print e
+            sys.exit(errno.EPERM)
 
     # suffix the final output with ext name 'clean'.
     shutil.copy(source_corpus, config.corpus_w(config.source_lang, 'clean'))
