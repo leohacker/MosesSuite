@@ -80,10 +80,10 @@ def argv2conf(argv):
 def clean_corpus(config):
     # prepare the corpus in working directory.
     if not path.samefile(config.infile_dir, config.working_dir):
-        source_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.source_lang]))
-        target_corpus = path.join(config.infile_dir, '.'.join([config.corpus_name, config.target_lang]))
-        shutil.copy(source_corpus, config.working_dir)
-        shutil.copy(target_corpus, config.working_dir)
+        source_in = path.join(config.infile_dir, '.'.join([config.corpus_name, config.source_lang]))
+        target_in = path.join(config.infile_dir, '.'.join([config.corpus_name, config.target_lang]))
+        shutil.copy(source_in, config.working_dir)
+        shutil.copy(target_in, config.working_dir)
 
     # backup the original corpus.
     source_corpus = config.corpus_w(config.source_lang)
@@ -97,9 +97,10 @@ def clean_corpus(config):
         if step["name"] == "lowercase":
             module_name = "corpustools.case.lowercase"
         elif step["name"] == "tokenize":
-            module_name = "corpustools.token.tokenzie"
+            module_name = "corpustools.token.tokenize"
         else:
             module_name = "corpustools.clean." + step["name"]
+
         try:
             __import__(module_name)
             module = sys.modules[module_name]
