@@ -156,7 +156,7 @@ ${train_model} \
     --f ${src} --e ${tgt} \
     --alignment grow-diag-final-and \
     --reordering msd-bidirectional-fe \
-    --lm 0:3:${TM_ROOT}/lm/corpus.blm.${target}:8 \
+    --lm 0:3:${TM_ROOT}/lm/corpus.blm.${tgt}:8 \
     &> ${TM_ROOT}/training/training.out
 
 # Create binary model
