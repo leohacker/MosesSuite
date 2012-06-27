@@ -72,6 +72,11 @@ export IRSTLM
 
 # Check the location of scritps and executable program.
 # =====================================================
+train_truecaser=${SCRIPTS_ROOT}/recaser/train-truecaser.perl
+truecaser=${SCRIPTS_ROOT}/recaser/truecase.perl
+check_file "$train_truecaser"   "script train truecase"
+check_file "$truecaser"         "truecaser"
+
 train_model=${SCRIPTS_ROOT}/training/train-model.perl
 moses=${MOSES_SUITE_ROOT}/moses/bin/moses
 mertdir=${MOSES_SUITE_ROOT}/moses/bin
