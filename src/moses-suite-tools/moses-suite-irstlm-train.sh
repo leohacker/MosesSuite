@@ -43,8 +43,6 @@ echo "Moses Suite Training Script -- Author: Leo Jiang <leo.jiang.dev@gmail.com>
 echo "Version: $version"
 echo
 
-set -x
-
 # source the moses configuration.
 source_moses_conf
 
