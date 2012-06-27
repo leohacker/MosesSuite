@@ -27,15 +27,15 @@ if [ $# != 3 ]; then
 fi
 
 src_lang=$1
-tar_lang=$2
+tgt_lang=$2
 id=$3
 
 # -- Normalize the src and target language ID. --
 SRC=$( echo "$src_lang" | tr '[:lower:]' '[:upper:]' )
-TARGET=$( echo "$tar_lang" | tr '[:lower:]' '[:upper:]' )
+TGT=$( echo "$tgt_lang" | tr '[:lower:]' '[:upper:]' )
 
 src=$( echo "$SRC" | tr '[:upper:]' '[:lower:]' )
-target=$( echo "$TARGET" | tr '[:upper:]' '[:lower:]' )
+tgt=$( echo "$TGT" | tr '[:upper:]' '[:lower:]' )
 
 # Copyleft declaration
 version="0.1"
@@ -51,7 +51,7 @@ source_moses_conf
 SCRIPTS_ROOT=${MOSES_SUITE_ROOT}/moses/scripts
 check_dir "${SCRIPTS_ROOT}" "Moses script root directory."
 
-TM_ROOT=${MOSES_DATA_ROOT}/translation_models/${SRC}-${TARGET}/${id}
+TM_ROOT=${MOSES_DATA_ROOT}/translation_models/${SRC}-${TGT}/${id}
 
 check_dir "${TM_ROOT}"  "root directory of translation model"
 if [ ! -w "${TM_ROOT}" ]; then
@@ -59,7 +59,7 @@ if [ ! -w "${TM_ROOT}" ]; then
     exit $E_ACCES
 fi  
 
-CORPUS_ROOT=${MOSES_DATA_ROOT}/corpus/${SRC}-${TARGET}
+CORPUS_ROOT=${MOSES_DATA_ROOT}/corpus/${SRC}-${TGT}
 check_dir "${CORPUS_ROOT}" "root directory of corpus in corpus repository."
 
 IRSTLM=${MOSES_SUITE_ROOT}/irstlm
@@ -83,25 +83,28 @@ check_file  "$processLexicalTable"  "processLexicalTable"
 # prepare tuning corpus.
 # ----------------------
 cd ${TM_ROOT}
+mkdir tuning
+mkdir -p corpus/tuning
+
 corpus_tuning=corpus_tuning
-cd ${TM_ROOT}/corpus/tuning
 check_file ${CORPUS_ROOT}/tuning/${corpus_tuning}.${src} "tuning corpus ${src}"
-check_file ${CORPUS_ROOT}/tuning/${corpus_tuning}.${target} "tuning corps ${target}"
+check_file ${CORPUS_ROOT}/tuning/${corpus_tuning}.${tgt} "tuning corpus ${tgt}"
 
 # we needn't to tokenize and truecase the corpus if already clean them with corpus_clean tool.
+cd ${TM_ROOT}/corpus/tuning
 cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${src} corpus_tuning.true.${src}
-cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${target} corpus_tuning.true.${target}
+cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${tgt} corpus_tuning.true.${tgt}
 #cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${src} corpus_tuning.tok.${src}
-#cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${target} corpus_tuning.tok.${target}
+#cp ${CORPUS_ROOT}/tuning/${corpus_tuning}.${tgt} corpus_tuning.tok.${tgt}
 #$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus_tuning.tok.${src} > corpus_tuning.true.${src}
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${target} < corpus_tuning.tok.${target} > corpus_tuning.true.${target}
+#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${tgt} < corpus_tuning.tok.${tgt} > corpus_tuning.true.${tgt}
 
 # Tuning 
 # ======
 cd ${TM_ROOT}
 ${mert_moses} \
     ${TM_ROOT}/corpus/tuning/corpus_tuning.true.${src} \
-    ${TM_ROOT}/corpus/tuning/corpus_tuning.true.${target} \
+    ${TM_ROOT}/corpus/tuning/corpus_tuning.true.${tgt} \
     $moses ${TM_ROOT}/model/moses.ini \
     --decoder-flags="-threads 4 -v 0" \
     --working-dir ${TM_ROOT}/tuning/mert-work \
