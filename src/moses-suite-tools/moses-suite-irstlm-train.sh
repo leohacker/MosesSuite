@@ -94,26 +94,19 @@ mkdir {lm,training,truecase-model}
 
 # prepare training corpus.
 # ------------------------
-#corpus_truecase=corpus_case
-#corpus_lm=corpus_lm
+corpus_truecase=corpus_case
 corpus_training=corpus_training
 
-#cd ${TM_ROOT}/corpus/truecase/
-#check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} "truecase corpus ${src}"
-#check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${tgt} "truecase corpus ${tgt}"
-#cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} .
-#cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${tgt} .
-#
-## train truecase model.
-#cd ${TM_ROOT}/truecase-model/
-#$train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${src}
-#$train_truecaser --model truecase-model.${tgt} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${tgt}
+cd ${TM_ROOT}/corpus/truecase/
+check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} "truecase corpus ${src}"
+check_file ${CORPUS_ROOT}/truecase/${corpus_truecase}.${tgt} "truecase corpus ${tgt}"
+cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${src} .
+cp ${CORPUS_ROOT}/truecase/${corpus_truecase}.${tgt} .
 
-#cd ${TM_ROOT}/corpus/lm/
-#check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${src} "lm corpus ${src}"
-#check_file ${CORPUS_ROOT}/lm/${corpus_lm}.${tgt} "lm corpus ${tgt}"
-#cp ${CORPUS_ROOT}/lm/${corpus_lm}.${src} .
-#cp ${CORPUS_ROOT}/lm/${corpus_lm}.${tgt} .
+# train truecase model.
+cd ${TM_ROOT}/truecase-model/
+$train_truecaser --model truecase-model.${src} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${src}
+$train_truecaser --model truecase-model.${tgt} --corpus ${TM_ROOT}/corpus/truecase/${corpus_truecase}.${tgt}
 
 cd ${TM_ROOT}/corpus/training/
 check_file ${CORPUS_ROOT}/training/${corpus_training}.${src} "training corpus ${src}"
@@ -121,16 +114,13 @@ check_file ${CORPUS_ROOT}/training/${corpus_training}.${tgt} "training corps ${t
 cp ${CORPUS_ROOT}/training/${corpus_training}.${src} corpus.tok.${src}
 cp ${CORPUS_ROOT}/training/${corpus_training}.${tgt} corpus.tok.${tgt}
 
-## truecase training corpus.
-#cd ${TM_ROOT}/corpus/training/
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus.tok.${src} > corpus.true.${src}
-#$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${tgt} < corpus.tok.${tgt} > corpus.true.${tgt}
-cp corpus.tok.${src} corpus.true.${src}
-cp corpus.tok.${tgt} corpus.true.${tgt}
+# truecase training corpus.
+cd ${TM_ROOT}/corpus/training/
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${src} < corpus.tok.${src} > corpus.true.${src}
+$truecaser --model ${TM_ROOT}/truecase-model/truecase-model.${tgt} < corpus.tok.${tgt} > corpus.true.${tgt}
+
 cp corpus.true.${src} corpus.clean.${src}
 cp corpus.true.${tgt} corpus.clean.${tgt}
-
-# Everything lowercased.  TODO: still right for truecase ?
 
 # Build Language Model and Train Phrase Model
 # ===========================================
