@@ -20,8 +20,8 @@ from corpustools.config import CleanConfig
 
 
 def main(argv=sys.argv):    # pylint: disable=W0102
-    config = argv2conf(argv)
-    clean_corpus(config)
+    tools_config, clean_config = argv2conf(argv)
+    clean_corpus(tools_config, clean_config)
 
 
 def argv2conf(argv):
@@ -75,26 +75,26 @@ def argv2conf(argv):
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
 
-    return clean_config
+    return (tools_config, clean_config)
 
 
-def clean_corpus(config):
+def clean_corpus(tools, clean):
     # prepare the corpus in working directory.
-    if not path.samefile(config.infile_dir, config.working_dir):
-        source_in = path.join(config.infile_dir, '.'.join([config.corpus_name, config.source_lang]))
-        target_in = path.join(config.infile_dir, '.'.join([config.corpus_name, config.target_lang]))
-        shutil.copy(source_in, config.working_dir)
-        shutil.copy(target_in, config.working_dir)
+    if not path.samefile(clean.infile_dir, clean.working_dir):
+        source_in = path.join(clean.infile_dir, '.'.join([clean.corpus_name, clean.source_lang]))
+        target_in = path.join(clean.infile_dir, '.'.join([clean.corpus_name, clean.target_lang]))
+        shutil.copy(source_in, clean.working_dir)
+        shutil.copy(target_in, clean.working_dir)
 
     # backup the original corpus.
-    source_corpus = config.corpus_w(config.source_lang)
-    target_corpus = config.corpus_w(config.target_lang)
-    shutil.copy(source_corpus, config.corpus_w(config.source_lang, 'orig'))
-    shutil.copy(target_corpus, config.corpus_w(config.target_lang, 'orig'))
+    source_corpus = clean.corpus_w(clean.source_lang)
+    target_corpus = clean.corpus_w(clean.target_lang)
+    shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'orig'))
+    shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'orig'))
 
     # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
     # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
-    for step in config.steps:
+    for step in clean.steps:
         if step["name"] == "lowercase":
             module_name = "corpustools.case.lowercase"
         elif step["name"] == "tokenize":
@@ -106,29 +106,29 @@ def clean_corpus(config):
             __import__(module_name)
             module = sys.modules[module_name]
             if 'predicate' in module.__dict__:
-                predicate_clean(config, step, module.predicate)
+                predicate_clean(clean, step, module.predicate)
             else:
-                module.run(config, step)
+                module.run(clean, tools, step)
         except ImportError as e:
             print e
             sys.exit(errno.EPERM)
 
     # suffix the final output with ext name 'clean'.
-    shutil.copy(source_corpus, config.corpus_w(config.source_lang, 'clean'))
-    shutil.copy(target_corpus, config.corpus_w(config.target_lang, 'clean'))
+    shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'clean'))
+    shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'clean'))
 
     # copy the final cleaned corpus into output directory.
-    if not path.samefile(config.working_dir, config.outfile_dir):
-        shutil.copy(config.corpus_w(config.source_lang, 'clean'), config.outfile_dir)
-        shutil.copy(config.corpus_w(config.target_lang, 'clean'), config.outfile_dir)
+    if not path.samefile(clean.working_dir, clean.outfile_dir):
+        shutil.copy(clean.corpus_w(clean.source_lang, 'clean'), clean.outfile_dir)
+        shutil.copy(clean.corpus_w(clean.target_lang, 'clean'), clean.outfile_dir)
 
 
-def predicate_clean(config, step, predicate):
+def predicate_clean(clean, step, predicate):
     ext = step["ext"]
-    source_corpus = config.corpus_w(config.source_lang)
-    target_corpus = config.corpus_w(config.target_lang)
-    source_ext_corpus = config.corpus_w(config.source_lang, ext)
-    target_ext_corpus = config.corpus_w(config.target_lang, ext)
+    source_corpus = clean.corpus_w(clean.source_lang)
+    target_corpus = clean.corpus_w(clean.target_lang)
+    source_ext_corpus = clean.corpus_w(clean.source_lang, ext)
+    target_ext_corpus = clean.corpus_w(clean.target_lang, ext)
 
     source_fp = codecs.open(source_corpus, 'r', encoding="utf-8")
     target_fp = codecs.open(target_corpus, 'r', encoding="utf-8")
