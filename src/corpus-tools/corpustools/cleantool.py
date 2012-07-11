@@ -8,6 +8,7 @@
 Clean aligned corpus files according to user specified configuration.
 """
 
+import codecs
 import errno
 import shutil
 import sys
@@ -97,7 +98,7 @@ def clean_corpus(config):
         if step["name"] == "lowercase":
             module_name = "corpustools.case.lowercase"
         elif step["name"] == "tokenize":
-            module_name = "corpustools.token.tokenize"
+            module_name = "corpustools.token.tokenizer"
         else:
             module_name = "corpustools.clean." + step["name"]
 
@@ -118,12 +119,26 @@ def clean_corpus(config):
 
     # copy the final cleaned corpus into output directory.
     if not path.samefile(config.working_dir, config.outfile_dir):
-        shutil.copy(config.corpus_w(config.source_lang, 'clean'), config.outfile_dir) 
-        shutil.copy(config.corpus_w(config.target_lang, 'clean'), config.outfile_dir) 
+        shutil.copy(config.corpus_w(config.source_lang, 'clean'), config.outfile_dir)
+        shutil.copy(config.corpus_w(config.target_lang, 'clean'), config.outfile_dir)
 
 
 def predicate_clean(config, step, predicate):
-    predicate(config.corpus_w(config.source_lang), config.corpus_w(config.target_lang), step)
+    ext = step["ext"]
+    src_fp = codecs.open(config.corpus_w(config.source_lang), 'r', encoding="utf-8")
+    tgt_fp = codecs.open(config.corpus_w(config.target_lang), 'r', encoding="utf-8")
+    src_ext_fp = codecs.open(config.corpus_w(config.source_lang, ext), 'w', encoding="utf-8")
+    tgt_ext_fp = codecs.open(config.corpus_w(config.target_lang, ext), 'w', encoding="utf-8")
+
+    for source_str, target_str in zip(src_fp, tgt_fp):
+        if predicate(source_str, target_str, step):
+            src_ext_fp.write(source_str)
+            tgt_ext_fp.write(target_str)
+    src_ext_fp.close()
+    tgt_ext_fp.close()
+    src_fp.close()
+    tgt_fp.close()
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
