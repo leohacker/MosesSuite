@@ -195,6 +195,5 @@ class CleanConfig(object):
         assert lang == self.source_lang or lang == self.target_lang
         namelist = [self.corpus_name, lang]
         if ext is not None:
-             namelist.insert(1, ext)
+            namelist.insert(1, ext)
         return path.join(self.working_dir, '.'.join(namelist))
-
