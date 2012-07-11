@@ -125,10 +125,15 @@ def clean_corpus(config):
 
 def predicate_clean(config, step, predicate):
     ext = step["ext"]
-    source_fp = codecs.open(config.corpus_w(config.source_lang), 'r', encoding="utf-8")
-    target_fp = codecs.open(config.corpus_w(config.target_lang), 'r', encoding="utf-8")
-    source_ext_fp = codecs.open(config.corpus_w(config.source_lang, ext), 'w', encoding="utf-8")
-    target_ext_fp = codecs.open(config.corpus_w(config.target_lang, ext), 'w', encoding="utf-8")
+    source_corpus = config.corpus_w(config.source_lang)
+    target_corpus = config.corpus_w(config.target_lang)
+    source_ext_corpus = config.corpus_w(config.source_lang, ext)
+    target_ext_corpus = config.corpus_w(config.target_lang, ext)
+
+    source_fp = codecs.open(source_corpus, 'r', encoding="utf-8")
+    target_fp = codecs.open(target_corpus, 'r', encoding="utf-8")
+    source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
+    target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
     for source_line, target_line in zip(source_fp, target_fp):
         if predicate(source_line, target_line, step):
@@ -139,6 +144,8 @@ def predicate_clean(config, step, predicate):
     target_ext_fp.close()
     source_fp.close()
     target_fp.close()
+    shutil.copy(source_ext_corpus, source_corpus)
+    shutil.copy(target_ext_corpus, target_corpus)
 
 
 if __name__ == "__main__":
