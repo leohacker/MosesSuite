@@ -59,7 +59,10 @@ class CorpusToolsConfig(object):
         else:
             return None
 
+    #
     def __getitem__(self, inquire_str):
+        if len(inquire_str.split('.')) != 2:
+            return None
         section, option = inquire_str.split('.')
         return self.config.get(section, option) if self.config.has_option(section, option) else None
 
