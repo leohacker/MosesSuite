@@ -34,6 +34,8 @@ function test_cmdline_interface() {
 }
 
 echo "Corpus_Clean: Clean Steps Testing"
+cp test/corpus.orig.en test/corpus.en
+cp test/corpus.orig.fr test/corpus.fr
 desc="clean steps"
 cmd='python corpus_clean.py test corpus en fr test/cleansteps.conf -o test -w test -l test/clean.log'
 run
