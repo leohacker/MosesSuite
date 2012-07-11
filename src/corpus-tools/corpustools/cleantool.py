@@ -125,19 +125,20 @@ def clean_corpus(config):
 
 def predicate_clean(config, step, predicate):
     ext = step["ext"]
-    src_fp = codecs.open(config.corpus_w(config.source_lang), 'r', encoding="utf-8")
-    tgt_fp = codecs.open(config.corpus_w(config.target_lang), 'r', encoding="utf-8")
-    src_ext_fp = codecs.open(config.corpus_w(config.source_lang, ext), 'w', encoding="utf-8")
-    tgt_ext_fp = codecs.open(config.corpus_w(config.target_lang, ext), 'w', encoding="utf-8")
+    source_fp = codecs.open(config.corpus_w(config.source_lang), 'r', encoding="utf-8")
+    target_fp = codecs.open(config.corpus_w(config.target_lang), 'r', encoding="utf-8")
+    source_ext_fp = codecs.open(config.corpus_w(config.source_lang, ext), 'w', encoding="utf-8")
+    target_ext_fp = codecs.open(config.corpus_w(config.target_lang, ext), 'w', encoding="utf-8")
 
-    for source_str, target_str in zip(src_fp, tgt_fp):
-        if predicate(source_str, target_str, step):
-            src_ext_fp.write(source_str)
-            tgt_ext_fp.write(target_str)
-    src_ext_fp.close()
-    tgt_ext_fp.close()
-    src_fp.close()
-    tgt_fp.close()
+    for source_line, target_line in zip(source_fp, target_fp):
+        if predicate(source_line, target_line, step):
+            source_ext_fp.write(source_line)
+            target_ext_fp.write(target_line)
+
+    source_ext_fp.close()
+    target_ext_fp.close()
+    source_fp.close()
+    target_fp.close()
 
 
 if __name__ == "__main__":
