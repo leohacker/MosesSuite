@@ -8,5 +8,5 @@ Clean the duplicate sentences.
 """
 
 def run(clean, tools, step):
-    # don't implement duplicate removing.
+    # don't implement duplicate clean.
     pass
