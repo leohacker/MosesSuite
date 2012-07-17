@@ -5,3 +5,6 @@
 
 ### nose
 .noseids
+
+### corpus files in corpus clean tool.
+src/corpus-tools/test/corpus.*
