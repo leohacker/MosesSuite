@@ -36,34 +36,34 @@ def relist_clean(source, target, relist):
         apply_to = re_step["apply_to"]
 
         if action == "delete_line":
-            match_re = re_step["match"]
-            source, target = re_del(source, target, match_re, apply_to)
+            pattern = re_step["pattern"]
+            source, target = re_del(source, target, pattern, apply_to)
             continue
 
         if action == "replace":
-            match_re = re_step["match"]
-            repl_re = re_step["replace"]
+            pattern = re_step["pattern"]
+            repl_re = re_step["repl"]
         elif action == "delete":
-            match_re = re_step["match"]
+            pattern = re_step["pattern"]
             repl_re = ur''
-        source, target = re_repl(source, target, match_re, repl_re, apply_to)
+        source, target = re_repl(source, target, pattern, repl_re, apply_to)
 
     return source.strip(), target.strip()
 
 
-def re_del(source, target, match_re, apply_to):
+def re_del(source, target, pattern, apply_to):
     if apply_to == "source" or apply_to == "both":
-        if re.match(match_re, source):
+        if re.search(pattern, source):
             source = u''
     if apply_to == "target" or apply_to == "both":
-        if re.match(match_re, target):
+        if re.search(pattern, target):
             target = u''
     return source, target
 
 
-def re_repl(source, target, match_re, repl_re, apply_to):
+def re_repl(source, target, pattern, repl_re, apply_to):
     if apply_to == "source" or apply_to == "both":
-        source = re.sub(match_re, repl_re, source)
+        source = re.sub(pattern, repl_re, source)
     if apply_to == "target" or apply_to == "both":
-        target = re.sub(match_re, repl_re, target)
+        target = re.sub(pattern, repl_re, target)
     return source, target
