@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # pylint: disable=C0301,C0103,C0111
 # pylint: disable-msg=R0902

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from nose.tools import assert_raises
 from nose.tools import raises
@@ -16,7 +15,7 @@ class TestLangCode:
                   "en_US", "zh_cn", "zh",    "EN-US",
                   "zh-CN.gbk", "en_US.UTF-8"]
         result = [None, None, None,
-                  "en_US", "zh_CN", "zh_CN", "en_US", 
+                  "en_US", "zh_CN", "zh_CN", "en_US",
                   "zh_CN", "en_US"]
         for param, value in zip(params, result):
             yield self.check_constructor, param, value
