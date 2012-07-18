@@ -8,6 +8,8 @@ def run(clean, tools, step):
     ext = step["ext"]
     relist = step["list"]
 
+    compile_relist(relist)
+
     source_fp = codecs.open(clean.corpus_w(clean.source_lang), 'r', 'utf-8')
     target_fp = codecs.open(clean.corpus_w(clean.target_lang), 'r', 'utf-8')
     source_ext_fp = codecs.open(clean.corpus_w(clean.source_lang, ext), 'w', 'utf-8')
@@ -25,6 +27,16 @@ def run(clean, tools, step):
     target_ext_fp.close()
 
 
+def compile_relist(relist):
+    for item in relist:
+        pattern = item["pattern"]
+        flag = 0
+        if 'unicode' in item and item["unicode"] == True:
+            flag = flag | re.UNICODE
+        if 'case_insensitive' in item and item["case_insensitive"] == True:
+            flag = flag | re.IGNORECASE
+        item["pattern"] = re.compile(pattern, flag)
+
 def relist_clean(source, target, relist):
     for re_step in relist:
         source = source.strip()
@@ -32,38 +44,30 @@ def relist_clean(source, target, relist):
         if len(source) == 0 or len(target) == 0:
             return source, target
 
-        action = re_step["action"]
-        apply_to = re_step["apply_to"]
-
-        if action == "delete_line":
-            pattern = re_step["pattern"]
-            source, target = re_del(source, target, pattern, apply_to)
-            continue
-
-        if action == "replace":
-            pattern = re_step["pattern"]
-            repl_re = re_step["repl"]
-        elif action == "delete":
-            pattern = re_step["pattern"]
-            repl_re = ur''
-        source, target = re_repl(source, target, pattern, repl_re, apply_to)
-
+        if u'apply_to' in re_step:
+            if re_step["apply_to"] == u"source":
+                source = re_clean(source, re_step)
+            elif re_step["apply_to"] == u"target":
+                target = re_clean(target, re_step)
+        else:
+            source = re_clean(source, re_step)
+            target = re_clean(target, re_step)
     return source.strip(), target.strip()
 
+def re_clean(sentence, step):
+    pattern = step["pattern"]
+    if step["action"] == "delete_line":
+        return re_del(sentence, pattern)
+    else:
+        if step["action"] == "replace":
+            repl = step["repl"]
+        elif step["action"] == "delete":
+            repl = u''
+        return re_repl(sentence, pattern, repl)
 
-def re_del(source, target, pattern, apply_to):
-    if apply_to == "source" or apply_to == "both":
-        if re.search(pattern, source):
-            source = u''
-    if apply_to == "target" or apply_to == "both":
-        if re.search(pattern, target):
-            target = u''
-    return source, target
 
+def re_del(sentence, pattern):
+    return u'' if pattern.search(sentence) else sentence
 
-def re_repl(source, target, pattern, repl_re, apply_to):
-    if apply_to == "source" or apply_to == "both":
-        source = re.sub(pattern, repl_re, source)
-    if apply_to == "target" or apply_to == "both":
-        target = re.sub(pattern, repl_re, target)
-    return source, target
+def re_repl(sentence, pattern, repl):
+    return pattern.sub(repl, sentence)
