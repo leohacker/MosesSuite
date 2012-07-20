@@ -6,7 +6,7 @@ import os.path
 import sys
 import shutil
 from subprocess import call
-from corpustools.langcode import LangCode
+from corpustools.lib.langcode import LangCode
 
 
 def tokenize(clean, tools, step, lang):

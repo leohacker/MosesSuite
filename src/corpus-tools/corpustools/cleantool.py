@@ -15,8 +15,8 @@ import sys
 from os import path
 
 from optparse import OptionParser
-from corpustools.config import CorpusToolsConfig
-from corpustools.config import CleanConfig
+from corpustools.config.corpustools_config import CorpusToolsConfig
+from corpustools.config.clean_config import CleanConfig
 
 
 def main(argv=sys.argv):    # pylint: disable=W0102
@@ -25,7 +25,7 @@ def main(argv=sys.argv):    # pylint: disable=W0102
 
 
 def argv2conf(argv):
-    usage = "Usage: %prog [options] corpus_directory corpus_filename src_lang tgt_lang clean_step_config"
+    usage = "Usage: %prog [options] corpus_directory corpus_filename source_lang target_lang clean_step_config"
     num_args = 5
     version = "%prog 0.2 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
     parser = OptionParser(usage=usage, version=version)

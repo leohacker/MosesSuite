@@ -3,7 +3,7 @@
 
 import errno
 import sys
-from corpustools.langcode import LangCode
+from corpustools.lib.langcode import LangCode
 
 # We handle the config parsing in this file and dispatch the tokenize
 # request to other modules which implement the tokenziation or as a adapter
