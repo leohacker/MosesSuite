@@ -144,7 +144,6 @@ def test_re_us_currency():
     repl = u''
     pattern = re.compile(pattern)
     source = regex.re_repl(source, pattern, repl)
-    print source
     assert source == u'¥  CNY $  USD'
 
 
@@ -155,8 +154,13 @@ def test_re_vertical_line():
     repl = u'vl'
     pattern = re.compile(pattern)
     source = regex.re_repl(source, pattern, repl)
-    print source
     assert source == target
 
 def test_re_url():
-    pass
+    source = u'goto http://www.sina.com.cn'
+    target = u'goto '
+    pattern = ur'((?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?)(?=($|<|{))'
+    repl = u''
+    pattern = re.compile(pattern)
+    source = regex.re_repl(source, pattern, repl)
+    assert source == target
