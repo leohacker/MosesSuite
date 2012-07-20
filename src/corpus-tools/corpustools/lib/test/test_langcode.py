@@ -2,7 +2,7 @@
 
 from nose.tools import assert_raises
 from nose.tools import raises
-from corpustools.langcode import LangCode
+from corpustools.lib.langcode import LangCode
 
 
 class TestLangCode:
