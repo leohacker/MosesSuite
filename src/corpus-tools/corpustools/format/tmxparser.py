@@ -14,7 +14,7 @@ from xml.parsers.expat import ExpatError
 from corpustools.lib.langcode import LangCode
 
 
-class TmxParser(object):
+class TMXParser(object):
     def __init__(self):
         self.source_lang = None
         self.target_lang = None
@@ -33,14 +33,14 @@ class TmxParser(object):
 
 
     @property
-    def outputdir(self):
-        return self._outputdir
+    def output_dir(self):
+        return self._output_dir
 
 
-    @outputdir.setter
-    def outputdir(self, path):
+    @output_dir.setter
+    def output_dir(self, path):
         if os.path.isdir(path):
-            self._outputdir = path
+            self._output_dir = path
 
 
     def parse_file(self, filename, source_lang, target_lang):
@@ -50,14 +50,14 @@ class TmxParser(object):
             print e
             sys.exit(e.errno)
 
-        if self.outputdir is None:
-            self.outputdir = os.path.dirname(filename)
-        stem = os.path.basename(filename).rpartition('.')[0]
+        if self.output_dir is None:
+            self.output_dir = os.path.dirname(filename)
+        stem = os.path.splitext(os.path.basename(filename))[0]
 
-        self.source_lang = source_lang
-        self.target_lang = target_lang
-        source_filepath = os.path.join(self.outputdir, stem + '.' + LangCode(source_lang).xx())
-        target_filepath = os.path.join(self.outputdir, stem + '.' + LangCode(target_lang).xx())
+        self.source_lang = LangCode(source_lang).TMX_form()
+        self.target_lang = LangCode(target_lang).TMX_form()
+        source_filepath = os.path.join(self.output_dir, stem + '.' + LangCode(source_lang).xx())
+        target_filepath = os.path.join(self.output_dir, stem + '.' + LangCode(target_lang).xx())
         try:
             self.source_fp = codecs.open(source_filepath, 'w', 'utf-8')
             self.target_fp = codecs.open(target_filepath, 'w', 'utf-8')

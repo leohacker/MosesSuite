@@ -27,7 +27,7 @@ def main(argv=sys.argv):    # pylint: disable=W0102
 def argv2conf(argv):
     usage = "Usage: %prog [options] corpus_directory corpus_basename source_lang target_lang clean_step_config"
     num_args = 5
-    version = "%prog 0.2 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
+    version = "%prog 0.8 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
     parser = OptionParser(usage=usage, version=version)
 
     parser.add_option("-c", "--config", metavar="FILE", dest="config",
