@@ -35,4 +35,4 @@ class LangCode(object):
         return '-'.join(self._langcode.upper().split('_')) if self._langcode is not None else None
 
     def TMX_form(self):
-        return self._XX_dash_XX()
+        return '-'.join(self.xx_XX().split('_'))

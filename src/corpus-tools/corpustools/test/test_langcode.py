@@ -30,4 +30,4 @@ class TestLangCode:
 
     def test_TMX_form(self):
         lc = LangCode("zh_CN")
-        assert lc.TMX_form() == "ZH-CN"
+        assert lc.TMX_form() == "zh-CN"
