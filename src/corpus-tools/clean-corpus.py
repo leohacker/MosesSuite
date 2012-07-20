@@ -11,5 +11,5 @@
 import sys
 
 if __name__ == '__main__':
-    from corpustools.cleantool import main
+    from corpustools.clean_corpus import main
     sys.exit(main(sys.argv))
