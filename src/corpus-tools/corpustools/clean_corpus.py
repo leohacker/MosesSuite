@@ -25,7 +25,7 @@ def main(argv=sys.argv):    # pylint: disable=W0102
 
 
 def argv2conf(argv):
-    usage = "Usage: %prog [options] corpus_directory corpus_filename source_lang target_lang clean_step_config"
+    usage = "Usage: %prog [options] corpus_directory corpus_basename source_lang target_lang clean_step_config"
     num_args = 5
     version = "%prog 0.2 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
     parser = OptionParser(usage=usage, version=version)
@@ -47,7 +47,7 @@ def argv2conf(argv):
     # then some settings are overrided by config file specified thru command line option.
     tools_config = CorpusToolsConfig()
     if options.config is not None:
-        tools_config.readfile(path.abspath(options.config))
+        tools_config.readfile(path.abspath(path.expanduser(options.config)))
 
     # clean tool depends on external tools/scripts, at least moses scripts.
     if len(tools_config.sections()) == 0:
@@ -57,7 +57,7 @@ def argv2conf(argv):
         sys.exit(errno.EINVAL)
 
     steps_filename = args[4]
-    clean_config = CleanConfig(path.abspath(steps_filename))
+    clean_config = CleanConfig(path.abspath(path.expanduser(steps_filename)))
     if clean_config.validate_steps() is False:
         sys.stderr.write("Failed to read clean steps definition.\n")
         sys.exit(errno.EINVAL)
@@ -65,12 +65,13 @@ def argv2conf(argv):
     clean_config.corpus_name = args[1]
     clean_config.source_lang = args[2]
     clean_config.target_lang = args[3]
-    clean_config.infile_dir  = path.abspath(args[0])
-    clean_config.outfile_dir = clean_config.infile_dir if options.output_dir is None else path.abspath(options.output_dir)
-    clean_config.working_dir = clean_config.infile_dir if options.working_dir is None else path.abspath(options.working_dir)
-
-    clean_config.log = path.abspath(options.log) if options.log is not None else \
-                        path.join(clean_config.working_dir, '.'.join([clean_config.corpus_name, "clean", "log"]))
+    clean_config.infile_dir  = path.abspath(path.expanduser(args[0]))
+    clean_config.outfile_dir = clean_config.infile_dir if options.output_dir is None \
+                                else path.abspath(path.expanduser(options.output_dir))
+    clean_config.working_dir = clean_config.infile_dir if options.working_dir is None \
+                                else path.abspath(path.expanduser(options.working_dir))
+    clean_config.log = path.abspath(path.expanduser(options.log)) if options.log is not None \
+                                else path.join(clean_config.working_dir, '.'.join([clean_config.corpus_name, "clean", "log"]))
 
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
