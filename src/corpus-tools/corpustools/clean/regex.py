@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
+# pylint: disable=I0011,C0301
+
+"""Regular expression clean module."""
+
 import codecs
 import re
 
 
-def run(clean, tools, step):
+def run(clean, tools, step):                # pylint: disable=I0011,W0613
+    """entry function."""
     ext = step["ext"]
     relist = step["list"]
 
@@ -28,6 +33,15 @@ def run(clean, tools, step):
 
 
 def compile_relist(relist):
+    """compile the regular expressions to re objects before using them to improve performance.
+
+    Args
+        :relist: a list of re clean steps.
+
+    Return
+        No returns. The compiled pattern is assigned back to clean step to replace the
+        string form of pattern.
+    """
     for item in relist:
         pattern = item["pattern"]
         flag = 0
@@ -38,6 +52,17 @@ def compile_relist(relist):
         item["pattern"] = re.compile(pattern, flag)
 
 def relist_clean(source, target, relist):
+    """clean source and target sentences with a list of re steps.
+
+    Args
+        :source: source corpus sentence.
+        :target: target corpus sentence.
+        :relist: a list of re clean steps.
+
+    Returns
+        :(source, target): cleaned corpus align.
+
+    """
     for re_step in relist:
         source = source.strip()
         target = target.strip()
@@ -55,6 +80,26 @@ def relist_clean(source, target, relist):
     return source.strip(), target.strip()
 
 def re_clean(sentence, step):
+    """clean the sentence with clean step, return cleaned corpus sentence.
+
+    Args
+        :sentence:  unicode string, corpus sentence.
+        :step:      clean step.
+
+    Example of clean step.
+
+    .. sourcecode:: bash
+
+        {
+          "description": "delete cdata",
+          "action": "replace",
+          "pattern" : "CDATA",
+          "repl" : "",
+          "apply_to": "source",
+          "unicode": true,
+          "case_insensitive": true
+        }
+    """
     pattern = step["pattern"]
     if step["action"] == "delete_line":
         return re_del(sentence, pattern)
@@ -67,7 +112,20 @@ def re_clean(sentence, step):
 
 
 def re_del(sentence, pattern):
+    """return empty string if pattern matched.
+
+    Args
+        :sentence:  unicode string, corpus sentence.
+        :pattern:   re object.
+    """
     return u'' if pattern.search(sentence) else sentence
 
 def re_repl(sentence, pattern, repl):
+    """return substituted sentence.
+
+    Args
+        :sentence:  unicode string, corpus sentences.
+        :pattern:   re object.
+        :repl:      unicode string.
+    """
     return pattern.sub(repl, sentence)

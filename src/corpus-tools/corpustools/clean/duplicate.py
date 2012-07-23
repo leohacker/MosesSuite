@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# pylint: disable=C0301,C0111
+# pylint: disable=I0011,C0301,C0111
 
 """
 Clean the duplicate sentences.

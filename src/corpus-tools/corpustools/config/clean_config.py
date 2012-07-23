@@ -126,7 +126,10 @@ class CleanConfig(object):
         self._log = value
 
     def validate_paths(self):
-        """Check the existence of files and directories in clean configuration."""
+        """Check the existence of files and directories in clean configuration
+
+        Return False if any file not exists, otherwise True."""
+
         result = True
 
         if not path.isdir(self.infile_dir):
