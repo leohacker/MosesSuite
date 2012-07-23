@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# pylint: disable=C0301,C0103,C0111
-# pylint: disable-msg=R0902
-# pylint: disable-msg=W0201
+# Copyright (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>
+# TODO: replace with real text of license.
+# Under BSD Liences.
+# Author:   Leo Jiang <leo.jiang.dev@gmail.com>
 
-"""Config module for clean config.
-"""
+# pylint: disable=I0011,C0301,C0103,R0902,W0201,C0111
+
+"""Module for class CleanConfig."""
 
 import codecs
 import errno
@@ -16,7 +18,35 @@ from os import path
 
 
 class CleanConfig(object):
+    """A class to represent corpus clean configuration.
+
+    Read the clean steps from a json foramt file and store the steps with form of list as a property
+    of configuration instance.
+
+
+    Properties::
+
+        steps:              a json style data to represent the clean steps.
+        corpus_name:        corpus file basename.
+        source_lang:        source language identifier.
+        target_lang:        target language identifier.
+        infile_dir:         input corpus directory.
+        working_dir:        working directory for cleanup, intermediate files are placed here.
+        outfile_dir:        output corpus directory.
+        log:                logger instance.
+
+    Reference:
+        A `sample configuration`_ of clean steps.
+
+    .. _sample configuration: https://github.com/leohacker/MosesSuite/blob/master/src/corpus-tools/test/cleansteps.conf
+
+    """
     def __init__(self, filename=None):
+        """initialize the clean config with optional clean step configuration file.
+
+        If not given clean step configuration, must assign the property steps with json style settings
+        after initialization.
+        """
         self._steps = None
         if filename is not None:
             try:
@@ -41,7 +71,6 @@ class CleanConfig(object):
 
     @property
     def corpus_name(self):
-        """The corpus filename without language extension."""
         return self._corpus_name
 
     @corpus_name.setter
@@ -66,7 +95,6 @@ class CleanConfig(object):
 
     @property
     def infile_dir(self):
-        """The directory to store the corpus files should be cleaned."""
         return self._infile_dir
 
     @infile_dir.setter
@@ -75,7 +103,6 @@ class CleanConfig(object):
 
     @property
     def outfile_dir(self):
-        """The directory to store the cleaned corpus files."""
         return self._outfile_dir
 
     @outfile_dir.setter
@@ -84,7 +111,6 @@ class CleanConfig(object):
 
     @property
     def working_dir(self):
-        """The working directory for corpus clean tool to store intermediate files."""
         return self._working_dir
 
     @working_dir.setter
@@ -93,7 +119,6 @@ class CleanConfig(object):
 
     @property
     def log(self):
-        """The log file for clean steps."""
         return self._log
 
     @log.setter
@@ -101,7 +126,7 @@ class CleanConfig(object):
         self._log = value
 
     def validate_paths(self):
-        """Check the existence of files and directories specified in clean configuration."""
+        """Check the existence of files and directories in clean configuration."""
         result = True
 
         if not path.isdir(self.infile_dir):
@@ -125,6 +150,7 @@ class CleanConfig(object):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
             result = False
 
+        # TODO: a logger instance ?
         try:
             fp = open(self.log, 'w')
             fp.close()
@@ -135,7 +161,7 @@ class CleanConfig(object):
         return result
 
     def corpus_w(self, lang, ext=None):
-        """Return corpus name with specified lang and ext in working directory."""
+        """Return corpus filename after joining basename with lang and ext in working directory."""
         assert lang == self.source_lang or lang == self.target_lang
         namelist = [self.corpus_name, lang]
         if ext is not None:
