@@ -1,11 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# pylint: disable=C0301,C0111
+# pylint: disable=I0011,C0301,C0103
 
-"""Corpus Clean Tool
+"""Moses Corpus Clean Tool
 
-Clean aligned corpus files according to user specified configuration.
+Clean the aligned corpus files according to user specified configuration. Most of cleanup can be implemented as
+regular expression clean, some of them can be implemented as predicate clean. Generally, we would
+run tokenization and lowercasing on corpus files also.
+
+Command line Syntax::
+
+    Usage: clean-corpus.py [options] corpus_directory corpus_basename source_lang target_lang clean_step_config
+
+    Options:
+      --version             show program's version number and exit
+      -h, --help            show this help message and exit
+      -c FILE, --config=FILE
+                            specified corpus tools config
+      -w DIR, --working-dir=DIR
+                            working directory
+      -o DIR, --output-dir=DIR
+                            output directory
+      -l FILE, --log=FILE   log file
+
+    Args:
+        corpus_directory:   Directory in which corpus files are placed.
+        corpus_basename:    Basename of corpus files, e.g. corpus is the basename of file corpus.en.
+        source_lang:        Source corpus language, for example 'en'.
+        target_lang:        Target corpus language, for example 'zh'.
+        clean_step_config:  Configuration file for clean steps.
 """
 
 import codecs
@@ -19,12 +43,26 @@ from corpustools.config.corpustools_config import CorpusToolsConfig
 from corpustools.config.clean_config import CleanConfig
 
 
-def main(argv=sys.argv):    # pylint: disable=W0102
+def main(argv):    # pylint: disable=I0011,W0102
+    """entry function."""
     tools_config, clean_config = argv2conf(argv)
     clean_corpus(tools_config, clean_config)
 
 
 def argv2conf(argv):
+    """
+    Parse command line arguments, construct configurations for clean and tools.
+
+    Parse the commandline arguments, construct clean config and tools config if specified.
+    If not specify the tools config in command line, read the system and user default settings.
+
+    Args
+        :argv: command line arguments.
+
+    Returns
+        :(tools_config, clean_config): A tuple of tools configuration and clean configuration.
+
+    """
     usage = "Usage: %prog [options] corpus_directory corpus_basename source_lang target_lang clean_step_config"
     num_args = 5
     version = "%prog 0.8 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
@@ -80,6 +118,19 @@ def argv2conf(argv):
 
 
 def clean_corpus(tools, clean):
+    """
+    Clean corpus files.
+
+    Copy the corpus files into working directory, run the user-specified clean steps, keep the result for
+    every steps, finally put the cleaned corpus files into output directory.
+
+    Args
+        :tools: configuration of external tools, e.g. tokenizers.
+        :clean: clean configuration, include filenames, directories, source and target languages, clean steps, etc.
+
+    Returns
+        Quit the program if failed.
+    """
     # prepare the corpus in working directory.
     if not path.samefile(clean.infile_dir, clean.working_dir):
         source_in = path.join(clean.infile_dir, '.'.join([clean.corpus_name, clean.source_lang]))
@@ -96,13 +147,7 @@ def clean_corpus(tools, clean):
     # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
     # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
     for step in clean.steps:
-        if step["name"] == "lowercase":
-            module_name = "corpustools.case.lowercase"
-        elif step["name"] == "tokenize":
-            module_name = "corpustools.token.tokenizer"
-        else:
-            module_name = "corpustools.clean." + step["name"]
-
+        module_name = "corpustools.clean." + step["name"]
         try:
             __import__(module_name)
             module = sys.modules[module_name]
@@ -125,6 +170,11 @@ def clean_corpus(tools, clean):
 
 
 def predicate_clean(clean, step, predicate):
+    """Clean the corpus files in a way called 'predicate clean'.
+
+    Predicate clean can be applied to those clean rules which only accept or drop
+    the align sentences from corpus according a predicate(a function return True or False).
+    """
     ext = step["ext"]
     source_corpus = clean.corpus_w(clean.source_lang)
     target_corpus = clean.corpus_w(clean.target_lang)
