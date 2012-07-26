@@ -1,13 +1,44 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# License: FreeBSD License or The BSD 2-Clause License
+
+# Copyright (c) 2012, Leo Jiang
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+
+#     Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#     Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# Author:       Leo Jiang <leo.jiang.dev@gmail.com>
+# Contributor:
+
 # pylint: disable=I0011,C0301,C0103
 
-"""Moses Corpus Clean Tool
+"""Corpus Clean Tool
 
 Clean the aligned corpus files according to user specified configuration. Most of cleanup can be implemented as
-regular expression clean, some of them can be implemented as predicate clean. Generally, we would
-run tokenization and lowercasing on corpus files also.
+regular expression clean, some of them can be implemented as predicate clean. Generally, we would run
+tokenization and lowercasing on corpus files also. Tokenization is implemented by calling external tools. A working
+directory as well as output directory can be specified in command line, otherwise all intermediate result files will
+be put in same folder as input corpus files.
 
 Command line Syntax::
 
@@ -42,30 +73,36 @@ from optparse import OptionParser
 from corpustools.config.corpustools_config import CorpusToolsConfig
 from corpustools.config.clean_config import CleanConfig
 
+__version__ = 0.8
+__years__ = "2012"
+__author__ = "Leo Jiang <leo.jiang.dev@gmail.com>"
 
 def main(argv):    # pylint: disable=I0011,W0102
     """entry function."""
-    tools_config, clean_config = argv2conf(argv)
-    clean_corpus(tools_config, clean_config)
+    tools, clean = argv2conf(argv)
+    clean_corpus(tools, clean)
 
 
 def argv2conf(argv):
-    """
-    Parse command line arguments, construct configurations for clean and tools.
+    """Parse command line arguments, and construct the clean and external tools configuration.
 
-    Parse the commandline arguments, construct clean config and tools config if specified.
-    If not specify the tools config in command line, read the system and user default settings.
+    For external tools configuration, read the system-wide and user default configuration file first.
+    If specified a configuration file in command line, read it.
+    A configuration file for clean steps must be provided in command line.
 
-    Args
-        :argv: command line arguments.
+    :param argv:    command line arguments.
 
-    Returns
-        :(tools_config, clean_config): A tuple of tools configuration and clean configuration.
+    :returns:
+        Exit program if arguments wrong, or constructing configuration failed. Else return a tuple,
+        tools configuration and clean configuration, (tools_config, clean_config).
 
     """
     usage = "Usage: %prog [options] corpus_directory corpus_basename source_lang target_lang clean_step_config"
     num_args = 5
-    version = "%prog 0.8 (c) 2012 Leo Jiang <leo.jiang.dev@gmail.com>"
+    version = "%prog {version} (c) {years} {author}".format(version=__version__,
+                                                            years=__years__,
+                                                            author=__author__
+                                                            )
     parser = OptionParser(usage=usage, version=version)
 
     parser.add_option("-c", "--config", metavar="FILE", dest="config",
@@ -82,7 +119,7 @@ def argv2conf(argv):
         parser.error("Too few/many arguments. Expected {num_args}".format(num_args=num_args))
 
     # corpus tools config(tools_config) is initialized with system and user config,
-    # then some settings are overrided by config file specified thru command line option.
+    # then some settings are overrode by config file specified thru command line option.
     tools_config = CorpusToolsConfig()
     if options.config is not None:
         tools_config.readfile(path.abspath(path.expanduser(options.config)))
@@ -109,7 +146,8 @@ def argv2conf(argv):
     clean_config.working_dir = clean_config.infile_dir if options.working_dir is None \
                                 else path.abspath(path.expanduser(options.working_dir))
     clean_config.log = path.abspath(path.expanduser(options.log)) if options.log is not None \
-                                else path.join(clean_config.working_dir, '.'.join([clean_config.corpus_name, "clean", "log"]))
+                                else path.join(clean_config.working_dir,
+                                               '.'.join([clean_config.corpus_name, "clean", "log"]))
 
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
@@ -122,14 +160,13 @@ def clean_corpus(tools, clean):
     Clean corpus files.
 
     Copy the corpus files into working directory, run the user-specified clean steps, keep the result for
-    every steps, finally put the cleaned corpus files into output directory.
+    every steps, finally put the cleaned corpus files into output directory. Exit program if can't find the
+    responding module for clean step.
 
-    Args
-        :tools: configuration of external tools, e.g. tokenizers.
-        :clean: clean configuration, include filenames, directories, source and target languages, clean steps, etc.
+    :param tools:   configuration of external tools, e.g. tokenizers.
+    :param clean:   clean configuration, include filenames, directories, source and target languages,
+                    clean steps, etc.
 
-    Returns
-        Quit the program if failed.
     """
     # prepare the corpus in working directory.
     if not path.samefile(clean.infile_dir, clean.working_dir):
@@ -173,7 +210,12 @@ def predicate_clean(clean, step, predicate):
     """Clean the corpus files in a way called 'predicate clean'.
 
     Predicate clean can be applied to those clean rules which only accept or drop
-    the align sentences from corpus according a predicate(a function return True or False).
+    the align sentences from corpus according result returned by a predicate(a function return True or False).
+
+    :param clean:       clean configuration.
+    :param step:        clean step.
+    :param predicate:   predicate function.
+
     """
     ext = step["ext"]
     source_corpus = clean.corpus_w(clean.source_lang)

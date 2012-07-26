@@ -8,3 +8,5 @@
 
 ### corpus files in corpus clean tool.
 src/corpus-tools/test/corpus.*
+doc/corpus-tools/build/
+doc/corpus-tools/Makefile

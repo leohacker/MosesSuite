@@ -59,7 +59,7 @@ The additional option can be specified:
 - ``unicode`` indicate regular expression is unicode awareness. default false.
 - ``case_insensitive`` indicate whether search is case sensitive or not, default false(sensitive).
 
-.. sourcecode:: bash
+.. code-block:: guess
 
     {
       "description": "integer",
