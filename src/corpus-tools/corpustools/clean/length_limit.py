@@ -30,13 +30,16 @@
 
 # pylint: disable=I0011,C0301
 
-"""predicate clean module."""
+"""
+Predicate Module: Length Limit
+"""
 
 def predicate(source, target, constraint):
     """
     Return False if the length of source and/or target is beyond the limit.
 
-    The available limit is 100 tokens for GIZA++ in moses system.
+    The length limit for GIZA++ in moses is 100 tokens.
+
     """
 
     if "source" in constraint:

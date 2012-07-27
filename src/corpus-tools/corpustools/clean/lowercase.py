@@ -30,7 +30,9 @@
 
 # pylint: disable=I0011,C0301,W0621
 
-"""Lowercase module for corpus clean tool."""
+"""
+Lowercase module for corpus clean tool
+"""
 
 import shutil
 

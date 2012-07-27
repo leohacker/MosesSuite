@@ -30,7 +30,9 @@
 
 # pylint: disable=I0011,C0301
 
-"""predicate clean module."""
+"""
+Predicate Module: Length Distance
+"""
 
 def predicate(source, target, constraint):
     """Return False if the distance between source and target is beyond the limit."""

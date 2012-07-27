@@ -30,7 +30,9 @@
 
 # pylint: disable=I0011,C0301
 
-"""Regular expression clean module."""
+"""
+Regular expression clean module.
+"""
 
 import codecs
 import re
@@ -61,14 +63,12 @@ def run(clean, tools, step):                # pylint: disable=I0011,W0613
 
 
 def compile_relist(relist):
-    """compile the regular expressions to re objects before using them to improve performance.
+    """Compile the regular expressions to re objects before using them to improve performance.
 
-    Args
-        :relist: a list of re clean steps.
+    :param relist: a list of re clean steps.
 
-    Return
-        No returns. The compiled pattern is assigned back to clean step to replace the
-        string form of pattern.
+    The compiled pattern is assigned back to clean step to replace the string form of pattern.
+
     """
     for item in relist:
         pattern = item["pattern"]
@@ -80,15 +80,13 @@ def compile_relist(relist):
         item["pattern"] = re.compile(pattern, flag)
 
 def relist_clean(source, target, relist):
-    """clean source and target sentences with a list of re steps.
+    """Clean source and target sentences with a list of re steps.
 
-    Args
-        :source: source corpus sentence.
-        :target: target corpus sentence.
-        :relist: a list of re clean steps.
+    :param source: source corpus sentence.
+    :param target: target corpus sentence.
+    :param relist: a list of re clean steps.
 
-    Returns
-        :(source, target): cleaned corpus align.
+    :return: (source, target), cleaned corpus align.
 
     """
     for re_step in relist:
@@ -108,11 +106,10 @@ def relist_clean(source, target, relist):
     return source.strip(), target.strip()
 
 def re_clean(sentence, step):
-    """clean the sentence with clean step, return cleaned corpus sentence.
+    """Clean the sentence with clean step, return cleaned corpus sentence.
 
-    Args
-        :sentence:  unicode string, corpus sentence.
-        :step:      clean step.
+    :param sentence:  unicode string, corpus sentence.
+    :param step:      clean step.
 
     Example of clean step.
 
@@ -127,6 +124,7 @@ def re_clean(sentence, step):
           "unicode": true,
           "case_insensitive": true
         }
+
     """
     pattern = step["pattern"]
     if step["action"] == "delete_line":
@@ -140,20 +138,20 @@ def re_clean(sentence, step):
 
 
 def re_del(sentence, pattern):
-    """return empty string if pattern matched.
+    """Return empty string if pattern matched.
 
-    Args
-        :sentence:  unicode string, corpus sentence.
-        :pattern:   re object.
+    :param sentence:  unicode string, corpus sentence.
+    :param pattern:   re object.
+
     """
     return u'' if pattern.search(sentence) else sentence
 
 def re_repl(sentence, pattern, repl):
-    """return substituted sentence.
+    """Return substituted sentence.
 
-    Args
-        :sentence:  unicode string, corpus sentences.
-        :pattern:   re object.
-        :repl:      unicode string.
+    :param sentence:  unicode string, corpus sentences.
+    :param pattern:   re object.
+    :param repl:      unicode string.
+
     """
     return pattern.sub(repl, sentence)

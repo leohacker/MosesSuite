@@ -28,8 +28,11 @@
 
 # Author:   Leo Jiang <leo.jiang.dev@gmail.com>
 
-"""Tokenize module in corpus clean tools."""
 # pylint: disable=I0011,C0301,C0103
+
+"""
+Tokenize module in corpus clean tools
+"""
 
 import errno
 import shutil
@@ -43,12 +46,11 @@ def tokenize(clean, tools, step, lang):
     Actually, this function works as router to dispatch the request to tokenizers in token subpackage.
     The modules in token subpackage are adapters to external tokenizer tools.
 
-    Args
+    :param clean:     corpus clean configuration.
+    :param tools:     external tools configuration.
+    :param step:      clean step.
+    :param lang:      specify the language of which corpus be tokenize.
 
-        :clean:     corpus clean configuration.
-        :tools:     external tools configuration.
-        :step:      clean step.
-        :lang:      specify the language of which corpus be tokenize.
     """
     xxlang = LanguageCode(lang).xx_XX()
     module_name = "corpustools.token." + step["tool"][xxlang]["name"]

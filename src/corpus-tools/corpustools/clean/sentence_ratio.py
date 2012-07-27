@@ -30,12 +30,17 @@
 
 # pylint: disable=I0011,C0301
 
-"""Predicate clean module"""
-def predicate(source, target, constraint):
-    """
-    Return False if the sentences ratio is beyond the threshold.
+"""
+Predicate Module: Sentences Ratio
+"""
 
-    The available threshold of moses system is 9.
+def predicate(source, target, constraint):
+    """Return False if the sentences ratio is beyond the threshold.
+
+    sentences ratio = source length / target length or target length / source length
+
+    The threshold of ratio in moses system is 9.
+
     """
     len_s = len(source.split(' '))
     len_t = len(target.split(' '))
