@@ -31,20 +31,22 @@
 # pylint: disable=I0011,C0301,C0103
 
 """
-A module to normalize the language code, and convert them between kinds of forms.
+LanguageCode Module.
 """
 
 import locale
 
 
-class LangCode(object):
-    """Class LangCode for representing the language code in different context.
+class LanguageCode(object):
+    """A class for language code.
 
-    The constructor accept three forms of language code as parameter: xx, xx_XX, xx-XX, case insensitive.
+    Currently constructor accept three forms of language code as parameter: xx, xx_XX,
+    xx-XX, case insensitive. And we can get kinds of forms of language code. So we can
+    convert the form of language code.
     """
 
     def __init__(self, langcode):
-        """LangCode Constructor.
+        """LanguageCode Constructor.
         Accept three forms of language code: xx, xx_XX, xx-XX, case insensitive.
         """
         # Cut the encoding part and support the form of xx-xx.
