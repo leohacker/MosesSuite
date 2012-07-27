@@ -1,9 +1,36 @@
 #!/usr/bin/env python
 # −*− coding: utf−8 −*−
 
-# pylint: disable=C0301,C0103,C0111
-# pylint: disable-msg=R0902
-# pylint: disable-msg=W0201
+# License: FreeBSD License or The BSD 2-Clause License
+
+# Copyright (c) 2012, Leo Jiang
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+
+#     Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#     Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# Author: Leo Jiang <leo.jiang.dev@gmail.com>
+
+# pylint: disable=I0011,C0301,C0103,R0902,E0202
+# pylint: disable=C0111
 
 import codecs
 import os.path
@@ -11,8 +38,7 @@ import sys
 from xml.parsers.expat import ParserCreate
 from xml.parsers.expat import ExpatError
 
-from corpustools.lib.langcode import LangCode
-
+from corpustools.lib.languagecode import LanguageCode
 
 class TMXParser(object):
     def __init__(self):
@@ -20,7 +46,14 @@ class TMXParser(object):
         self.target_lang = None
         self.source = []
         self.target = []
+
+        self._output_dir = None
+        self.source_fp = None
+        self.target_fp = None
+
         self.in_seg = False
+        self.tuv_lang = None
+        self.seg = None
 
         self.parser = ParserCreate()
         self.parser.buffer_text = True
@@ -30,7 +63,6 @@ class TMXParser(object):
         self.parser.StartElementHandler = self.start_element_handler
         self.parser.EndElementHandler = self.end_element_handler
         self.parser.CharacterDataHandler = self.char_data_handler
-
 
     @property
     def output_dir(self):
@@ -54,10 +86,10 @@ class TMXParser(object):
             self.output_dir = os.path.dirname(filename)
         stem = os.path.splitext(os.path.basename(filename))[0]
 
-        self.source_lang = LangCode(source_lang).TMX_form()
-        self.target_lang = LangCode(target_lang).TMX_form()
-        source_filepath = os.path.join(self.output_dir, stem + '.' + LangCode(source_lang).xx())
-        target_filepath = os.path.join(self.output_dir, stem + '.' + LangCode(target_lang).xx())
+        self.source_lang = LanguageCode(source_lang).TMX_form()
+        self.target_lang = LanguageCode(target_lang).TMX_form()
+        source_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(source_lang).xx())
+        target_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(target_lang).xx())
         try:
             self.source_fp = codecs.open(source_filepath, 'w', 'utf-8')
             self.target_fp = codecs.open(target_filepath, 'w', 'utf-8')

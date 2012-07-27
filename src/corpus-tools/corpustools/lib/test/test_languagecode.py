@@ -2,12 +2,12 @@
 
 from nose.tools import assert_raises
 from nose.tools import raises
-from corpustools.lib.langcode import LangCode
+from corpustools.lib.languagecode import LanguageCode
 
 
-class TestLangCode:
+class TestLanguageCode:
     def check_constructor(self, param, value):
-        lc = LangCode(param)
+        lc = LanguageCode(param)
         assert lc._langcode == value
 
     def test_constructor(self):
@@ -21,13 +21,13 @@ class TestLangCode:
             yield self.check_constructor, param, value
 
     def test_xx(self):
-        lc = LangCode("en-US")
+        lc = LanguageCode("en-US")
         assert lc.xx() == "en"
 
     def test_xx_XX(self):
-        lc = LangCode("zh_tw")
+        lc = LanguageCode("zh_tw")
         assert lc.xx_XX() == "zh_TW"
 
     def test_TMX_form(self):
-        lc = LangCode("zh_CN")
+        lc = LanguageCode("zh_CN")
         assert lc.TMX_form() == "zh-CN"

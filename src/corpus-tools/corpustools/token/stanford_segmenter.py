@@ -8,7 +8,7 @@ import codecs
 import os.path
 import sys
 from subprocess import call
-from corpustools.lib.langcode import LangCode
+from corpustools.lib.languagecode import LanguageCode
 
 
 def tokenize(infile, outfile, lang, tools, step):
@@ -24,7 +24,7 @@ def tokenize(infile, outfile, lang, tools, step):
     """
     script = os.path.join(tools["stanford_segmenter.path"], 'segment.sh')
 
-    xxlang = LangCode(lang).xx_XX()
+    xxlang = LanguageCode(lang).xx_XX()
     options = step["tool"][xxlang]
     model = options["model"]
     nbest = str(options["nbest"])

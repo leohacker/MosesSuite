@@ -34,7 +34,7 @@
 import errno
 import shutil
 import sys
-from corpustools.lib.langcode import LangCode
+from corpustools.lib.languagecode import LanguageCode
 
 
 def tokenize(clean, tools, step, lang):
@@ -50,7 +50,7 @@ def tokenize(clean, tools, step, lang):
         :step:      clean step.
         :lang:      specify the language of which corpus be tokenize.
     """
-    xxlang = LangCode(lang).xx_XX()
+    xxlang = LanguageCode(lang).xx_XX()
     module_name = "corpustools.token." + step["tool"][xxlang]["name"]
     try:
         __import__(module_name)
