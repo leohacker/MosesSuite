@@ -30,7 +30,7 @@
 
 # pylint: disable=I0011,C0301,C0103,R0902,W0201,C0111
 
-"""Module for class CleanConfig."""
+"""Clean Config Module"""
 
 import codecs
 import errno
@@ -41,10 +41,10 @@ from os import path
 
 
 class CleanConfig(object):
-    """A class of corpus clean configuration.
+    """Class of corpus clean configuration to store the info of a clean process.
 
-    Read the clean steps from a json foramt file and store the steps with form of list as a property.
-    Other properties should be assigned as correct info before starting corpus cleaning.
+    Read the clean steps from a json foramt file and store it into a list object named steps.
+    Other properties should be assigned before starting corpus cleaning.
 
     Properties::
 

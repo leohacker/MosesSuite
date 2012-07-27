@@ -30,7 +30,7 @@
 
 # pylint: disable=I0011,C0301,C0103,W0105
 
-"""Module for class CorpusToolsConfig.
+"""Corpus Tools Config Module
 
 This module define the class CorpusToolsConfig to access the configuration of external corpus tools.
 The instance will read the system-wide and user configuration automatically, and you can specify
@@ -42,13 +42,13 @@ import ConfigParser
 
 
 class CorpusToolsConfig(object):
-    """A class of storing external corpus tools configuration.
+    """Class of corpus tools configuration to store external tools info.
 
     The instance can be initialized by reading three configuration files:
     system-wide, user default and optional specified file.
     Can initialize with specified file as parameter, or read the file after initialization.
 
-    Configuration foramt: ini style
+    Configuration file foramt: ini (key=value) style.
 
     """
 
@@ -61,7 +61,8 @@ class CorpusToolsConfig(object):
     def __init__(self, filename=None):
         """Initialize tools configuration instance.
 
-        Read the system wide, default user configuration and user specified configuration if parameter given.
+        Read the system wide, default user configuration and user specified configuration
+        if parameter filename given.
         """
         self.config = ConfigParser.SafeConfigParser()
         configfiles = [CorpusToolsConfig.SYSTEM_CONFIG,
