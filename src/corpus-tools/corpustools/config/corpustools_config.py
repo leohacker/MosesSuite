@@ -35,6 +35,7 @@
 This module define the class CorpusToolsConfig to access the configuration of external corpus tools.
 The instance will read the system-wide and user configuration automatically, and you can specify
 a configuration file to load.
+
 """
 
 import os.path
@@ -63,6 +64,7 @@ class CorpusToolsConfig(object):
 
         Read the system wide, default user configuration and user specified configuration
         if parameter filename given.
+
         """
         self.config = ConfigParser.SafeConfigParser()
         configfiles = [CorpusToolsConfig.SYSTEM_CONFIG,

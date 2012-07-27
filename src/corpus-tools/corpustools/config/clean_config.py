@@ -30,7 +30,9 @@
 
 # pylint: disable=I0011,C0301,C0103,R0902,W0201,C0111
 
-"""Clean Config Module"""
+"""
+Clean Config Module
+"""
 
 import codecs
 import errno
@@ -61,6 +63,7 @@ class CleanConfig(object):
         A `sample configuration`_ of clean steps.
 
     .. _sample configuration: https://github.com/leohacker/MosesSuite/blob/master/src/corpus-tools/test/cleansteps.conf
+
 
     """
     def __init__(self, filename=None):
@@ -154,6 +157,7 @@ class CleanConfig(object):
         """Check the existence of files and directories.
 
         Return False if any file not exists, otherwise True.
+
         """
 
         result = True

@@ -31,7 +31,7 @@
 # pylint: disable=I0011,C0301,C0103
 
 """
-LanguageCode Module.
+LanguageCode Module
 """
 
 import locale
@@ -43,11 +43,14 @@ class LanguageCode(object):
     Currently constructor accept three forms of language code as parameter: xx, xx_XX,
     xx-XX, case insensitive. And we can get kinds of forms of language code. So we can
     convert the form of language code.
+
     """
 
     def __init__(self, langcode):
         """LanguageCode Constructor.
+
         Accept three forms of language code: xx, xx_XX, xx-XX, case insensitive.
+
         """
         # Cut the encoding part and support the form of xx-xx.
         langcode = langcode.split('.')[0].replace('-', '_')

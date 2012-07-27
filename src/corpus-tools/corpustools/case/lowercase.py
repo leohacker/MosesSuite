@@ -32,7 +32,7 @@
 # pylint: disable=I0011,C0301,W0621
 
 """
-Loweracse module.
+Loweracse Module
 """
 
 import codecs
