@@ -1,3 +1,5 @@
+.. _moses corpus clean tool:
+
 ***********************
 Moses corpus clean tool
 ***********************
@@ -49,9 +51,8 @@ Regular Expression Clean
 Most of cleanup are deleting strings or replacing strings in align sentences. User can specify regular
 expression in configuration. A typical regex clean step should include ``description``, ``action``, ``pattern``
 at least. The value of action can be ``delete_line``, ``delete`` or ``replace``. If action is replace,
-``repl`` is needed. pattern is a regular expression, but for complying to json format, every backslash
-should be escaped, e.g. write the regex ``\d`` as ``\\d`` in json cofiguration, the character '\' is the only
-one need to escape.
+``repl`` is needed. pattern is a regular expression, but in json format every backslash should be escaped,
+e.g. write the regex ``\d`` as ``\\d`` in json cofiguration. The only character '\' need to be escaped.
 
 The additional option can be specified:
 
@@ -76,8 +77,8 @@ The additional option can be specified:
 Predicate Clean
 ---------------
 Now we have the following predicate clean modules built in. In predicate clean module,
-the function ``predicate`` must be implemented. Please refer :ref:`predicate clean modules` for this function
-interface.
+the function ``predicate`` must be implemented. Please refer :ref:`predicate clean modules` for signatures
+of these functions.
 
 - clean align beyond the length limit.
 - clean wrong sentence ratio align
