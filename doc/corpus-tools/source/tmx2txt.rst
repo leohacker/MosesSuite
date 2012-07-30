@@ -14,5 +14,5 @@ Module API Documentation
 
 :mod:`tmx2txt` Module
 ---------------------
-.. automodule:: corpustools.tmxtxt
+.. automodule:: corpustools.tmx2txt
    :members:
