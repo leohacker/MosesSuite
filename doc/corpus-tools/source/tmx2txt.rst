@@ -11,14 +11,8 @@ TMX2Text Converter(tmx2txt.py) is designed for converting TMX file(s) into plain
 
 Module API Documentation
 ========================
-tmx2txt
--------
-.. automodule:: corpustools.tmx2txt
-   :members:
-   :member-order: bysource
 
-tmxparser
----------
-.. automodule:: corpustools.format.tmxparser
+:mod:`tmx2txt` Module
+---------------------
+.. automodule:: corpustools.tmxtxt
    :members:
-   :member-order: bysource

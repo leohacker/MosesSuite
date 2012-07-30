@@ -44,22 +44,22 @@ the instruction to get a pre-compiled binary. After installing, don't forget to 
 Module API Documentation
 ========================
 
-config.corpustools_config
--------------------------
+:mod:`config.corpustools_config` Module
+---------------------------------------
 .. automodule:: corpustools.config.corpustools_config
    :members:
 
-token.moses
------------
+:mod:`token.moses` Module
+-------------------------
 .. automodule:: corpustools.token.moses
    :members:
 
-token.stanford_segmenter
-------------------------
+:mod:`token.stanford_segmenter` Module
+--------------------------------------
 .. automodule:: corpustools.token.stanford_segmenter
    :members:
 
-token.chasen
-------------
+:mod:`token.chasen` Module
+--------------------------
 .. automodule:: corpustools.token.chasen
    :members:

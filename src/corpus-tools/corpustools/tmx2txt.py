@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# −*− coding: utf−8 −*−
+# −*− coding: utf-8 −*−
 
 # License: FreeBSD License or The BSD 2-Clause License
 
@@ -35,7 +35,7 @@
 TMX2Text Converter
 
 Convert the tmx file or tmx files in a directory into corpus files. Corpus files
-have same stem name as tmx file, but suffix with language code.
+have same basename as tmx file, but suffix with language code.
 
 Command line syntax::
 

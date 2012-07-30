@@ -102,21 +102,21 @@ Module API Documentation
 
 .. _clean corpus module:
 
-clean_corpus
-------------
+:mod:`clean_corpus` Module
+--------------------------
 .. automodule:: corpustools.clean_corpus
    :members:
    :member-order: bysource
 
 .. _clean config module:
 
-config.clean_config
--------------------
+:mod:`config.clean_config` Module
+---------------------------------
 .. automodule:: corpustools.config.clean_config
    :members:
 
-regular expression clean
-------------------------
+:mod:`clean.regex` Module
+-------------------------
 .. automodule:: corpustools.clean.regex
    :members:
    :member-order: bysource
