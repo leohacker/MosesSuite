@@ -30,20 +30,26 @@
 # Author: Leo Jiang <leo.jiang.dev@gmail.com>
 
 # pylint: disable=I0011,C0301,C0103,R0902,E0202
-# pylint: disable=C0111
+
+"""TMX Parser Module"""
 
 import codecs
 import os.path
-import sys
 from xml.parsers.expat import ParserCreate
 from xml.parsers.expat import ExpatError
 
 from corpustools.lib.languagecode import LanguageCode
 
 class TMXParser(object):
+    """TMXParser read TMX file and extract the specified languages sentence align.
+
+    This tmx parser use xml.parsers.expat as xml parser engine.
+    """
     def __init__(self):
         self.source_lang = None
         self.target_lang = None
+        self.source_filepath = None
+        self.target_filepath = None
         self.source = []
         self.target = []
 
@@ -51,6 +57,8 @@ class TMXParser(object):
         self.source_fp = None
         self.target_fp = None
 
+        # The flag 'in_seg' indicate whether current event is happened in seg.
+        # Because some tags will be embedded in sentence, we have to keep these tags in seg.
         self.in_seg = False
         self.tuv_lang = None
         self.seg = None
@@ -76,11 +84,13 @@ class TMXParser(object):
 
 
     def parse_file(self, filename, source_lang, target_lang):
+        """Expat parser callback function."""
+        # open the txm file, needn't to specify the encoding.
         try:
             fp = open(filename, 'r')
         except IOError as e:
-            print e
-            sys.exit(e.errno)
+            print  e
+            return e.errno
 
         if self.output_dir is None:
             self.output_dir = os.path.dirname(filename)
@@ -88,27 +98,31 @@ class TMXParser(object):
 
         self.source_lang = LanguageCode(source_lang).TMX_form()
         self.target_lang = LanguageCode(target_lang).TMX_form()
-        source_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(source_lang).xx())
-        target_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(target_lang).xx())
+        self.source_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(source_lang).xx())
+        self.target_filepath = os.path.join(self.output_dir, stem + '.' + LanguageCode(target_lang).xx())
         try:
-            self.source_fp = codecs.open(source_filepath, 'w', 'utf-8')
-            self.target_fp = codecs.open(target_filepath, 'w', 'utf-8')
+            self.source_fp = codecs.open(self.source_filepath, 'w', 'utf-8')
+            self.target_fp = codecs.open(self.target_filepath, 'w', 'utf-8')
         except IOError as e:
-            print e
-            sys.exit(e.errno)
+            print  e
+            return e.errno
 
         # whether success or fail, close the files and quit.
         try:
             self.parser.ParseFile(fp)
         except ExpatError as e:
-            print e
+            print "[Error] {0}:".format(os.path.basename(filename)), e
+            return e.code
+        finally:
+            fp.close()
+            self.source_fp.close()
+            self.target_fp.close()
 
-        fp.close()
-        self.source_fp.close()
-        self.target_fp.close()
+        return 0
 
 
     def start_element_handler(self, name, attributes):
+        """Expat parser callback function."""
         if (self.in_seg):
             attrlist = [ attrname + "=" + '"'+ attributes[attrname] +'"' for attrname in attributes.keys()]
             attrstr = " ".join(attrlist)
@@ -125,9 +139,13 @@ class TMXParser(object):
 
 
     def end_element_handler(self, name):
+        """Expat parser callback function."""
         if (name == u"tu"):
-            self.source_fp.write(u' '.join(self.source) + os.linesep)
-            self.target_fp.write(u' '.join(self.target) + os.linesep)
+            source = u' '.join(self.source).strip()
+            target = u' '.join(self.target).strip()
+            if len(source) > 0 and len(target) > 0:
+                self.source_fp.write(source + os.linesep)
+                self.target_fp.write(target + os.linesep)
         if (name == u"tuv"):
             self.tuv_lang = None
         if (name == u"seg"):
@@ -143,5 +161,6 @@ class TMXParser(object):
 
 
     def char_data_handler(self, data):
+        """Expat parser callback function."""
         if self.in_seg:
             self.seg += data

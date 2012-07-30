@@ -15,6 +15,6 @@ Corpus Clean Tool 0.8
 
 TMX2Text Converter 0.9
 
-* Feature List
-* placeholder
-
+* Parsing TMX file and extract the specified languages sentence align.
+* Parsing all .tmx files in a directory.
+* Logging the results when parsing tmx files in a directory.

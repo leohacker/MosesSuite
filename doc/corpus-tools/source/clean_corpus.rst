@@ -16,7 +16,7 @@ writing your clean steps.
 
 Most of clean steps can be implemented as :ref:`regular expression clean`, while others can be implemented
 as :ref:`predicate clean` which drop the corpus align if predicate is failed. The predicate clean way
-simplified the code writing of this kind of clean.
+simplified the code writing for this kind of clean.
 
 Moses corpus clean tool is designed to be very extensible by external clean modules. User can
 :ref:`write own clean module` to implement the clean step.
@@ -88,6 +88,13 @@ of these functions.
 
 Write own clean module
 ----------------------
+You can write own clean module to extend the corpus clean tool to support new clean rules. The new clean module
+should be put into the sub-package ``corpustools.clean``, and have an entry function `run(clean, tools, step)`.
+You can get whole clean information from clean configuration, and get external corpus tools from tools configuration.
+The parameter step indicate the configuration for current step. Please refer the source code for example.
+
+For predicate clean, corpus corpus tool had implemented the common code, so you only need to provide a function
+to return True or False according to current sentence align. Also please refer the built-in modules for example.
 
 
 Module API Documentation
