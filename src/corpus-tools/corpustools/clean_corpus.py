@@ -73,7 +73,7 @@ from optparse import OptionParser
 from corpustools.config.corpustools_config import CorpusToolsConfig
 from corpustools.config.clean_config import CleanConfig
 
-__version__ = 0.8
+__version__ = 0.9
 __years__ = "2012"
 __author__ = "Leo Jiang <leo.jiang.dev@gmail.com>"
 

@@ -1,10 +1,10 @@
 ChangeLog
 =========
 
-SMT Corpus Tools 0.8
+SMT Corpus Tools 0.9
 --------------------
 
-Corpus Clean Tool 0.8
+Corpus Clean Tool 0.9
 
 * Support predicate clean
 * Support regular expression clean
@@ -12,6 +12,7 @@ Corpus Clean Tool 0.8
 * Implement three built-in predicate clean: lenght diff, length limit, sentence ratio.
 * Internal language code converter
 * Support moses tokenizer, chasen and Stanford Word Segmenter.
+* Check the line number for corpus after tokenization.
 
 TMX2Text Converter 1.0
 
