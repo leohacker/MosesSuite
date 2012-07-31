@@ -61,7 +61,7 @@ from optparse import OptionParser
 from corpustools.format.tmxparser import TMXParser
 from corpustools.lines import eq_lines, lines
 
-__version__ = 0.9
+__version__ = 1.0
 __years__ = "2012"
 __author__ = "Leo Jiang <leo.jiang.dev@gmail.com>"
 
