@@ -12,7 +12,7 @@ Corpus Clean Tool 0.9
 * Implement three built-in predicate clean: lenght diff, length limit, sentence ratio.
 * Internal language code converter
 * Support moses tokenizer, chasen and Stanford Word Segmenter.
-* Check the line number for corpus after tokenization.
+* Check whether number of lines of corpus is identical after tokenization.
 
 TMX2Text Converter 1.0
 
