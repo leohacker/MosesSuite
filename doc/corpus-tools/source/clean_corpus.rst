@@ -128,3 +128,15 @@ predicate clean
 .. autofunction:: corpustools.clean.length_diff.predicate
 .. autofunction:: corpustools.clean.length_limit.predicate
 .. autofunction:: corpustools.clean.sentence_ratio.predicate
+
+:mod:`clean.tokenize` Module
+----------------------------
+.. automodule:: corpustools.clean.tokenize
+   :members:
+   :member-order: bysource
+
+:mod:`clean.lowercase` Module
+-----------------------------
+.. automodule:: corpustools.clean.lowercase
+   :members:
+   :member-order: bysource

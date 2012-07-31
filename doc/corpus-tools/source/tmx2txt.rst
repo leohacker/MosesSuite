@@ -20,3 +20,20 @@ Command line syntax::
                             output directory
       -l FILE, --log=FILE   log file
       -D, --Debug           logging debug message
+
+
+Module API Documentation
+========================
+
+:mod:`tmx2txt` Module
+---------------------
+.. automodule:: corpustools.tmx2txt
+   :members:
+   :member-order: bysource
+
+
+:mod:`format.tmxparser` Module
+------------------------------
+.. automodule:: corpustools.format.tmxparser
+   :members:
+   :member-order: bysource

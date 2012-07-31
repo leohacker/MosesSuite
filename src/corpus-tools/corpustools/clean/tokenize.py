@@ -1,4 +1,4 @@
-# −*− coding: utf−8 −*−
+# -*- coding: utf-8 -*-
 
 # License: FreeBSD License or The BSD 2-Clause License
 
