@@ -73,9 +73,9 @@ def compile_relist(relist):
     for item in relist:
         pattern = item["pattern"]
         flag = 0
-        if 'unicode' in item and item["unicode"] == True:
+        if 'unicode' not in item or item["unicode"] == True:
             flag = flag | re.UNICODE
-        if 'case_insensitive' in item and item["case_insensitive"] == True:
+        if 'case_sensitive' not in item or item["case_sensitive"] == False:
             flag = flag | re.IGNORECASE
         item["pattern"] = re.compile(pattern, flag)
 
@@ -95,7 +95,7 @@ def relist_clean(source, target, relist):
         if len(source) == 0 or len(target) == 0:
             return source, target
 
-        if u'apply_to' in re_step:
+        if 'apply_to' in re_step:
             if re_step["apply_to"] == u"source":
                 source = re_clean(source, re_step)
             elif re_step["apply_to"] == u"target":
@@ -122,7 +122,7 @@ def re_clean(sentence, step):
           "repl" : "",
           "apply_to": "source",
           "unicode": true,
-          "case_insensitive": true
+          "case_sensitive": true
         }
 
     """

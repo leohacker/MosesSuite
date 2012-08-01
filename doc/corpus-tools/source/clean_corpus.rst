@@ -57,8 +57,8 @@ e.g. write the regex ``\d`` as ``\\d`` in json cofiguration. The only character 
 The additional option can be specified:
 
 - ``apply_to`` indicate which sentence should be cleaned, default Both.
-- ``unicode`` indicate regular expression is unicode awareness. default false.
-- ``case_insensitive`` indicate whether search is case sensitive or not, default false(sensitive).
+- ``unicode`` indicate regular expression is unicode awareness. default true.
+- ``case_sensitive`` indicate whether or not search is case sensitive, default false(insensitive).
 
 .. code-block:: guess
 
@@ -69,7 +69,7 @@ The additional option can be specified:
       "repl" : "num",
       "apply_to": "source",
       "unicode": true,
-      "case_insensitive": true
+      "case_sensitive": true
     }
 
 .. _predicate clean:
