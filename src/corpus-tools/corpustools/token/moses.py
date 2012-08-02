@@ -62,9 +62,7 @@ def tokenize(infile, outfile, lang, tools, step):           # pylint: disable=I0
     except OSError as e:
         print e, ":", script
         sys.exit(e.errno)
-    in_fp.close()
-    out_fp.close()
-
-    if ret != 0:
-        print "Failed to tokenize the corpus file:", infile
-        sys.exit(ret)
+    finally:
+        in_fp.close()
+        out_fp.close()
+    return ret

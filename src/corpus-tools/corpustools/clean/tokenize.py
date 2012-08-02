@@ -57,12 +57,14 @@ def tokenize(clean, tools, step, lang):
     module_name = "corpustools.token." + step["tool"][xxlang]["name"]
     try:
         __import__(module_name)
-        module = sys.modules[module_name]
-        module.tokenize(clean.corpus_w(lang), clean.corpus_w(lang, step["ext"]), lang, tools, step)
-        shutil.copy(clean.corpus_w(lang, step["ext"]), clean.corpus_w(lang))
     except ImportError as e:
         print e
         sys.exit(errno.EPERM)
+    module = sys.modules[module_name]
+    ret = module.tokenize(clean.corpus_w(lang), clean.corpus_w(lang, step["ext"]), lang, tools, step)
+    if ret != 0:
+        print "Failed to tokenize file: {0}".format(clean.corpus_w(lang))
+        sys.exit(1)
 
 
 def run(clean, tools, step):

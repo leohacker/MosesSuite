@@ -34,8 +34,6 @@
 Lowercase module for corpus clean tool
 """
 
-import shutil
-
 from corpustools.case.lowercase import lowercase_file
 
 
@@ -51,4 +49,3 @@ def lowercase_corpus(clean, lang, ext):
     corpus = clean.corpus_w(lang)
     corpus_lc = clean.corpus_w(lang, ext)
     lowercase_file(corpus, corpus_lc)
-    shutil.copy(corpus_lc, corpus)

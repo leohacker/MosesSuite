@@ -70,8 +70,6 @@ def tokenize(infile, outfile, lang, tools, step):
     except OSError as e:
         print e, ":", script
         sys.exit(e.errno)
-    out_fp.close()
-
-    if ret != 0:
-        print "Failed to tokenzie the corpus file:", infile
-        sys.exit(ret)
+    finally:
+        out_fp.close()
+    return ret

@@ -35,14 +35,15 @@ Regular expression clean module.
 """
 
 import codecs
+import os
 import re
 
 
 def run(clean, tools, step):                # pylint: disable=I0011,W0613
     """entry function."""
     ext = step["ext"]
-    relist = step["list"]
 
+    relist = step["list"]
     compile_relist(relist)
 
     source_fp = codecs.open(clean.corpus_w(clean.source_lang), 'r', 'utf-8')
@@ -53,8 +54,8 @@ def run(clean, tools, step):                # pylint: disable=I0011,W0613
     for source_line, target_line in zip(source_fp, target_fp):
         source_line, target_line = relist_clean(source_line, target_line, relist)
         if len(source_line) != 0 and len(target_line) != 0:
-            source_ext_fp.write(source_line)
-            target_ext_fp.write(target_line)
+            source_ext_fp.write(source_line + os.linesep)
+            target_ext_fp.write(target_line + os.linesep)
 
     source_fp.close()
     target_fp.close()

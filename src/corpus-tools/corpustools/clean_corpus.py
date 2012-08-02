@@ -65,6 +65,7 @@ Command line Syntax::
 
 import codecs
 import errno
+import os
 import shutil
 import sys
 from os import path
@@ -187,14 +188,16 @@ def clean_corpus(tools, clean):
         module_name = "corpustools.clean." + step["name"]
         try:
             __import__(module_name)
-            module = sys.modules[module_name]
-            if 'predicate' in module.__dict__:
-                predicate_clean(clean, step, module.predicate)
-            else:
-                module.run(clean, tools, step)
         except ImportError as e:
             print e
             sys.exit(errno.EPERM)
+
+        module = sys.modules[module_name]
+        if 'predicate' in module.__dict__:
+            predicate_clean(clean, step, module.predicate)
+        else:
+            module.run(clean, tools, step)
+        prepare_corpus(clean, step)
 
     # suffix the final output with ext name 'clean'.
     shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'clean'))
@@ -205,6 +208,11 @@ def clean_corpus(tools, clean):
         shutil.copy(clean.corpus_w(clean.source_lang, 'clean'), clean.outfile_dir)
         shutil.copy(clean.corpus_w(clean.target_lang, 'clean'), clean.outfile_dir)
 
+def prepare_corpus(clean, step):
+    """Prepare corpus for next step."""
+    ext = step["ext"]
+    for lang in [clean.source_lang, clean.target_lang]:
+        shutil.copyfile(clean.corpus_w(lang, ext), clean.corpus_w(lang))
 
 def predicate_clean(clean, step, predicate):
     """Clean the corpus files in a way called 'predicate clean'.
@@ -237,8 +245,6 @@ def predicate_clean(clean, step, predicate):
     target_ext_fp.close()
     source_fp.close()
     target_fp.close()
-    shutil.copy(source_ext_corpus, source_corpus)
-    shutil.copy(target_ext_corpus, target_corpus)
 
 
 if __name__ == "__main__":
