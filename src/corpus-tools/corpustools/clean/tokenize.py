@@ -35,11 +35,9 @@ Tokenize module in corpus clean tools
 """
 
 import errno
-import shutil
 import sys
 
 from corpustools.lib.languagecode import LanguageCode
-from corpustools.lines import eq_lines
 
 def tokenize(clean, tools, step, lang):
     """Tokenize the corpus files in corpus clean working directroy.
@@ -71,7 +69,3 @@ def run(clean, tools, step):
     """Clean module interface function, run tokenization for corpus files."""
     tokenize(clean, tools, step, clean.source_lang)
     tokenize(clean, tools, step, clean.target_lang)
-    if not eq_lines(clean.corpus_w(clean.source_lang, step["ext"]),
-                    clean.corpus_w(clean.target_lang, step["ext"])):
-        print "Parallel corpus are mismatched after tokenization."
-        sys.exit(1)

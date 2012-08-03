@@ -29,7 +29,7 @@ def test_re_clean_repl_case_insensitive():
     step = {"action": u"replace",
             "pattern": u"(\\bKOREAN\\b)",
             "repl": u" \\1 ",
-            "case_insensitive": True
+            "case_sensitive": False
             }
     source = u"韩国Korean代表团"
     step["pattern"] = re.compile(step["pattern"], re.IGNORECASE)

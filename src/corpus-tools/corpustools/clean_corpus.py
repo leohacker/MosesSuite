@@ -73,6 +73,7 @@ from os import path
 from optparse import OptionParser
 from corpustools.config.corpustools_config import CorpusToolsConfig
 from corpustools.config.clean_config import CleanConfig
+from corpustools.lines import eq_lines
 
 __version__ = 0.9
 __years__ = "2012"
@@ -197,13 +198,20 @@ def clean_corpus(tools, clean):
             predicate_clean(clean, step, module.predicate)
         else:
             module.run(clean, tools, step)
+        # Check the line number for every step if you are sure the result should have identical lines.
+        # Anything can occurred!
+        if not eq_lines(clean.corpus_w(clean.source_lang, step["ext"]),
+                        clean.corpus_w(clean.target_lang, step["ext"])):
+            print "Error: Line number of corpus not equal after step {0}".format(step["name"])
+            sys.exit(1)
+        # Copy the corpus.ext.en to corpus.en for next step.
         prepare_corpus(clean, step)
 
-    # suffix the final output with ext name 'clean'.
+    # Suffix the final output with ext name 'clean'.
     shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'clean'))
     shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'clean'))
 
-    # copy the final cleaned corpus into output directory.
+    # Copy the final cleaned corpus into output directory.
     if not path.samefile(clean.working_dir, clean.outfile_dir):
         shutil.copy(clean.corpus_w(clean.source_lang, 'clean'), clean.outfile_dir)
         shutil.copy(clean.corpus_w(clean.target_lang, 'clean'), clean.outfile_dir)
@@ -237,9 +245,11 @@ def predicate_clean(clean, step, predicate):
     target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
     for source_line, target_line in zip(source_fp, target_fp):
+        # TODO: write the log for align sentence.
         if predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)
             target_ext_fp.write(target_line)
+
 
     source_ext_fp.close()
     target_ext_fp.close()
