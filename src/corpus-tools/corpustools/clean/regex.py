@@ -35,124 +35,153 @@ Regular expression clean module.
 """
 
 import codecs
+import logging
 import os
 import re
 
 
 def run(clean, tools, step):                # pylint: disable=I0011,W0613
     """entry function."""
-    ext = step["ext"]
+    reclean = RegexClean(clean, step)
+    reclean.run()
 
-    relist = step["list"]
-    compile_relist(relist)
+class RegexClean(object):
+    """Class RegexClean run regular expression clean on source and target corpus."""
+    def __init__(self, clean, step):
+        self.ext = step["ext"]
+        self.clean = clean
+        self.relist = step["list"]
+        self.restep = None
+        self.lineno = 0
 
-    source_fp = codecs.open(clean.corpus_w(clean.source_lang), 'r', 'utf-8')
-    target_fp = codecs.open(clean.corpus_w(clean.target_lang), 'r', 'utf-8')
-    source_ext_fp = codecs.open(clean.corpus_w(clean.source_lang, ext), 'w', 'utf-8')
-    target_ext_fp = codecs.open(clean.corpus_w(clean.target_lang, ext), 'w', 'utf-8')
+    def run(self):
+        """clean the corpus."""
+        self.compile_relist()
 
-    for source_line, target_line in zip(source_fp, target_fp):
-        source_line, target_line = relist_clean(source_line, target_line, relist)
-        if len(source_line) != 0 and len(target_line) != 0:
-            source_ext_fp.write(source_line + os.linesep)
-            target_ext_fp.write(target_line + os.linesep)
+        source_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang), 'r', 'utf-8')
+        target_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang), 'r', 'utf-8')
+        source_ext_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang, self.ext), 'w', 'utf-8')
+        target_ext_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang, self.ext), 'w', 'utf-8')
 
-    source_fp.close()
-    target_fp.close()
-    source_ext_fp.close()
-    target_ext_fp.close()
+        for source_line, target_line in zip(source_fp, target_fp):
+            self.lineno = self.lineno + 1
+            source_line, target_line = self.relist_clean(source_line, target_line)
+            if len(source_line) != 0 and len(target_line) != 0:
+                source_ext_fp.write(source_line + os.linesep)
+                target_ext_fp.write(target_line + os.linesep)
+
+        source_fp.close()
+        target_fp.close()
+        source_ext_fp.close()
+        target_ext_fp.close()
 
 
-def compile_relist(relist):
-    """Compile the regular expressions to re objects before using them to improve performance.
+    def compile_relist(self):
+        """Compile the regular expressions to re objects before using them to improve performance.
+        The compiled pattern is assigned back to clean step to replace the string form of pattern.
 
-    :param relist: a list of re clean steps.
+        """
+        for item in self.relist:
+            pattern = item["pattern"]
+            flag = 0
+            if 'unicode' not in item or item["unicode"] == True:
+                flag = flag | re.UNICODE
+            if 'case_sensitive' not in item or item["case_sensitive"] == False:
+                flag = flag | re.IGNORECASE
+            item["pattern"] = re.compile(pattern, flag)
 
-    The compiled pattern is assigned back to clean step to replace the string form of pattern.
+    def relist_clean(self, source, target):
+        """Clean source and target sentences with a list of re steps.
 
-    """
-    for item in relist:
-        pattern = item["pattern"]
-        flag = 0
-        if 'unicode' not in item or item["unicode"] == True:
-            flag = flag | re.UNICODE
-        if 'case_sensitive' not in item or item["case_sensitive"] == False:
-            flag = flag | re.IGNORECASE
-        item["pattern"] = re.compile(pattern, flag)
+        :param source: source corpus sentence.
+        :param target: target corpus sentence.
 
-def relist_clean(source, target, relist):
-    """Clean source and target sentences with a list of re steps.
+        :return: (source, target), cleaned corpus align.
 
-    :param source: source corpus sentence.
-    :param target: target corpus sentence.
-    :param relist: a list of re clean steps.
+        """
+        for re_step in self.relist:
+            self.restep = re_step
+            source = source.strip()
+            target = target.strip()
+            if len(source) == 0 or len(target) == 0:
+                return source, target
 
-    :return: (source, target), cleaned corpus align.
+            if 'apply_to' in re_step:
+                if re_step["apply_to"] == u"source":
+                    source = self.re_clean(source)
+                elif re_step["apply_to"] == u"target":
+                    target = self.re_clean(target)
+            else:
+                source = self.re_clean(source)
+                target = self.re_clean(target)
+        return source.strip(), target.strip()
 
-    """
-    for re_step in relist:
-        source = source.strip()
-        target = target.strip()
-        if len(source) == 0 or len(target) == 0:
-            return source, target
+    def re_clean(self, sentence):
+        """Clean the sentence with clean step, return cleaned corpus sentence.
 
-        if 'apply_to' in re_step:
-            if re_step["apply_to"] == u"source":
-                source = re_clean(source, re_step)
-            elif re_step["apply_to"] == u"target":
-                target = re_clean(target, re_step)
+        :param sentence:  unicode string, corpus sentence.
+
+        Example of clean step.
+
+        .. code-block:: bash
+
+            {
+              "description": "delete cdata",
+              "action": "replace",
+              "pattern" : "CDATA",
+              "repl" : "",
+              "apply_to": "source",
+              "unicode": true,
+              "case_sensitive": true,
+              "log": true
+            }
+
+        """
+        pattern = self.restep["pattern"]
+        if self.restep["action"] == "delete_line":
+            return self.re_del(sentence, pattern)
         else:
-            source = re_clean(source, re_step)
-            target = re_clean(target, re_step)
-    return source.strip(), target.strip()
-
-def re_clean(sentence, step):
-    """Clean the sentence with clean step, return cleaned corpus sentence.
-
-    :param sentence:  unicode string, corpus sentence.
-    :param step:      clean step.
-
-    Example of clean step.
-
-    .. code-block:: bash
-
-        {
-          "description": "delete cdata",
-          "action": "replace",
-          "pattern" : "CDATA",
-          "repl" : "",
-          "apply_to": "source",
-          "unicode": true,
-          "case_sensitive": true
-        }
-
-    """
-    pattern = step["pattern"]
-    if step["action"] == "delete_line":
-        return re_del(sentence, pattern)
-    else:
-        if step["action"] == "replace":
-            repl = step["repl"]
-        elif step["action"] == "delete":
-            repl = u''
-        return re_repl(sentence, pattern, repl)
+            if self.restep["action"] == "replace":
+                repl = self.restep["repl"]
+            elif self.restep["action"] == "delete":
+                repl = u''
+            return self.re_repl(sentence, pattern, repl)
 
 
-def re_del(sentence, pattern):
-    """Return empty string if pattern matched.
+    def re_del(self, sentence, pattern):
+        """Return empty string if pattern matched.
 
-    :param sentence:  unicode string, corpus sentence.
-    :param pattern:   re object.
+        :param sentence:  unicode string, corpus sentence.
+        :param pattern:   re object.
+        :param log:       whether log or not.
+        """
+        if pattern.search(sentence):
+            if "log" in self.restep and self.restep["log"]:
+                logging.info("Line {ln}: Desc={desc}: {match}".format(
+                             ln=self.lineno,
+                             desc=self.restep["description"],
+                             match=pattern.search(sentence).group()
+                             )
+                )
+            return u''
+        else:
+            return sentence
 
-    """
-    return u'' if pattern.search(sentence) else sentence
+    def re_repl(self, sentence, pattern, repl):
+        """Return substituted sentence.
 
-def re_repl(sentence, pattern, repl):
-    """Return substituted sentence.
+        :param sentence:  unicode string, corpus sentences.
+        :param pattern:   re object.
+        :param repl:      unicode string.
 
-    :param sentence:  unicode string, corpus sentences.
-    :param pattern:   re object.
-    :param repl:      unicode string.
-
-    """
-    return pattern.sub(repl, sentence)
+        """
+        if pattern.search(sentence):
+            if "log" in self.restep and self.restep["log"]:
+                for match in pattern.findall(sentence):
+                    logging.info("Line {ln}: Desc={desc}: {match}".format(
+                                 ln=self.lineno,
+                                 desc=self.restep["description"],
+                                 match=match
+                                 )
+                    )
+        return pattern.sub(repl, sentence)

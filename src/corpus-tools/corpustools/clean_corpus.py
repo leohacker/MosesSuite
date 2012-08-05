@@ -65,7 +65,7 @@ Command line Syntax::
 
 import codecs
 import errno
-import os
+import logging
 import shutil
 import sys
 from os import path
@@ -75,7 +75,7 @@ from corpustools.config.corpustools_config import CorpusToolsConfig
 from corpustools.config.clean_config import CleanConfig
 from corpustools.lines import eq_lines
 
-__version__ = 0.9
+__version__ = 1.0
 __years__ = "2012"
 __author__ = "Leo Jiang <leo.jiang.dev@gmail.com>"
 
@@ -150,6 +150,8 @@ def argv2conf(argv):
     clean_config.log = path.abspath(path.expanduser(options.log)) if options.log is not None \
                                 else path.join(clean_config.working_dir,
                                                '.'.join([clean_config.corpus_name, "clean", "log"]))
+    open(clean_config.log, 'w').close()
+    logging.basicConfig(filename=clean_config.log, level=logging.INFO, format="%(message)s")
 
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
@@ -222,7 +224,7 @@ def prepare_corpus(clean, step):
     for lang in [clean.source_lang, clean.target_lang]:
         shutil.copyfile(clean.corpus_w(lang, ext), clean.corpus_w(lang))
 
-def predicate_clean(clean, step, predicate):
+def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     """Clean the corpus files in a way called 'predicate clean'.
 
     Predicate clean can be applied to those clean rules which only accept or drop
@@ -244,12 +246,15 @@ def predicate_clean(clean, step, predicate):
     source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
     target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
+    log = step["log"]
+    lineno = 0
     for source_line, target_line in zip(source_fp, target_fp):
-        # TODO: write the log for align sentence.
+        lineno = lineno + 1
         if predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)
             target_ext_fp.write(target_line)
-
+        elif log:
+            logging.info("Line {ln}: {name}".format(ln=lineno, name=step["name"]))
 
     source_ext_fp.close()
     target_ext_fp.close()

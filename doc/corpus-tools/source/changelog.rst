@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+SMT Corpus Tools 1.0
+--------------------
+
+Corpus Clean Tool 1.0
+
+* Add the log for predicate clean and regex clean.
+
 SMT Corpus Tools 0.9
 --------------------
 
