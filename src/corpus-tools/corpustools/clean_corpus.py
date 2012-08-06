@@ -246,14 +246,13 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
     target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
-    log = step["log"]
     lineno = 0
     for source_line, target_line in zip(source_fp, target_fp):
         lineno = lineno + 1
         if predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)
             target_ext_fp.write(target_line)
-        elif log:
+        elif "log" in step and step["log"] == "lineno":
             logging.info("Line {ln}: {name}".format(ln=lineno, name=step["name"]))
 
     source_ext_fp.close()

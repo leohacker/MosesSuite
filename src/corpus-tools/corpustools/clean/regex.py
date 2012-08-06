@@ -153,16 +153,22 @@ class RegexClean(object):
 
         :param sentence:  unicode string, corpus sentence.
         :param pattern:   re object.
-        :param log:       whether log or not.
         """
         if pattern.search(sentence):
-            if "log" in self.restep and self.restep["log"]:
-                logging.info("Line {ln}: Desc={desc}: {match}".format(
+            if "log" in self.restep:
+                if self.restep["log"] == u"match":
+                    logging.info("Line {ln}: Desc={desc}: {match}".format(
                              ln=self.lineno,
                              desc=self.restep["description"],
-                             match=pattern.search(sentence).group()
+                             match=pattern.search(sentence).group(0).encode('utf-8')
                              )
-                )
+                    )
+                elif self.restep["log"] == u"lineno":
+                    logging.info("Line {ln}: Desc={desc}".format(
+                                 ln=self.lineno,
+                                 desc=self.restep["description"]
+                                 )
+                    )
             return u''
         else:
             return sentence
@@ -176,12 +182,19 @@ class RegexClean(object):
 
         """
         if pattern.search(sentence):
-            if "log" in self.restep and self.restep["log"]:
-                for match in pattern.findall(sentence):
-                    logging.info("Line {ln}: Desc={desc}: {match}".format(
+            if "log" in self.restep:
+                if  self.restep["log"] == u"match":
+                    for match in pattern.finditer(sentence):
+                        logging.info("Line {ln}: Desc={desc}: {match}".format(
+                                     ln=self.lineno,
+                                     desc=self.restep["description"],
+                                     match=match.group(0).encode('utf-8')
+                                     )
+                        )
+                elif self.restep["log"] == u"lineno":
+                    logging.info("Line {ln}: Desc={desc}".format(
                                  ln=self.lineno,
-                                 desc=self.restep["description"],
-                                 match=match
+                                 desc=self.restep["description"]
                                  )
                     )
         return pattern.sub(repl, sentence)
