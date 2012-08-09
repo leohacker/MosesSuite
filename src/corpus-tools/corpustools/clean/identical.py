@@ -28,14 +28,10 @@
 
 # Author:   Leo Jiang <leo.jiang.dev@gmail.com>
 
-# pylint: disable=I0011,C0301
-
 """
-Predicate Module: Length Distance
+Predicate Module: Identical
 """
 
-def predicate(source, target, constraint):
-    """Return True if the distance between source and target is beyond the limit."""
-    len_s = len(source.split(' '))
-    len_t = len(target.split(' '))
-    return True if abs(len_s - len_t) > constraint["diff"] else False
+def predicate(source, target, constriant):      # pylint: disable=I0011,W0613
+    """Return True if source is identical to target ."""
+    return source == target

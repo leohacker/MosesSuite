@@ -204,7 +204,7 @@ def clean_corpus(tools, clean):
         # Anything can occurred!
         if not eq_lines(clean.corpus_w(clean.source_lang, step["ext"]),
                         clean.corpus_w(clean.target_lang, step["ext"])):
-            print "Error: Line number of corpus not equal after step {0}".format(step["name"])
+            print "Error: Line number of corpus is not identical after step '{0}'.".format(step["name"])
             sys.exit(1)
         # Copy the corpus.ext.en to corpus.en for next step.
         prepare_corpus(clean, step)
@@ -249,7 +249,7 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     lineno = 0
     for source_line, target_line in zip(source_fp, target_fp):
         lineno = lineno + 1
-        if predicate(source_line, target_line, step):
+        if not predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)
             target_ext_fp.write(target_line)
         elif "log" in step and step["log"] == "lineno":

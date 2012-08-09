@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # License: FreeBSD License or The BSD 2-Clause License
@@ -31,11 +32,43 @@
 # pylint: disable=I0011,C0301
 
 """
-Predicate Module: Length Distance
+HTML Clean Module
+
+Unescape the HTML entity (name or codepoint form) to unicode char, remove html
+tags.
 """
 
-def predicate(source, target, constraint):
-    """Return True if the distance between source and target is beyond the limit."""
-    len_s = len(source.split(' '))
-    len_t = len(target.split(' '))
-    return True if abs(len_s - len_t) > constraint["diff"] else False
+import codecs
+import os
+from xml.sax import saxutils
+import HTMLParser
+
+def run(clean, tools, step):        # pylint: disable=I0011,W0613
+    """entry function."""
+    ext = step["ext"]
+
+    for lang in [clean.source_lang, clean.target_lang]:
+        unescape(clean.corpus_w(lang), clean.corpus_w(lang, ext))
+
+
+def unescape(infile, outfile):
+    """Unescape xml escape sequences, html entities and tags."""
+    infp = codecs.open(infile, 'r', 'utf-8')
+    outfp = codecs.open(outfile, 'w', 'utf-8')
+    htmlparser = HTMLParser.HTMLParser()
+
+    for line in infile:
+        # We need to use saxutils unescape() to convert the &amp; first.
+        # use case: &amp;nbsp;
+        line = saxutils.unescape(line)
+        line = u" ".join(htmlparser.unescape(line).splitlines())
+        line = clean_htmltag(line)
+        outfp.write(line.strip() + os.linesep)
+
+    infp.close()
+    outfp.close()
+
+# TODO: ...
+def clean_htmltag(line):
+    """clean html tags."""
+    return line

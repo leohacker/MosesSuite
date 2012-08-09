@@ -35,7 +35,7 @@ Predicate Module: Sentences Ratio
 """
 
 def predicate(source, target, constraint):
-    """Return False if the sentences ratio is beyond the threshold.
+    """Return True if the sentences ratio is beyond the threshold.
 
     sentences ratio = source length / target length or target length / source length
 
@@ -45,7 +45,4 @@ def predicate(source, target, constraint):
     len_s = len(source.split(' '))
     len_t = len(target.split(' '))
     ratio = (float(len_s) / len_t) if len_s > len_t else (float(len_t) / len_s)
-    if ratio > constraint["ratio"]:
-        return False
-    else:
-        return True
+    return True if ratio > constraint["ratio"] else False

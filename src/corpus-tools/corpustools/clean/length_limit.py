@@ -36,7 +36,7 @@ Predicate Module: Length Limit
 
 def predicate(source, target, constraint):
     """
-    Return False if the length of source and/or target is beyond the limit.
+    Return True if the length of source and/or target is beyond the limit.
 
     The length limit for GIZA++ in moses is 100 tokens.
 
@@ -46,12 +46,12 @@ def predicate(source, target, constraint):
         len_s = len(source.split(' '))
         (low, high) = tuple(constraint["source"])
         if len_s < low or len_s > high:
-            return False
+            return True
 
     if "target" in constraint:
         len_t = len(target.split(' '))
         (low, high) = tuple(constraint["target"])
         if len_t < low or len_t > high:
-            return False
+            return True
 
-    return True
+    return False
