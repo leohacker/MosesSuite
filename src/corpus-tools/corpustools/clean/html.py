@@ -40,8 +40,11 @@ tags.
 
 import codecs
 import os
+import re
 from xml.sax import saxutils
 import HTMLParser
+
+
 
 def run(clean, tools, step):        # pylint: disable=I0011,W0613
     """entry function."""
@@ -57,7 +60,7 @@ def unescape(infile, outfile):
     outfp = codecs.open(outfile, 'w', 'utf-8')
     htmlparser = HTMLParser.HTMLParser()
 
-    for line in infile:
+    for line in infp:
         # We need to use saxutils unescape() to convert the &amp; first.
         # use case: &amp;nbsp;
         line = saxutils.unescape(line)
@@ -68,7 +71,145 @@ def unescape(infile, outfile):
     infp.close()
     outfp.close()
 
-# TODO: ...
+
+# remove table, form, frame, embedded object.
+COMPLEX_TAGS = ['address',
+                'applet',
+                'button',
+                'caption',
+                'colgroup',
+                'dir',
+                'fieldset',
+                'form',
+                'frameset',
+                'iframe',
+                'label',
+                'legend',
+                'map',
+                'menu',
+                'object',
+                'optgroup',
+                'option',
+                'select',
+                'table',
+                'tbody',
+                'tfoot',
+                'thead',
+                'th',
+                'tr',
+                'textarea',
+                'ul',
+                'ol',
+                'dl',
+                'noframes',
+                'noscript'
+]
+
+COMPLEX_SINGLE_TAGS = ['area',
+                       'col',
+                       'frame',
+                       'img',
+                       'input',
+                       'param'
+]
+
+STRUCT_TAGS = ['blockquote',
+               'dd',
+               'li',
+               'p',
+               'td'
+]
+
+# Keep the content.
+INLINE_TAGS = ['a',
+               'abbr',
+               'acronym',
+               'b',
+               'bdo',
+               'big',
+               'cite',
+               'center',
+               'dfn',
+               'em',
+               'font',
+               'ins',
+               'i',
+               'q',
+               'small',
+               'strong',
+               'sub',
+               'sup',
+               'tt',
+               'u',
+               'var',
+               'html',
+               'body'
+]
+
+# delete the content.
+DELETE_TAGS = ['code',
+               'del',
+               'head',
+               'kbd',
+               'pre',
+               'samp',
+               'script',
+               'style',
+               's',
+               'strike',
+               'link',
+               'title',
+               'h1',
+               'h2',
+               'h3',
+               'h4',
+               'h5',
+               'h6',
+               'dt'
+]
+
+DELETE_SINGLE_TAGS = ['base',
+                      'basefont',
+                      'link',
+                      'meta',
+                      'hr'
+]
+
+
 def clean_htmltag(line):
     """clean html tags."""
+    if re.search(ur'<(%s).*?>.*</\1>' % '|'.join(COMPLEX_TAGS), line, re.IGNORECASE):
+        return u''
+    if re.search(ur'<(%s).*?/>' % '|'.join(COMPLEX_SINGLE_TAGS), line, re.IGNORECASE):
+        return u''
+    pattern_comment = ur'<!--(.*?)-->'
+    pattern_doctype = ur'(?i)<!DOCTYPE.+?>'
+    line = re.sub(pattern_comment, ur'\1', line)
+    line = re.sub(pattern_doctype, u'', line)
+
+    # <code>...<code >
+    for tag in DELETE_TAGS:
+        line = re.sub(ur'<(?i){tag}.*?>.*?</{tag} ?>'.format(tag=tag), u'', line)
+    for tag in DELETE_SINGLE_TAGS:
+        line = re.sub(ur'<(?i){tag}.*?/>'.format(tag=tag), u'', line)
+
+    # <A ...>...<a >
+    for tag in INLINE_TAGS:
+        line = re.sub(ur'<(?i){tag}.*?>(.*?)</{tag} ?>'.format(tag=tag), ur'\1', line)
+
+    for tag in STRUCT_TAGS:
+        line = re.sub(ur'<(?i){tag}.*?>(.*?)</{tag} ?>'.format(tag=tag), ur' \1 ', line)
+
+    # Remove the div and span even they are embedded themselves.
+    # The following code works if have correct div/span pairs in sentence.
+    # Otherwise some div/span will be left there, maybe not the correct standalone one.
+    for tag in ['div', 'span']:
+        pattern = ur'<(?i){tag}.*?>(.*?)</{tag} ?>'.format(tag=tag)
+        result = re.sub(pattern, ur' \1 ', line, count=1)
+        while line != result:
+            line = result
+            result = re.sub(pattern, ur' \1 ', line, count=1)
+
+    line = re.sub(ur'<br.*?/>', ur' ', line)
+
     return line

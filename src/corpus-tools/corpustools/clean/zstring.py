@@ -219,7 +219,7 @@ def run(clean, tool, step):     # pylint: disable=I0011,W0613
         outfile.close()
 
 def zstring_unescape(line, zdict):
-    """unescape the zstring name and number -form escape sequence."""
+    """unescape the zstring name form and number form of escape sequence."""
     line = u" ".join(saxutils.unescape(line, zdict).splitlines())
     pattern = ur'#\{U\+([0-9a-fA-F]{4})\}'
     line = re.sub(pattern,
