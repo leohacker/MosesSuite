@@ -9,6 +9,22 @@ clean Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`html` Module
+------------------
+
+.. automodule:: corpustools.clean.html
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`identical` Module
+-----------------------
+
+.. automodule:: corpustools.clean.identical
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`length_diff` Module
 -------------------------
 
@@ -33,6 +49,14 @@ clean Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`newline` Module
+---------------------
+
+.. automodule:: corpustools.clean.newline
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`regex` Module
 -------------------
 
@@ -49,10 +73,34 @@ clean Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`similar` Module
+---------------------
+
+.. automodule:: corpustools.clean.similar
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`tokenize` Module
 ----------------------
 
 .. automodule:: corpustools.clean.tokenize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`url` Module
+-----------------
+
+.. automodule:: corpustools.clean.url
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`zstring` Module
+---------------------
+
+.. automodule:: corpustools.clean.zstring
     :members:
     :undoc-members:
     :show-inheritance:
