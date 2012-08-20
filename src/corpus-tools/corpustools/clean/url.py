@@ -52,7 +52,7 @@ class URLClean(object):
 
     PROTOCAL = ['http', 'https', 'ftp', 'ldap']
 
-    GENERAL_ROOT = ['com', 'org', 'net', 'edu', 'gov', 'info', 'tv' ]
+    GENERAL_ROOT = ['com', 'org', 'net', 'edu', 'gov', 'info', 'int', 'tv' ]
     COUNTRY_ROOT = ['uk', 'eu',
                     'au', 'br', 'ca', 'cn', 'ch', 'cz',
                     'de', 'dk', 'es', 'fi', 'fr', 'gr',
@@ -80,7 +80,9 @@ class URLClean(object):
         # prepare the re pattern.
         proto_list = "|".join(self.PROTOCAL)
         groot_list = "|".join(self.GENERAL_ROOT)
-        croot_list = "|".join(self.COUNTRY_ROOT.extend(self.country))
+        if self.country is not None:
+            self.COUNTRY_ROOT.extend(self.country)
+        croot_list = "|".join(self.COUNTRY_ROOT)
 
         proto = ur'((?#Protocal)({proto})://)'.format(proto=proto_list)
         user = ur'(?:\\w+:\\w+@)?'
