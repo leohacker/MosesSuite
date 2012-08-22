@@ -57,7 +57,6 @@ class CleanConfig(object):
         infile_dir:         input corpus directory.
         working_dir:        working directory for cleanup, intermediate files are placed here.
         outfile_dir:        output corpus directory.
-        log:                logger instance.
 
     Reference:
         A `sample configuration`_ of clean steps.
@@ -145,14 +144,6 @@ class CleanConfig(object):
     def working_dir(self, value):
         self._working_dir = value
 
-    @property
-    def log(self):
-        return self._log
-
-    @log.setter
-    def log(self, value):
-        self._log = value
-
     def validate_paths(self):
         """Check the existence of files and directories.
 
@@ -181,14 +172,6 @@ class CleanConfig(object):
             result = False
         if not path.isfile(target_path):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
-            result = False
-
-        # TODO: a logger instance ?
-        try:
-            fp = open(self.log, 'w')
-            fp.close()
-        except IOError as e:
-            print e
             result = False
 
         return result
