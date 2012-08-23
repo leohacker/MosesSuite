@@ -37,6 +37,7 @@ Clean Config Module
 import codecs
 import errno
 import json
+import logging
 import os
 import sys
 from os import path
@@ -183,3 +184,15 @@ class CleanConfig(object):
         if ext is not None:
             namelist.insert(1, ext)
         return path.join(self.working_dir, '.'.join(namelist))
+
+    def logger(self, ext):
+        """Return logger instance for specified clean step."""
+        logger = logging.getLogger(ext)     # ext name is unique for each step.
+        logger.propagate = False
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(filename=path.join(self.working_dir, ext + '.log'),
+                                      mode='w', encoding='utf-8', delay=True)
+        formatter = logging.Formatter('%(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        return logger

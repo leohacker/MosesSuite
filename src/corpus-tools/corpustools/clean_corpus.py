@@ -53,7 +53,6 @@ Command line Syntax::
                             working directory
       -o DIR, --output-dir=DIR
                             output directory
-      -l FILE, --log=FILE   log file
 
     Args:
         corpus_directory:   Directory in which corpus files are placed.
@@ -66,6 +65,7 @@ Command line Syntax::
 import codecs
 import errno
 import logging
+import os
 import shutil
 import sys
 from os import path
@@ -113,8 +113,6 @@ def argv2conf(argv):
                       type="string", help="working directory")
     parser.add_option("-o", "--output-dir", metavar="DIR", dest="output_dir",
                       type="string", help="output directory")
-    parser.add_option("-l", "--log", metavar="FILE", dest="log",
-                      type="string", help="log file")
 
     (options, args) = parser.parse_args(argv[1:])
     if len(args) != num_args:
@@ -128,15 +126,15 @@ def argv2conf(argv):
 
     # clean tool depends on external tools/scripts, at least moses scripts.
     if len(tools_config.sections()) == 0:
-        sys.stderr.write("Corpus tools config files not exist or broken. Please check the system and user config files.\n")
-        sys.stderr.write("System: " + tools_config.SYSTEM_CONFIG + "\n")
-        sys.stderr.write("User:   " + tools_config.USER_CONFIG + "\n")
+        sys.stderr.write("Corpus tools config files not exist or broken. Please check the system and user config files." + os.linesep)
+        sys.stderr.write("System: " + tools_config.SYSTEM_CONFIG + os.linesep)
+        sys.stderr.write("User:   " + tools_config.USER_CONFIG + os.linesep)
         sys.exit(errno.EINVAL)
 
     steps_filename = args[4]
     clean_config = CleanConfig(path.abspath(path.expanduser(steps_filename)))
     if clean_config.validate_steps() is False:
-        sys.stderr.write("Failed to read clean steps definition.\n")
+        sys.stderr.write("Failed to read clean steps definition." + os.linesep)
         sys.exit(errno.EINVAL)
 
     clean_config.corpus_name = args[1]
@@ -147,12 +145,6 @@ def argv2conf(argv):
                                 else path.abspath(path.expanduser(options.output_dir))
     clean_config.working_dir = clean_config.infile_dir if options.working_dir is None \
                                 else path.abspath(path.expanduser(options.working_dir))
-    clean_config.log = path.abspath(path.expanduser(options.log)) if options.log is not None \
-                                else path.join(clean_config.working_dir,
-                                               '.'.join([clean_config.corpus_name, "clean", "log"]))
-    open(clean_config.log, 'w').close()
-    logging.basicConfig(filename=clean_config.log, level=logging.INFO, format="%(message)s")
-
     if clean_config.validate_paths() is False:
         sys.exit(errno.ENOENT)
 
@@ -185,6 +177,14 @@ def clean_corpus(tools, clean):
     shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'orig'))
     shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'orig'))
 
+    # initialize root logger.
+    logging.basicConfig(filename=os.path.join(clean.working_dir, "clean.log"),
+                        filemode="w",
+                        level=logging.INFO,
+                        format="%(levelname)s: %(asctime)s %(message)s",
+                        datefmt="%Y-%m-%d %I:%M:%S %p")
+
+    logging.info("START cleaning corpus ...")
     # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
     # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
     for step in clean.steps:
@@ -204,11 +204,13 @@ def clean_corpus(tools, clean):
         # Anything can occurred!
         if not eq_lines(clean.corpus_w(clean.source_lang, step["ext"]),
                         clean.corpus_w(clean.target_lang, step["ext"])):
-            print "Error: Line number of corpus is not identical after step '{0}'.".format(step["name"])
+            logging.critical("Line number of corpus isn't identical after step '{0}'.".format(step["name"]))
+            #sys.stderr.write("Error: Line number of corpus is not identical after step '{0}'.".format(step["name"]) + os.linesep)
             sys.exit(1)
         # Copy the corpus.ext.en to corpus.en for next step.
         prepare_corpus(clean, step)
 
+    logging.info("END cleaning corpus.")
     # Suffix the final output with ext name 'clean'.
     shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'clean'))
     shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'clean'))
@@ -246,14 +248,23 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
     target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
+    logging.info("START " + step["description"])
+    logger = clean.logger(ext)
+
     lineno = 0
+    droplines = 0
     for source_line, target_line in zip(source_fp, target_fp):
         lineno = lineno + 1
         if not predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)
             target_ext_fp.write(target_line)
-        elif "log" in step and step["log"] == "lineno":
-            logging.info("Line {ln}: {name}".format(ln=lineno, name=step["name"]))
+        else:
+            droplines = droplines + 1
+            if "log" in step and step["log"] == "lineno":
+                logger.info("Line {ln}".format(ln=lineno))
+
+    logging.info("{drop} lines are removed for {step}".format(drop=droplines, step=step["name"]))
+    logging.info("END " + step["description"])
 
     source_ext_fp.close()
     target_ext_fp.close()
