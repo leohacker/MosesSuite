@@ -35,7 +35,6 @@ Regular expression clean module.
 """
 
 import codecs
-import logging
 import os
 import re
 
@@ -49,6 +48,7 @@ class RegexClean(object):
     """Class RegexClean run regular expression clean on source and target corpus."""
     def __init__(self, clean, step):
         self.ext = step["ext"]
+        self.logger = step["logger"]
         self.clean = clean
         self.relist = step["list"]
         self.restep = None
@@ -133,7 +133,7 @@ class RegexClean(object):
               "apply_to": "source",
               "unicode": true,
               "case_sensitive": true,
-              "log": true
+              "log": "detail"
             }
 
         """
@@ -156,19 +156,13 @@ class RegexClean(object):
         """
         if pattern.search(sentence):
             if "log" in self.restep:
-                if self.restep["log"] == u"match":
-                    logging.info("Line {ln}: Desc={desc}: {match}".format(
-                             ln=self.lineno,
-                             desc=self.restep["description"],
-                             match=pattern.search(sentence).group(0).encode('utf-8')
-                             )
-                    )
+                if self.restep["log"] == u"detail":
+                    self.logger.info(
+                        "Line {ln}: Desc={desc}: {match}".format(ln=self.lineno, desc=self.restep["description"],
+                                                                 match=pattern.search(sentence).group(0).encode('utf-8'))
+                        )
                 elif self.restep["log"] == u"lineno":
-                    logging.info("Line {ln}: Desc={desc}".format(
-                                 ln=self.lineno,
-                                 desc=self.restep["description"]
-                                 )
-                    )
+                    self.logger.info("Line {ln}: Desc={desc}".format(ln=self.lineno, desc=self.restep["description"]))
             return u''
         else:
             return sentence
@@ -181,20 +175,14 @@ class RegexClean(object):
         :param repl:      unicode string.
 
         """
-        if pattern.search(sentence):
-            if "log" in self.restep:
-                if  self.restep["log"] == u"match":
-                    for match in pattern.finditer(sentence):
-                        logging.info("Line {ln}: Desc={desc}: {match}".format(
-                                     ln=self.lineno,
-                                     desc=self.restep["description"],
-                                     match=match.group(0).encode('utf-8')
-                                     )
-                        )
-                elif self.restep["log"] == u"lineno":
-                    logging.info("Line {ln}: Desc={desc}".format(
-                                 ln=self.lineno,
-                                 desc=self.restep["description"]
-                                 )
+        if "log" in self.restep and pattern.search(sentence):
+            if  self.restep["log"] == u"detail":
+                for match in pattern.finditer(sentence):
+                    self.logger.info(
+                        "Line {ln}: Desc={desc}: {match}".format(ln=self.lineno, desc=self.restep["description"],
+                                                                 match=match.group(0).encode('utf-8'))
                     )
+            elif self.restep["log"] == u"lineno":
+                self.logger.info("Line {ln}: Desc={desc}".format(ln=self.lineno, desc=self.restep["description"]))
+
         return pattern.sub(repl, sentence)

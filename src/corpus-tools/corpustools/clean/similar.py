@@ -42,10 +42,15 @@ def predicate(source, target, constraint):      # pylint: disable=I0011,W0613
     source = source.strip()
     target = target.strip()
     if source == target:
-        return True
-    if len(source) == 0:
-        return True
-    distance = float(edit_distance(source, target)) / len(source)
+        distance = 0
+    elif len(source) == 0:
+        distance = float('inf')
+    else:
+        distance = float(edit_distance(source, target)) / len(source)
+
+    if constraint["log"] == "detail":
+        constraint["logger"].info("{0}".format(distance))
+
     if distance < constraint["threshold"]:
         return True
     return False
