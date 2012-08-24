@@ -68,6 +68,7 @@ class URLClean(object):
         self.clean = clean
         self.logger = step["logger"]
         self.log = step["log"] if "log" in step else None
+        self.repl = step["repl"]
 
     def run(self):
         """run URL clean process."""
@@ -121,7 +122,7 @@ class URLClean(object):
                 elif self.log == u'lineno':
                     self.logger.info("Line {ln}".format(ln=lineno))
 
-            outfp.write(pattern.sub("$URL", line))
+            outfp.write(pattern.sub(self.repl, line))
 
         infp.close()
         outfp.close()
