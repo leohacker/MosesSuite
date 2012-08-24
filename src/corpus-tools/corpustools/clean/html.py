@@ -51,11 +51,11 @@ def run(clean, tools, step):        # pylint: disable=I0011,W0613
     ext = step["ext"]
 
     for lang in [clean.source_lang, clean.target_lang]:
-        unescape(clean.corpus_w(lang), clean.corpus_w(lang, ext))
+        clean_html(clean.corpus_w(lang), clean.corpus_w(lang, ext))
 
 
-def unescape(infile, outfile):
-    """Unescape xml escape sequences, html entities and tags."""
+def clean_html(infile, outfile):
+    """Unescape xml escape sequences, html entities and clean html tags."""
     infp = codecs.open(infile, 'r', 'utf-8')
     outfp = codecs.open(outfile, 'w', 'utf-8')
     htmlparser = HTMLParser.HTMLParser()
