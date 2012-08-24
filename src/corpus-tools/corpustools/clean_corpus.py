@@ -64,6 +64,7 @@ Command line Syntax::
 
 import codecs
 import errno
+from itertools import izip
 import logging
 import os
 import shutil
@@ -253,7 +254,9 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
 
     lineno = 0
     droplines = 0
-    for source_line, target_line in zip(source_fp, target_fp):
+
+    # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
+    for source_line, target_line in izip(source_fp, target_fp):
         lineno = lineno + 1
         if not predicate(source_line, target_line, step):
             source_ext_fp.write(source_line)

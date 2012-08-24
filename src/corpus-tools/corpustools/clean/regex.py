@@ -35,6 +35,7 @@ Regular expression clean module.
 """
 
 import codecs
+from itertools import izip
 import os
 import re
 
@@ -63,7 +64,8 @@ class RegexClean(object):
         source_ext_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang, self.ext), 'w', 'utf-8')
         target_ext_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang, self.ext), 'w', 'utf-8')
 
-        for source_line, target_line in zip(source_fp, target_fp):
+        # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
+        for source_line, target_line in izip(source_fp, target_fp):
             self.lineno = self.lineno + 1
             source_line, target_line = self.relist_clean(source_line, target_line)
             if len(source_line) != 0 and len(target_line) != 0:
