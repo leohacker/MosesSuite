@@ -45,7 +45,6 @@ from xml.sax import saxutils
 import HTMLParser
 
 
-
 def run(clean, tools, step):        # pylint: disable=I0011,W0613
     """entry function."""
     ext = step["ext"]

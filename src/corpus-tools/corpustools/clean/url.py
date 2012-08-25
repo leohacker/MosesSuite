@@ -40,10 +40,12 @@ Clean the URL-like text as I can.
 import codecs
 import re
 
+
 def run(clean, tools, step):    # pylint: disable=I0011,W0613
     """entry function."""
     urlclean = URLClean(clean, step)
     urlclean.run()
+
 
 class URLClean(object):
     """Class of cleaning the url-like text from corpus.
@@ -69,6 +71,7 @@ class URLClean(object):
         self.logger = step["logger"]
         self.log = step["log"] if "log" in step else None
         self.repl = step["repl"]
+
 
     def run(self):
         """run URL clean process."""

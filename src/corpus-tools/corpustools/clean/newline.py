@@ -18,6 +18,7 @@ import codecs
 import os
 import sys
 
+
 def run(clean, tools, step):   # pylint: disable=I0011,W0613
     """entry function."""
     for lang in [clean.source_lang, clean.target_lang]:
@@ -34,6 +35,7 @@ def normal_newlines(infile, outfile):
         out_fp.write(line + os.linesep)
     in_fp.close()
     out_fp.close()
+
 
 if __name__ == '__main__':
     normal_newlines(sys.argv[1], sys.argv[2])

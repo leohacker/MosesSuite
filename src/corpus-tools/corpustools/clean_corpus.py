@@ -189,7 +189,9 @@ def clean_corpus(tools, clean):
     # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
     # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
     for step in clean.steps:
+        logging.info("START " + step["description"])
         step["logger"] = clean.logger(step["ext"])
+
         module_name = "corpustools.clean." + step["name"]
         try:
             __import__(module_name)
@@ -209,6 +211,9 @@ def clean_corpus(tools, clean):
             logging.critical("Line number of corpus isn't identical after step '{0}'.".format(step["name"]))
             #sys.stderr.write("Error: Line number of corpus is not identical after step '{0}'.".format(step["name"]) + os.linesep)
             sys.exit(1)
+
+        logging.info("END " + step["description"])
+
         # Copy the corpus.ext.en to corpus.en for next step.
         prepare_corpus(clean, step)
 
@@ -222,11 +227,13 @@ def clean_corpus(tools, clean):
         shutil.copy(clean.corpus_w(clean.source_lang, 'clean'), clean.outfile_dir)
         shutil.copy(clean.corpus_w(clean.target_lang, 'clean'), clean.outfile_dir)
 
+
 def prepare_corpus(clean, step):
     """Prepare corpus for next step."""
     ext = step["ext"]
     for lang in [clean.source_lang, clean.target_lang]:
         shutil.copyfile(clean.corpus_w(lang, ext), clean.corpus_w(lang))
+
 
 def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     """Clean the corpus files in a way called 'predicate clean'.
@@ -250,8 +257,6 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
     target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
 
-    logging.info("START " + step["description"])
-
     lineno = 0
     droplines = 0
 
@@ -267,7 +272,6 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
                 step["logger"].info("Line {ln}".format(ln=lineno))
 
     logging.info("{drop} lines are removed for {step}".format(drop=droplines, step=step["name"]))
-    logging.info("END " + step["description"])
 
     source_ext_fp.close()
     target_ext_fp.close()
