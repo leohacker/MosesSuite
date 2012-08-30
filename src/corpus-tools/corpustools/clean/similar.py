@@ -41,6 +41,12 @@ def predicate(source, target, constraint):      # pylint: disable=I0011,W0613
     """Return True if source is similar to target."""
     source = source.strip()
     target = target.strip()
+    if constraint["threshold"] == 0:
+        if source == target:
+            return True
+        else:
+            return False
+
     if source == target:
         distance = 0
     elif len(source) == 0:
