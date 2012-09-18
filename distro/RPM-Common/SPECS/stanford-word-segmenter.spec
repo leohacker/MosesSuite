@@ -1,4 +1,4 @@
-%define release 1
+%define release 2
 %define version 12.05.22
 
 Name: 		stanford-segmenter
@@ -10,6 +10,8 @@ Packager:	Leo Jiang <leo.jiang.dev@gmail.com>
 License: 	GPL v2
 Group: 		Moses Suite
 Source: 	%{name}-2012-05-22.tar.gz
+Requires:       java
+BuildArch:      noarch
 Buildroot: 	%{_tmppath}/%{name}-root
 URL:		http://nlp.stanford.edu/software/segmenter.shtml
 
@@ -48,5 +50,8 @@ rm -rf %{buildroot}
 %{moses_suite_root}/stanford-segmenter/
 
 %changelog
+* Tue Sep 18 2012 Leo Jiang - 12.05.22-2
+- add java as dependence, set noarch as buildarch.
+
 * Tue Jun 26 2012 Leo Jiang <leo.jiang.dev@gmail.com>
 - create the rpm spec.
