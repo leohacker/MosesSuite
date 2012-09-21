@@ -40,10 +40,12 @@ Clean the URL-like text as I can.
 import codecs
 import re
 
+
 def run(clean, tools, step):    # pylint: disable=I0011,W0613
     """entry function."""
     urlclean = URLClean(clean, step)
     urlclean.run()
+
 
 class URLClean(object):
     """Class of cleaning the url-like text from corpus.
@@ -66,6 +68,10 @@ class URLClean(object):
         self.ext = step["ext"]
         self.country = step["country"] if "country" in step else None
         self.clean = clean
+        self.logger = step["logger"]
+        self.log = step["log"] if "log" in step else None
+        self.repl = step["repl"]
+
 
     def run(self):
         """run URL clean process."""
@@ -106,8 +112,20 @@ class URLClean(object):
         infp = codecs.open(infile, 'r', 'utf-8')
         outfp = codecs.open(outfile, 'w', 'utf-8')
 
+        lineno = 0
         for line in infp:
-            outfp.write(pattern.sub("$URL", line))
+            lineno = lineno + 1
+            if self.log is not None and pattern.search(line):
+                if self.log == u'detail':
+                    for match in pattern.finditer(line):
+                        self.logger.info(
+                            "Line {ln}: {match}".format(ln=lineno,
+                                                        match=match.group(0).encode('utf-8'))
+                        )
+                elif self.log == u'lineno':
+                    self.logger.info("Line {ln}".format(ln=lineno))
+
+            outfp.write(pattern.sub(self.repl, line))
 
         infp.close()
         outfp.close()

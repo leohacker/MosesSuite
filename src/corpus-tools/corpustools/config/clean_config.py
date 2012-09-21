@@ -37,6 +37,7 @@ Clean Config Module
 import codecs
 import errno
 import json
+import logging
 import os
 import sys
 from os import path
@@ -57,7 +58,6 @@ class CleanConfig(object):
         infile_dir:         input corpus directory.
         working_dir:        working directory for cleanup, intermediate files are placed here.
         outfile_dir:        output corpus directory.
-        log:                logger instance.
 
     Reference:
         A `sample configuration`_ of clean steps.
@@ -145,14 +145,6 @@ class CleanConfig(object):
     def working_dir(self, value):
         self._working_dir = value
 
-    @property
-    def log(self):
-        return self._log
-
-    @log.setter
-    def log(self, value):
-        self._log = value
-
     def validate_paths(self):
         """Check the existence of files and directories.
 
@@ -183,14 +175,6 @@ class CleanConfig(object):
             sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
             result = False
 
-        # TODO: a logger instance ?
-        try:
-            fp = open(self.log, 'w')
-            fp.close()
-        except IOError as e:
-            print e
-            result = False
-
         return result
 
     def corpus_w(self, lang, ext=None):
@@ -200,3 +184,15 @@ class CleanConfig(object):
         if ext is not None:
             namelist.insert(1, ext)
         return path.join(self.working_dir, '.'.join(namelist))
+
+    def logger(self, ext):
+        """Return logger instance for specified clean step."""
+        logger = logging.getLogger(ext)     # ext name is unique for each step.
+        logger.propagate = False
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(filename=path.join(self.working_dir, ext + '.log'),
+                                      mode='w', encoding='utf-8', delay=True)
+        formatter = logging.Formatter('%(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        return logger

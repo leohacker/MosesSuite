@@ -35,7 +35,7 @@ Regular expression clean module.
 """
 
 import codecs
-import logging
+from itertools import izip
 import os
 import re
 
@@ -49,6 +49,7 @@ class RegexClean(object):
     """Class RegexClean run regular expression clean on source and target corpus."""
     def __init__(self, clean, step):
         self.ext = step["ext"]
+        self.logger = step["logger"]
         self.clean = clean
         self.relist = step["list"]
         self.restep = None
@@ -63,7 +64,8 @@ class RegexClean(object):
         source_ext_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang, self.ext), 'w', 'utf-8')
         target_ext_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang, self.ext), 'w', 'utf-8')
 
-        for source_line, target_line in zip(source_fp, target_fp):
+        # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
+        for source_line, target_line in izip(source_fp, target_fp):
             self.lineno = self.lineno + 1
             source_line, target_line = self.relist_clean(source_line, target_line)
             if len(source_line) != 0 and len(target_line) != 0:
@@ -133,7 +135,7 @@ class RegexClean(object):
               "apply_to": "source",
               "unicode": true,
               "case_sensitive": true,
-              "log": true
+              "log": "detail"
             }
 
         """
@@ -156,19 +158,13 @@ class RegexClean(object):
         """
         if pattern.search(sentence):
             if "log" in self.restep:
-                if self.restep["log"] == u"match":
-                    logging.info("Line {ln}: Desc={desc}: {match}".format(
-                             ln=self.lineno,
-                             desc=self.restep["description"],
-                             match=pattern.search(sentence).group(0).encode('utf-8')
-                             )
-                    )
+                if self.restep["log"] == u"detail":
+                    self.logger.info(
+                        "Line {ln}: Desc={desc}: {match}".format(ln=self.lineno, desc=self.restep["description"],
+                                                                 match=pattern.search(sentence).group(0).encode('utf-8'))
+                        )
                 elif self.restep["log"] == u"lineno":
-                    logging.info("Line {ln}: Desc={desc}".format(
-                                 ln=self.lineno,
-                                 desc=self.restep["description"]
-                                 )
-                    )
+                    self.logger.info("Line {ln}: Desc={desc}".format(ln=self.lineno, desc=self.restep["description"]))
             return u''
         else:
             return sentence
@@ -181,20 +177,14 @@ class RegexClean(object):
         :param repl:      unicode string.
 
         """
-        if pattern.search(sentence):
-            if "log" in self.restep:
-                if  self.restep["log"] == u"match":
-                    for match in pattern.finditer(sentence):
-                        logging.info("Line {ln}: Desc={desc}: {match}".format(
-                                     ln=self.lineno,
-                                     desc=self.restep["description"],
-                                     match=match.group(0).encode('utf-8')
-                                     )
-                        )
-                elif self.restep["log"] == u"lineno":
-                    logging.info("Line {ln}: Desc={desc}".format(
-                                 ln=self.lineno,
-                                 desc=self.restep["description"]
-                                 )
+        if "log" in self.restep and pattern.search(sentence):
+            if  self.restep["log"] == u"detail":
+                for match in pattern.finditer(sentence):
+                    self.logger.info(
+                        "Line {ln}: Desc={desc}: {match}".format(ln=self.lineno, desc=self.restep["description"],
+                                                                 match=match.group(0).encode('utf-8'))
                     )
+            elif self.restep["log"] == u"lineno":
+                self.logger.info("Line {ln}: Desc={desc}".format(ln=self.lineno, desc=self.restep["description"]))
+
         return pattern.sub(repl, sentence)
