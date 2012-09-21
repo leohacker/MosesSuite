@@ -1,0 +1,51 @@
+======================================================================
+		     Morphological Analysis System
+			 ChaSen version 2.4.1
+======================================================================
+
+0. Files and directories
+------------------------
+
+   README                how to install and use ChaSen
+   INSTALL               general guidance how to install
+   NEWS                  version history
+   ChangeLog             change log
+   COPYING               copying of ChaSen
+   lib/                  ChaSen libraries and its sources
+   chasen/               ChaSen command and its sources
+   mkchadic/             programs for building dictionaries and its sources
+   perl/                 Perl modules to use ChaSen
+   doc/                  manuals
+
+1. Installation
+---------------------------
+
+   See INSTALL.
+
+2. How to use ChaSen system
+---------------------------
+
+   Suppose a Japanese text file `nihongo', which should be encoded in
+   Japanese EUC (Extended UNIX Code), JIS (ISO-2022-JP), Shift_JIS
+   (MS Kanji) or UTF-8.  Issue the following command:
+
+   % chasen nihongo # Use the system default encode
+
+   % chasen -i e nihongo-euc # Use EUC-JP or JIS
+
+   % chasen -i s nihongo-euc # Use Shift_JIS
+
+   % chasen -i w nihongo-euc # Use UTF-8
+
+   The result of the morphological analysis is shown on the standard
+   output.  If your terminal has a direct input facility of Japanese
+   characters, simply type 
+
+   % chasen
+
+   then input a Japanese sentence followed by a carrige return.
+
+----------------------------------------------------------------------
+See doc/manual-j.pdf for details (in Japanese).
+For further information, send an email to chasen@is.naist.jp
+ChaSen homepage: http://chasen.naist.jp/

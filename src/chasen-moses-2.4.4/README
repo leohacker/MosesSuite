@@ -1,10 +1,13 @@
+Chasen for Moses
+================
+
 Author: Leo Jiang <leo.jiang.dev@gmail.com>
 
 If you have any question about this package, please feel free to contact me
-via above email.
+via email.
 
-* What's chasen?
-----------------
+What's chasen?
+--------------
 
 Chasen is a Japanese Word Segmentor, which was developed by 奈良先端科学技術大学
 院大学情報科学研究科自然言語処理学講座(松本研究室), and depends on the
@@ -12,11 +15,19 @@ Darts(Double-ARray Trie System).
 
 You can find more information on http://sourceforge.jp/projects/chasen-legacy/.
 
-Recently version:
+I integrated Chasen, Darts(dependent file which implement the Double ARray Trie System)
+and the dictionaries into one package to simplify the compilation and depolyment. Current
+ version of these software as below:
  - Chasen 2.4.4
  - Darts 0.3.2
+ - ipadic 2.7.0
 
-* Chasen and Encoding Support
+You can find the doc about Darts 0.3.2 at http://www.chasen.org/~taku/software/darts/.
+
+Chasen for moses follow the same version as chasen.
+
+Chasen and Encoding Support
+---------------------------
 
 Originally, Chasen support the encoding EUC-JP and UTF-8 both. But
 unfortunately, we cannot support them simultaneously. We have to convert the
@@ -26,40 +37,44 @@ Makefile in dic directory in this package.
 
 Now, the chasen in this package support UTF-8.
 
-* How to use the Chasen.
-------------------------
+How to use the Chasen
+---------------------
 
-# use the chasen to tokenize the Japanese text.
-$ ./chasen -i w input.file > output.file
+    # use the chasen to tokenize the Japanese text.
+    $ ./chasen -i w input.file > output.file
 
-* How to install the chasen.
-----------------------------
+How to install chasen-moses
+---------------------------
 
-# compile and build the chasen and dic tools.
-$ cd src
-$ make
-$ make install
+    # compile and build the chasen and dic tools.
+    $ cd src
+    $ make
+    $ make install
 
 The installation step will copy the makemat and makeda into the dic directory.
 Then you can change the working directory into dic, which include all source dic
 files and grammar files, and run the make to create the matrix.cha, table.cha
 and dictionary file (default named as chadic.*) used by chasen.
 
-$ ./makemat -i w
-$ ./makeda -i w chadic *.dic
+    $ ./makemat -i w
+    $ ./makeda -i w chadic *.dic
 
 you can create the grammar and dic files just by running make.
-$ make
+    $ make
 
-* Configuration
+Configuration
+-------------
+
 Please put the configuration file 'chasenrc' with the same directory as chasen.
 This configuration file should be same encoding as what you want to support,
 i.e. UTF-8 in this package.
 
-And you can customize this file to get the different output, specify the
+You can customize chasenrc to get the different output, specify the
 location for dic file.
 
-* Motivation
+Motivation
+----------
+
 Why creating this package or not using the original tar package distributed by
 original author?
 
@@ -69,7 +84,3 @@ original author?
  - For support to run chasen on MacOSX, we have to generate some source file for
  this platform. please run the configure script in original package to create the
  config.h and darts.h for MacOSX.
-
- - I want to call the chasen in moses suite tools, and simplify the installation.
- So I put the all source files into one folder, create one binary executable
- file.

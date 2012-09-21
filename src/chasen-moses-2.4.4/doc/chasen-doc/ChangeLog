@@ -1,0 +1,716 @@
+2007-07-23  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* lib/tokenizer.c (cha_tok_parse): 
+	tokenization bug: unknown words with an half width space
+	
+2007-07-03  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* lib/tokenizer.c (cha_tok_parse): 
+	bug fix #10259 
+	https://sourceforge.jp/tracker/index.php?func=detail&aid=10259&group_id=2619&atid=9708
+	Thanks for Yasuharu Den
+	
+2007-03-30  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* lib/lisp.c (LISPBUFSIZ): 
+
+2007-03-26  TAKAOKA Kazuma  <klm@apsaras.quasi.dip.jp>
+
+	* lib/tokenizer.c (is_anno): spaces are anno[0] (SPACE_POS)
+
+2007-03-25  TAKAOKA Kazuma  <kazum-ta@jeans.ocn.ne.jp>
+
+	* lib/parse.c (set_anno):
+	* lib/print.c (print_anno):
+	print annotations correctly
+	
+	* lib/tokenizer.c (cha_tok_parse): fix for hangup when anno->len2 is 0
+
+	* lib/chalib.c (chasen_parse_segments): read outputs of ChaSen
+
+	* lib/literal.c (cha_set_encode): add '-i u' for UTF-8
+	
+	* lib/init.c (eval_chasenrc_sexp): add 'ENCODE' predicate
+	
+2007-03-15  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* lib/parse.c (set_anno): 
+	Annotation output
+	Thanks to Yasuharu Den
+	
+	* lib/print.c (print_anno): 
+	Annotation output
+	Thanks to Yasuharu Den
+
+2007-03-14  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* lib/dartsdic.cpp : 
+	for darts-0.31
+
+2007-03-13  Asahara Masayuki  <masayu-a@is.naist.jp>
+
+	* mkchadic/makemat.c (REN_TBL_MAX): 
+	for unidic RENSETU table
+
+	* lib/dartsdic.cpp (da_open): 
+	for darts-0.3 
+
+2005-12-01  Masayuki Asahara  <masayu-a@is.naist.jp>
+
+	* lib/dartsdic.cpp (da_open): 
+	[chasen-users:00567]	
+	Thanks to NOKUBI Takatsugu
+	
+	* mkchadic/makemat.c (read_rensetu): 
+	[chasen-users:00483]
+	Thanks to NOKUBI Takatsugu
+
+2004-07-13  Masayuki Asahara  <masayu-a@is.naist.jp>
+
+	* lib/dartsdic.cpp (da_build_dump): 
+	[chasen-users:00444]
+	Thanks to NOKUBI Takatsugu
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=258568
+
+
+2003-11-25  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.c (seg_tokenize): Change the format for the partial
+	analyzing mode.
+
+2003-11-21  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Marge the codes of the normal mode and the partial analyzing
+	mode.
+	
+2003-11-13  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.c (chasen_parse_segments): Optimize the loops.
+
+2003-11-11  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Add partial analyzing mode.
+
+2003-10-24  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/mmap.c (mmap_file): Shared file handles in Win32.
+
+2003-08-28  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.h: Stop copying mrph_t to mrph_data_t.
+
+2003-08-22  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (extract_yomi1): Fix bug.
+
+2003-08-21  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/tokenizer.c (cha_tok_parse): Fix for SPACE_POS.
+
+2003-08-13  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/iotool.c (cha_read_registry): Read the registry for the
+	paths of chasenrc and grammar files on Windows.
+
+2003-08-11  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (print_anno): Set uninitialized members.
+
+2003-08-08  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/translate.c (parse_lexicon): Remove constraints for the
+	inflection of compound words.
+
+2003-08-04  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (cha_printf_mrph): Fix bug with stem-less readings
+	and pronunciations.
+	(cha_printf_mrph): Print null strings for empty readings and
+	pronunciations.
+
+2003-08-03  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (print_mrph): Fix bug with the last morpheme of a
+	compound word.
+
+2003-07-31  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Use Darts version 0.2.
+
+2003-07-27  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/dartsdic.cpp (da_lookup): Use int32_t.
+
+2003-07-24  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* configure.in: Clean up scripts.
+
+2003-07-19  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/translate.c (parse_lexicon): 
+	  lib/print.c (cha_printf_mrph): New dictionary format with
+	  specified inflection form.
+
+2003-07-15  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* configure.in: '--with-iconv' -> '--with-libiconv'.
+
+2003-07-13  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (collect_all_mrph): Fix bugs.
+
+	* mkchadic/translate.c (parse_lexicon): Fix a bug; look up wrong
+	entries of a connection table.
+
+2003-07-12  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/literal.c (jlit_init): Skip unnecessary conversion.
+
+2003-07-11  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/translate.c (main): Remove tmp file.
+
+2003-07-08  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.h: Add a new member to path_t.
+
+	* lib/literal.c: Fix a janapese literal of unknown word.
+
+	* New dictionary format.
+
+2003-07-03  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/trans.c: Remove code for old style.
+
+	* lib/literal.c (jlit_init): Close iconv.
+
+2003-07-02  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* configure.in: Add checking arguments of iconv.
+
+	* chasen/chasen.c (usage): Fix typo.
+
+2003-06-27  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/literal.c: 'EUCJP' -> 'EUC-JP' and so on.
+
+	* mkchadic/makeda.cpp: Make padding for memory alignment.
+
+	* lib/dartsdic.cpp (da_open): Fix allocate order.
+	Thanks to ITO Yoshiharu <ito.yoshiharu@canon.co.jp>
+	
+	* lib/literal.c (jlit_init): Remove debug output.
+	
+2003-06-17  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* documents modification
+
+2003-06-10  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* chasen-config.in: Change dicdir.
+
+	* lib/parse.c (malloc_chars): 
+	* lib/lisp.c (malloc_char): Enlarge buffers of memory chunk.
+
+	* lib/print.c (print_best_path): Fix an uninitialized member.
+	Thanks to TORIGOE Makoto <torigoe655@oki.com>
+
+2003-06-09  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* configure.in: Remove unused checks.
+
+	* lib/htobe.h, lib/htobe.c: Remove.
+
+	* mkchadic/convdic.c: Remove convdic.
+
+2003-06-05  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/lisp.c (myscanf): Fix a bug with SJIS.
+
+2003-06-04  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/literal.c: For UTF-8 and other encoding schemata.
+	To specify an encoding schema for chasen, makemat, makeint,
+	use -i option with e (EUC-JP), s (Shift_JIS), w (UTF-8),
+	and a (ISO-8859-1).
+
+2003-04-19  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/mmap.c: Fix bug for Win32.
+
+2003-02-27  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/print.c (copy_mbstr): Use cha_tok_mblen().
+	(comm_prefix_len): Use cha_tok_mblen().
+	(set_ruby): Use cha_tok_mblen().
+
+2003-02-25  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Remove PATRICIA and SUFARY.
+
+	* lib/dartsdic.cpp (da_open): Use mmaped objects for Darts.
+
+2003-02-16  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/makeda.cpp (DataFile::write): Use unsigned short for
+	the length of info.
+	* lib/dartsdic.cpp (da_get_data): Use unsigned short for the
+	length of info.
+
+2003-02-15  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/dartsdic.cpp (da_lookup): Fix for Darts-0.0.9.
+
+2003-02-14  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/block.c: Use cha_block_t objects for mrph2_t buffer.
+
+	* lib/print.c (extract_yomi1): Fix for 2nd byte of Shift-JIS.
+
+	* Remove codes for -DSJIS.
+
+2003-02-13  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Use larger buffers for literals.
+
+	* mkchadic/makemat.c: Enlarge the buffer for RENSETSU table.
+
+	* lib/print.c (cha_printf_mrph): Bug fix.
+
+2003-01-08  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/mmap.c: Use MapViewOfFile() for Win32.
+
+	* Remove BUNSETSU-KUGIRI.
+
+2002-12-02  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.c: Kill chasen_command() again.
+
+	* chasen/server.c, chasen/client.c: Kill server/client mode again.
+
+2002-11-28  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Add a module for double-array dictionaries with Darts.
+	<http://cl.aist-nara.ac.jp/~taku-ku/software/darts/>
+
+	Double-array dictionaries are encoded with host byte order.
+
+2002-06-18  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* chasen/chasend: A new ChaSen server in Perl.
+
+	* lib/jfgets.c (cha_jfgets): Fix a bug; reading only one file with
+	-j option.
+	Thanks to HARADA Masanori <harada@ingrid.org>
+	(cha_fget_line): Use ungetc().
+
+2002-02-28  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/chalib.c: Assign proper encoding to Cha_encode.
+
+2002-02-26  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* mkchadic/sortdic.c: Bug fix for realloc size.
+	* lib/chalib.h: PAT_DIC_NUM is increased from 5 to 32.
+	* lib/tokenizer.c: tokenization rule for Shift-JIS.
+	* mkchadic/sortdic.c: new option `-q'.
+
+2002-02-08  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* release-2.2.9
+
+2002-02-06  KITAUCHI Akira <kitauchi@rd.nttdata.co.jp>
+
+	* new option (´ðËÜ·Á ---) in cforms.cha
+	      changing BASE_FORM name
+
+2002-01-05  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+        * lib/tokenizer.c (cha_tok_parse): Fix wrong size of buffer.
+        Thanks to HAMATANI Chihiro <hamatani@rsk.ricoh.co.jp>
+
+        * lib/init.c (cha_init): the tokenizer is never destroyed.
+
+        * configure.in: Change the order of AC_PROG_CC and AM_PROG_LIBTOOL.
+
+2001-12-25  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+        
+        * lib/chalib.c (chasen_command):
+        * mkchadic/makeint.c (main):
+        * mkchadic/mkary.c (open_array_file):
+        * mkchadic/sortdic.c (sortdic): Open files in binary mode.
+
+2001-12-11  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+        * lib/jfgets.c (cha_fget_line): Fix a buffer-overrun bug.
+
+2001-07-23  Masayuki Asahara  <masayu-a@cacao.aist-nara.ac.jp>
+
+	* release-2.2.8
+
+2001-07-08  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/parse.c (cha_parse_sentence): Fix another EOS bug.
+
+2001-06-21  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/parse.c
+	  lib/tokenizer.h
+	  lib/tokenizer.c
+	  lib/chalib.c	
+	
+	CHASEN_ENCODE_EUC is renamed to CHASEN_ENCODE_EUCJP.
+
+2001-06-20  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/parse.c (cha_parse_sentence): 
+	
+	the bug for the Sentence End processing.
+	
+2001-04-17  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/parse.c (cha_parse_sentence): 
+
+	the bug for the Sentence End processing.
+
+2001-03-21  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/htobe.h : Bug fix for bigendian.
+
+	Thanks to FUJIMOTO Hisakuni <hisa@imasy.or.jp>
+
+2001-03-16  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/print.c (print_mrph): 
+
+	the bugs for compound words fixed.
+
+2001-03-16  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/htobe.c: Big-endian <-> host byte order converter.
+
+	* mkchadic/mkary.c: Remove unused functions.
+
+2001-03-15  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/chadic.h : 
+	* lib/chalib.c: 	
+	* lib/chalib.h: 
+	* lib/init.c : 
+	* lib/print.c :
+	* mkchadic/trans.c : 
+	
+                JSTR_COMPO ->JSTR_COMPOUND      
+	        ESTR_COMPO -> ESTR_COMPOUND      
+		JSTR_OUTPUT_COMPO -> JSTR_OUTPUT_COMPOUND
+                ESTR_OUTPUT_COMPO -> ESTR_OUTPUT_COMPOUND
+		JSTR_COMPO_POS -> JSTR_COMPOSIT_POS
+                ESTR_COMPO_POS -> ETSR_COMPOSIT_POS
+		Cha_hinsi[].comp -> Cha_hinsi[].composit
+	        _hinsi_t.comp  -> _hinsi_t.composit
+	        Cha_output_compo -> Cha_output_iscompound
+	        _mrph2_t.comp  -> _mrph2_t.compound
+
+	the name conversion:
+	   "composit" used for composit POS
+           "compound" used for compounding word
+	
+2001-03-15  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/print.c (print_best_path): 
+	         (concat_composit_mrph): 
+	     (concat_composit_mrph_end): 
+
+	The bug 
+	     "When we define two or more `COMPOSIT POS',
+              it cannot analyze the sequence of two kinds of `COMPOSIT POS'."
+	is fixed.
+
+2001-03-14  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/print.c (print_best_path): 
+	         (concat_composit_mrph): 
+	     (concat_composit_mrph_end): the "11" bug fixed.
+
+	But there is one more bug.
+	When we define two or more "COMPOSIT POS",
+	it cannot analyze the sequence of two kinds of "COMPOSIT POS".
+
+2001-03-12  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/chadic.h (JSTR_BASE_FORM): 
+	* lib/chadic.h (ESTR_BASE_FORM1): 	
+	* lib/chadic.h (ESTR_BASE_FORM2): 		
+	* lib/katuyou.c (read_type_form): 
+
+	JSTR_BASIC_FORM  -> JSTR_BASE_FORM
+	ESTR_BASIC_FORM  -> ESTR_BASE_FORM1, ESTR_BASE_FORM2
+
+	`BASICFORM' is changed to `BASEFORM' or `STEMFORM'
+	
+2001-03-08  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/tokenizer.h, lib/tokenizer.c: New tokenizer functions.
+
+	* -L option becomes exclusive. So 'j' means 'je' in the old style.
+
+	* lib/parse.c (cha_parse_sentence): Split the function.
+
+	* tests/test-tokenizer.c: A test set of the tokenizer module.
+
+2001-02-28  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* chasen-config.in : new option for chasenrc path
+	                     `chasen-config --chasenrc-path`
+
+2001-02-27  Masayuki Asahara <masayu-a@is.aist-nara.ac.jp>
+
+	* add comments in English
+
+2001-02-24  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Reformat the sources in BSD-like style.
+
+2001-02-24  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	release-2.2.3
+	
+2001-02-23  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* Rewrite function definitions in ANSI-C style.
+
+	* Remove the code of KoCha.
+
+	* lib/select.c (sa_common_prefix_search): The loop can't find
+	end-of-string. Fix.
+
+2001-02-22  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+        release 2.2.2
+	
+2001-02-21  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/Makefile.am (DEFS): default chasenrc path (PREFIX/etc)
+
+	* configure.in: version number update
+	* README: version number update
+	* README-ja: version number update
+	
+	* doc/manual.tex: 
+	* doc/manual-j.tex: modification for chasenrc path
+
+2001-02-19  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/parse.c (utf8_check_undefword_len): Add UTF-8 tokenizer.
+	(iso8859_check_undefword_len): Add ISO-8859-* tokenizer.
+
+2001-02-13  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* doc/manual.tex: 
+	* doc/manual-j.tex: modification for manual.
+
+2001-02-13  Masayuki Asahara  <masayu-a@is.aist-nara.ac.jp>
+
+	* lib/*.c: 
+	  lib/*.h: 
+	  chasen/chasen.c: merged from the branch `release-2_2_0-patches'
+
+	  `fclose' problem 
+	  Thanks to Takahiro Kambe <taca@sky.yamashina.kyoto.jp>
+	
+	  the branch `release-2_2_0-patches' are obsolete.
+	  
+2001-02-03  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/patfile.c: Use fgetc and fputc instead of egetc and eputc.
+
+2001-02-02  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/print.c: new output format '%i0'.
+
+2001-01-14  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/jfgets.c: Modified a bug in -j option.
+	Now replaces "KANJI SPACES \n SPACES KANJI" with
+ 	"KANJI KANJI" again.
+
+2001-01-07  Taku Kudoh  <taku-ku@is.aist-nara.ac.jp>
+
+	* chasen.spec.in: fix options to compile on RedHat 7.0
+
+2000-12-07  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/sortdic.c: Arrange some codes.
+
+	* lib/iotool.c (cha_realloc): New.
+	
+	* mkchadic/convary.c: A new command for making chadic.ary.
+
+2000-12-06  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/morph.c: Remove.
+
+	* lib/select.c, lib/pat.h: Fix macros.
+
+2000-12-06  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/chadic.h: Moved JM_* macros in mkchadic/convdic.c.
+
+2000-12-06  Masayuki Asahara  <masayu-a@cacao.aist-nara.ac.jp>
+
+	* doc/manual*: remove the discription of IPADIC
+	(the discription of ipadic is moved in ipadic package)
+
+2000-12-06  Taku Kudoh <taku-ku@is.aist-nara.ac.jp>
+
+	* Add chasen.spec.in: spec file for RedHat rpm package
+	
+2000-12-05  Masayuki Asahara  <masayu-a@cacao.aist-nara.ac.jp>
+
+	* lib/Makefile.am (DEFS): 
+	change dic directory (dic -> ipadic)
+	the default dictionary is ipadic
+
+2000-12-05  Masayuki Asahara  <asahara@parasite.aist-nara.ac.jp>
+
+	* lib/Makefile.am (DEFS): 
+	change dic directory (ipadic -> dic)
+
+2000-12-05  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/makemat.c (main): Specifies input file by the first
+	argument.
+
+	* mkchadic/morph.c (insert_dic_data): pat_get_text never returns
+	NULL. Fix the loop condition.
+
+2000-12-05  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/chadic.h, mkchadic/trans.c: Accepts "Fuka-Joho"
+	(in Japanese) as the infromation field in the dictionaries.
+
+2000-12-04  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chadic.h: cell_t is renamed chasen_cell_t.
+
+2000-12-01  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/dic.c(cha_get_mrph_data): Move from parse.c.
+
+2000-11-28  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* perl/: Text::ChaSen 1.03
+
+2000-11-24  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* mkchadic/mkary.c, lib/select.c: SUFARY use network byte order.
+
+	* lib/pat.h (pat_t): A new structure for PATRICIA.
+
+2000-11-24  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/pat.c: pat_memcmp().
+	* lib/parse.c: Modified a bug enbuged at 2000-11-22.
+
+2000-11-22  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/mmap.c: New.
+
+	* lib/chalib.h, lib/chadic.h: Use prototype declarations.
+
+2000-11-21  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/parse.c, lib/sufary.h, lib/select.c: Rewrite
+	sa_common_prefix_search().
+
+	* lib/sufary.h, lib/select.c, lib/chfile.c: Remove unused codes.
+
+2000-11-18  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* chasen/server.c: Use waitpid() instead of wait3().
+
+2000-11-17  TAKAOKA Kazuma  <kazuma-t@is.aist-nara.ac.jp>
+
+	* lib/chalib.c, lib/parse.c: Change the type of Suf_dicfile. 
+
+2000-11-12  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/parse.c: Updated.
+
+2000-11-06  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* lib/chasen.h: New file.
+
+	* configure.in: version 2.1.0, LTVERSION="0:1:0".
+
+	* lib/Makefile.am: RCPATH=$(pkgdatadir)/ipadic/chasenrc
+
+	* dic/: Removed. Also removed from AC_OUTPUT in configure.in.
+
+2000-11-05  Akira Kitauchi  <kitauchi@rd.nttdata.co.jp>
+
+	* mkchadic/trans.c: Binary format for chadic.int.
+
+	* lib/chalib.h: Don't include chadic.h and pat.h.
+
+	* mkchadic/makemat.c: Extended format of matrix.cha to
+	compress file size.
+
+	* Deleted the macro VGRAM and no longer support bi-gram version.
+
+	* lib/pat.h: Removed macros for debugging such as OL().
+
+	* Defined a macro PATHTYPE_MSDOS.
+
+	* Use the macro HAVE_MMAP instead of NO_MMAP.
+
+	* chasen/chasmpl.c: Global variable `opt' for cc.
+
+	* Renamed so many symbol names.
+
+2000-08-21  Satoru Takabayashi  <satoru-t@is.aist-nara.ac.jp>
+
+	* maintMakefile (cxref): Add new rules: cxref and global.
+
+	* chasen-config.in (libs): Add --mkchadic and --dicdir option.
+
+	* lib/print.c (set_cha_fput): Remove #ifndef HAVE_PROTO_FPUTC
+	... #endif conditions.
+
+2000-08-19  Satoru Takabayashi  <satoru-t@is.aist-nara.ac.jp>
+
+	* dic/makedic.bat: Removed.
+
+	* chkconf.sh: Removed.
+
+	* lib/print.c (set_cha_fput): Remove #ifndef HAVE_PROTO_FPUTC ...
+	#endif
+
+	* dic/Makefile.am: New file.
+
+	* chasen-config.in: New file.
+
+	* INSTALL-ja: New file.
+	<http://www.sra.co.jp/people/m-kasahr/install/INSTALL-ja>
+
+	* README-ja: Renamed from README.ja
+
+	* mkchadic/Makefile.am: New file.
+
+	* chasen/Makefile.am: New file.
+
+	* lib/Makefile.am: New file.
+
+	* prolog/Makefile.am: New file.
+
+	* doc/Makefile.am: New file.
+
+	* Makefile.am: New file.
+
+	* COPYING: Copied from doc/manual-j.tex
+
+	* NEWS: Renamed from CHANGES.
+
+	* Modernization started! Employ autoconf, automake and libtool.
+
