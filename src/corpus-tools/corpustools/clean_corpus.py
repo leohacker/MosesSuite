@@ -162,7 +162,7 @@ def clean_corpus(tools, clean):
 
     Copy the corpus files into working directory, run the user-specified clean steps, keep the result for
     every steps, finally put the cleaned corpus files into output directory. Exit program if can't find the
-    responding module for clean step.
+    corresponding module for clean step.
 
     :param tools:   configuration of external tools, e.g. tokenizers.
     :param clean:   clean configuration, include filenames, directories, source and target languages,

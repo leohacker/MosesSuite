@@ -49,7 +49,7 @@ def predicate(source, target, constraint):      # pylint: disable=I0011,W0613
 
     if source == target:
         distance = 0
-    elif len(source) == 0:
+    elif len(source) == 0 or len(target) == 0:
         distance = float('inf')
     else:
         distance = float(edit_distance(source, target)) / len(source)
