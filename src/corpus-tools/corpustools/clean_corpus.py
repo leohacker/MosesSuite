@@ -34,11 +34,15 @@
 
 """Corpus Clean Tool
 
-Clean the aligned corpus files according to user specified configuration. Most of cleanup can be implemented as
-regular expression clean, some of them can be implemented as predicate clean. Generally, we would run
-tokenization and lowercasing on corpus files also. Tokenization is implemented by calling external tools. A working
-directory as well as output directory can be specified in command line, otherwise all intermediate result files will
-be put in same folder as input corpus files.
+Clean the aligned corpus files according to user specified configuration. User specify the directory and basename
+of corpus files, the language pairs in command line, and the last argument is the configuration of clean steps.
+A working directory as well as output directory can be specified in command line, otherwise all intermediate
+result files will be put in same folder as input corpus files.
+
+User can implement own clean modules with python language, and put them into folder "corpustools.clean".
+Most of cleanup steps can be implemented as regular expression clean, some of them can be implemented as
+predicate clean. Generally, we would run tokenization and lowercasing on corpus files also.
+Tokenization is implemented by calling external tools.
 
 Command line Syntax::
 
@@ -238,8 +242,9 @@ def prepare_corpus(clean, step):
 def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
     """Clean the corpus files in a way called 'predicate clean'.
 
-    Predicate clean can be applied to those clean rules which only accept or drop
-    the align sentences from corpus according result returned by a predicate(a function return True or False).
+    Predicate clean can be invoked for those clean rules which only accept or drop
+    the align sentences from corpus according result returned by a predicate function
+    (a function return True or False). Drop the align if predicate is True.
 
     :param clean:       clean configuration.
     :param step:        clean step.
@@ -271,7 +276,7 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
             if "log" in step and step["log"] == "lineno":
                 step["logger"].info("Line {ln}".format(ln=lineno))
 
-    logging.info("{drop} lines are removed for {step}".format(drop=droplines, step=step["name"]))
+    logging.info("Totally {drop} lines are removed in step of {step}".format(drop=droplines, step=step["name"]))
 
     source_ext_fp.close()
     target_ext_fp.close()
