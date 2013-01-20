@@ -4,7 +4,6 @@
 import re
 from corpustools.clean.regex import RegexClean
 
-
 class TestRegexClean():
     def __init__(self):
         self.regexclean = RegexClean(None, {"ext": "re", "list": []})

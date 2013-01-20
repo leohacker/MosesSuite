@@ -45,11 +45,13 @@ def run(clean, tools, step):                # pylint: disable=I0011,W0613
     reclean = RegexClean(clean, step)
     reclean.run()
 
+
 class RegexClean(object):
     """Class RegexClean run regular expression clean on source and target corpus."""
     def __init__(self, clean, step):
         self.ext = step["ext"]
-        self.logger = step["logger"]
+        if hasattr(step, "logger"):
+            self.logger = step["logger"]
         self.clean = clean
         self.relist = step["list"]
         self.restep = None
