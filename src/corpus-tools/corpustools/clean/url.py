@@ -40,6 +40,8 @@ Clean the URL-like text as I can.
 import codecs
 import re
 
+def validate(step):
+    return True
 
 def run(clean, tools, step):    # pylint: disable=I0011,W0613
     """entry function."""

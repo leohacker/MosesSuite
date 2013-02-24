@@ -39,6 +39,8 @@ from itertools import izip
 import os
 import re
 
+def validate(step):
+    return True
 
 def run(clean, tools, step):                # pylint: disable=I0011,W0613
     """entry function."""

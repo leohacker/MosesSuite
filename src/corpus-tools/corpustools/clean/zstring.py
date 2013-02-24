@@ -204,6 +204,9 @@ import os
 import re
 from xml.sax import saxutils
 
+def validate(step):
+    return True
+
 def run(clean, tool, step):     # pylint: disable=I0011,W0613
     """entry function."""
     ext = step["ext"]

@@ -33,6 +33,8 @@
 """
 Predicate Module: Sentences Ratio
 """
+def validate(step):
+    return True
 
 def predicate(source, target, constraint):
     """Return True if the sentences ratio is beyond the threshold.

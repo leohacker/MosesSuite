@@ -34,6 +34,9 @@
 Predicate Module: Length Distance
 """
 
+def validate(step):
+    return True
+
 def predicate(source, target, constraint):
     """Return True if the distance between source and target is beyond the limit."""
     len_s = len(source.split(' '))

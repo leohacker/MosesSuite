@@ -37,6 +37,9 @@ Predicate Module: Similar
 
 from nltk.metrics import edit_distance
 
+def validate(step):
+    return True
+
 def predicate(source, target, constraint):      # pylint: disable=I0011,W0613
     """Return True if source is similar to target."""
     source = source.strip()

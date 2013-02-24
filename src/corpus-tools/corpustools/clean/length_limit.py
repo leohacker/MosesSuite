@@ -34,6 +34,9 @@
 Predicate Module: Length Limit
 """
 
+def validate(step):
+    return True
+
 def predicate(source, target, constraint):
     """
     Return True if the length of source and/or target is beyond the limit.
