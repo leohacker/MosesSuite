@@ -2,7 +2,7 @@
 
 # License: FreeBSD License or The BSD 2-Clause License
 
-# Copyright (c) 2012, Leo Jiang
+# Copyright (c) 2012, 2013, Leo Jiang
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 # pylint: disable=I0011,C0301,C0103,R0902,W0201,C0111
 
 """
-Clean Config Module
+Corpus Clean Config Module
 """
 
 import codecs
@@ -39,12 +39,12 @@ import errno
 import json
 import logging
 import os
+import os.path
 import sys
-from os import path
 
 
-class CleanConfig(object):
-    """Class of corpus clean configuration to store the info of a clean process.
+class CorpusCleanConfig(object):
+    """Corpus clean configuration to store the info of a clean process.
 
     Read the clean steps from a json foramt file and store it into a list object named steps.
     Other properties should be assigned before starting corpus cleaning.
@@ -55,9 +55,9 @@ class CleanConfig(object):
         corpus_name:        corpus file basename.
         source_lang:        source language identifier.
         target_lang:        target language identifier.
-        infile_dir:         input corpus directory.
-        working_dir:        working directory for cleanup, intermediate files are placed here.
-        outfile_dir:        output corpus directory.
+        infile_dir:         input directory.
+        working_dir:        working directory in which intermediate files are placed.
+        outfile_dir:        output directory.
 
     Reference:
         A `sample configuration`_ of clean steps.
@@ -66,24 +66,20 @@ class CleanConfig(object):
 
 
     """
-    def __init__(self, filename=None):
-        """initialize the clean config with optional clean step configuration file.
-
-        If not given clean step configuration, must assign the property steps with json style settings
-        after initialization.
-
-        :param filename:    clean step config filename.
-
-        """
+    def __init__(self):
+        """initialize the clean config."""
         self._steps = None
-        if filename is not None:
-            try:
-                fp = codecs.open(filename, 'r', 'utf8')
-                self._steps = json.load(fp)
-            except IOError as e:
-                print e
-            except ValueError as e:
-                print e
+
+    def read_cleansteps(self, filename):
+        try:
+            fp = codecs.open(filename, 'r', 'utf8')
+            self._steps = json.load(fp)
+        except IOError as e:
+            print >> sys.stderr, e
+            self._steps = None
+        except ValueError as e:
+            print >> sys.stderr, e
+            self._steps = None
 
     @property
     def steps(self):
@@ -93,9 +89,41 @@ class CleanConfig(object):
     def steps(self, step_list):
         self._steps = step_list
 
-    # TODO: check more situations.
     def validate_steps(self):
-        return False if self._steps is None else True
+        """Validate the modules and the config of clean steps.
+
+        The function would check whether can import the clean modules, and whether each module
+        have the essential functions: validate, run/predicate. And it would run the function
+        validate() from each module to validate the config. Return False if anything wrong.
+
+        """
+        if self._steps is None:
+            print >> sys.stderr, "Failed to read the config of clean steps."
+            return False
+
+        ret = True
+        for step in self._steps:
+            module_name = "corpustools.clean." + step["name"]
+            try:
+                __import__(module_name)
+            except ImportError as e:
+                print >> sys.stderr, e
+                ret = False
+                continue
+
+            # module must have functions: validate, run or predicate.
+            module = sys.modules[module_name]
+            if not hasattr(module, "validate"):
+                ret = False
+                continue
+            elif not ( hasattr(module, "run") or hasattr(module, "predicate") ):
+                ret = False
+                continue
+
+            if module.validate(step) == False:
+                ret = False
+
+        return ret
 
     @property
     def corpus_name(self):
@@ -145,48 +173,16 @@ class CleanConfig(object):
     def working_dir(self, value):
         self._working_dir = value
 
-    def validate_paths(self):
-        """Check the existence of files and directories.
-
-        Return False if any file not exists, otherwise True.
-
-        """
-
-        result = True
-
-        if not path.isdir(self.infile_dir):
-            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.infile_dir + "\n")
-            result = False
-
-        if not path.isdir(self.outfile_dir):
-            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.outfile_dir + "\n")
-            result = False
-
-        if not path.isdir(self.working_dir):
-            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + self.working_dir + "\n")
-            result = False
-
-        source_path = path.join(self.infile_dir, '.'.join([self.corpus_name, self.source_lang]))
-        target_path = path.join(self.infile_dir, '.'.join([self.corpus_name, self.target_lang]))
-        if not path.isfile(source_path):
-            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + source_path + "\n")
-            result = False
-        if not path.isfile(target_path):
-            sys.stderr.write(os.strerror(errno.ENOENT) + ": " + target_path + "\n")
-            result = False
-
-        return result
-
-    def corpus_w(self, lang, ext=None):
-        """Return corpus filename after joining basename with lang and ext in working directory."""
-        assert lang == self.source_lang or lang == self.target_lang
-        namelist = [self.corpus_name, lang]
+    def corpus_filename(self, ext=None):
+        """Return corpus filename."""
+        namelist = [self.corpus_name, '-'.join([self.source_lang, self.target_lang])]
         if ext is not None:
-            namelist.insert(1, ext)
-        return path.join(self.working_dir, '.'.join(namelist))
+            namelist.append(ext)
+        namelist.append("bitext")
+        return '.'.join(namelist)
 
     def logger(self, ext):
-        """Return logger instance for specified clean step."""
+        """instantiate logger for specified clean step."""
         logger = logging.getLogger(ext)     # ext name is unique for each step.
         logger.propagate = False
         logger.setLevel(logging.INFO)

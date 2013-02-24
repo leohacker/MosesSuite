@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 
-from corpustools.config.corpustools_config import CorpusToolsConfig
+from corpustools.config.corpustools import CorpusToolsConfig
 
 
-class TestToolsConfig():
+class TestCorpusToolsConfig():
     def setup(self):
         self.config = CorpusToolsConfig()
 

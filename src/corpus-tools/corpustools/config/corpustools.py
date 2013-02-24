@@ -2,7 +2,7 @@
 
 # License: FreeBSD License or The BSD 2-Clause License
 #
-# Copyright (c) 2012, Leo Jiang
+# Copyright (c) 2012, 2013, Leo Jiang
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
 
 # pylint: disable=I0011,C0301,C0103,W0105
 
-"""Corpus Tools Config Module
+"""External Corpus Tools Config Module
 
 This module define the class CorpusToolsConfig to access the configuration of external corpus tools.
 The instance will read the system-wide and user configuration automatically, and you can specify
@@ -43,7 +43,7 @@ import ConfigParser
 
 
 class CorpusToolsConfig(object):
-    """Class of corpus tools configuration to store external tools info.
+    """Configuration to store external tools info.
 
     The instance can be initialized by reading three configuration files:
     system-wide, user default and optional specified file.
@@ -60,7 +60,7 @@ class CorpusToolsConfig(object):
     """User default configuration."""
 
     def __init__(self, filename=None):
-        """Initialize tools configuration instance.
+        """Initialize external tools configuration instance.
 
         Read the system wide, default user configuration and user specified configuration
         if parameter filename given.

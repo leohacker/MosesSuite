@@ -1,23 +1,20 @@
 #-*- coding: utf-8 -*-
 
-from corpustools.config.clean_config import CleanConfig
+from corpustools.config.corpusclean import CorpusCleanConfig
 from nose.tools import assert_raises
 
-class TestCleanConfig():
+class TestCorpusCleanConfig():
     def setup(self):
-        self.config = CleanConfig()
+        self.config = CorpusCleanConfig()
         self.config.working_dir = "wdir"
         self.config.corpus_name = "corpus"
         self.config.source_lang = "en"
         self.config.target_lang = "fr"
 
-    def test_corpus_w_ext(self):
-        path = self.config.corpus_w("en", "ext")
-        assert(path == "wdir/corpus.ext.en")
+    def test_corpus_filename(self):
+        filename = self.config.corpus_filename("ext")
+        assert(filename == "corpus.en-fr.ext.bitext")
 
-    def test_corpus_w_noext(self):
-        path = self.config.corpus_w("fr")
-        assert(path == "wdir/corpus.fr")
-
-    def test_corpus_w_param_assert(self):
-        assert_raises(AssertionError, self.config.corpus_w, "de")
+    def test_corpus_filename_noext(self):
+        path = self.config.corpus_filename()
+        assert(path == "corpus.en-fr.bitext")
