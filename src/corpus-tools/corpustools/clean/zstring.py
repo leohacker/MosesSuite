@@ -37,30 +37,30 @@ Support conversion for Adobe's ZString escape sequence.
 """
 
 ESCAPESEQ_TABLE = {     # zstring1.5
-    ur"\\" : u"\u005C",     # REVERSE SOLIDUS
-    ur"\"" : u"\u0022",     # QUOTATION MARK  APL quote
-    ur"\n" : u"\u000A",     # LINE FEED
-    ur"\r" : u"\u000D",     # CARRIAGE RETURN
-    ur"\t" : u"\u0009",     # HORIZONTAL TABULATION
-    ur"\b" : u"\u0008",     # BACK SPACE
-    ur"\v" : u" ",
-    ur"\f" : u" ",
+    # ur"\\" : u"\u005C",     # REVERSE SOLIDUS
+    # ur"\"" : u"\u0022",     # QUOTATION MARK  APL quote
+    # ur"\n" : u"\u000A",     # LINE FEED
+    # ur"\r" : u"\u000D",     # CARRIAGE RETURN
+    # ur"\t" : u"\u0009",     # HORIZONTAL TABULATION
+    # ur"\b" : u"\u0008",     # BACK SPACE
+    # ur"\v" : u" ",
+    # ur"\f" : u" ",
 
-    ur"^^" : u"\u005E",     # ^ CIRCUMFLEX ACCENT
+    # ur"^^" : u"\u005E",     # ^ CIRCUMFLEX ACCENT
     ur"^Q" : u"\u0022",     # " QUOTATION MARK  APL quote
-    ur"^[" : u"\u201C",     # “ LEFT DOUBLE QUOTATION MARK  DOUBLE TURNED COMMA QUOTATION MARK
-    ur"^]" : u"\u201D",     # ” RIGHT DOUBLE QUOTATION MARK DOUBLE COMMA QUOTATOIN MARK
-    ur"^{" : u"\u2018",     # ‘ LEFT SINGLE QUOTATION MARK  SINGLE TURNED COMMA QUOTATION MARK
-    ur"^}" : u"\u2019",     # ’ RIGHT SINGLE QUOTATION MARK SINGLE COMMA QUOTATION MARK
-    ur"^C" : u"\u00A9",     # © COPYRIGHT SIGN
-    ur"^R" : u"\u00AE",     # ® REGISTERED SIGN REGISTERED TRADE MARK SIGN
-    ur"^T" : u"\u2122",     # ™ TRADEMARK SIGN
-    ur"^D" : u"\u00B0",     # ° DEGREE SIGN
-    ur"^B" : u"\u2022",     # • BULLET  black small circle
-    ur"^#" : u"\u2318",     # ⌘ PLACE OF INTEREST SIGN  COMMAND KEY
-    ur"^!" : u"\u00AC",     # ¬ NOT SIGN
-    ur"^|" : u"\u2206",     # ∆ INCREMENT   Laplace operator forward difference
-    ur"^S" : u"\u2211",     # ∑ N-ARY SUMMATION summation sign
+    # ur"^[" : u"\u201C",     # “ LEFT DOUBLE QUOTATION MARK  DOUBLE TURNED COMMA QUOTATION MARK
+    # ur"^]" : u"\u201D",     # ” RIGHT DOUBLE QUOTATION MARK DOUBLE COMMA QUOTATOIN MARK
+    # ur"^{" : u"\u2018",     # ‘ LEFT SINGLE QUOTATION MARK  SINGLE TURNED COMMA QUOTATION MARK
+    # ur"^}" : u"\u2019",     # ’ RIGHT SINGLE QUOTATION MARK SINGLE COMMA QUOTATION MARK
+    # ur"^C" : u"\u00A9",     # © COPYRIGHT SIGN
+    # ur"^R" : u"\u00AE",     # ® REGISTERED SIGN REGISTERED TRADE MARK SIGN
+    # ur"^T" : u"\u2122",     # ™ TRADEMARK SIGN
+    # ur"^D" : u"\u00B0",     # ° DEGREE SIGN
+    # ur"^B" : u"\u2022",     # • BULLET  black small circle
+    # ur"^#" : u"\u2318",     # ⌘ PLACE OF INTEREST SIGN  COMMAND KEY
+    # ur"^!" : u"\u00AC",     # ¬ NOT SIGN
+    # ur"^|" : u"\u2206",     # ∆ INCREMENT   Laplace operator forward difference
+    # ur"^S" : u"\u2211",     # ∑ N-ARY SUMMATION summation sign
 
     ur"#{endl}"     : u"\u000A", # \n
     ur"#{tab}"      : u"\u0009", # \t  horizontal tabulation
@@ -207,19 +207,25 @@ from xml.sax import saxutils
 def validate(step):
     return True
 
-def run(clean, tool, step):     # pylint: disable=I0011,W0613
+def run(clean_config, corpustool_config, step):     # pylint: disable=I0011,W0613
     """entry function."""
-    ext = step["ext"]
     zstring_dict = ESCAPESEQ_TABLE
 
-    for lang in [clean.source_lang, clean.target_lang]:
-        infile = codecs.open(clean.corpus_w(lang), 'r', 'utf-8')
-        outfile = codecs.open(clean.corpus_w(lang, ext), 'w', 'utf-8')
-        for line in infile:
-            line = zstring_unescape(line, zstring_dict)
-            outfile.write(line.strip() + os.linesep)
-        infile.close()
-        outfile.close()
+    filename = os.path.join(clean_config.working_dir, clean_config.corpus_filename())
+    filename_ext = os.path.join(clean_config.working_dir, clean_config.corpus_filename(step["ext"]))
+
+    infp = codecs.open(filename, 'r', 'UTF-8')
+    outfp = codecs.open(filename_ext, 'w', 'UTF-8')
+
+    for line in infp:
+        [source, target] = line.split(u'\t')
+        source = zstring_unescape(source, zstring_dict)
+        target = zstring_unescape(target, zstring_dict)
+        outfp.write(u'\t'.join([source.strip(), target.strip()]) + os.linesep)
+
+    infp.close()
+    outfp.close()
+
 
 def zstring_unescape(line, zdict):
     """unescape the zstring name form and number form of escape sequence."""

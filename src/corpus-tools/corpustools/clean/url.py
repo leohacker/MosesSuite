@@ -39,13 +39,14 @@ Clean the URL-like text as I can.
 
 import codecs
 import re
+import os
 
 def validate(step):
     return True
 
-def run(clean, tools, step):    # pylint: disable=I0011,W0613
+def run(clean_config, corpustools_config, step):    # pylint: disable=I0011,W0613
     """entry function."""
-    urlclean = URLClean(clean, step)
+    urlclean = URLClean(clean_config, step)
     urlclean.run()
 
 
@@ -74,17 +75,32 @@ class URLClean(object):
         self.log = step["log"] if "log" in step else None
         self.repl = step["repl"]
 
+        self.pattern = None
+
 
     def run(self):
         """run URL clean process."""
         clean = self.clean
-        for lang in [clean.source_lang, clean.target_lang]:
-            self.urlclean_file(clean.corpus_w(lang), clean.corpus_w(lang, self.ext))
+        self.prepare_pattern()
 
+        filename = os.path.join(self.clean.working_dir, self.clean.corpus_filename())
+        filename_ext = os.path.join(self.clean.working_dir, self.clean.corpus_filename(self.ext))
 
-    def urlclean_file(self, infile, outfile):     # pylint: disable=I0011,R0914
-        """Clean url-like text in infile and write the output into outfile."""
+        infp = codecs.open(filename, 'r', 'UTF-8')
+        outfp = codecs.open(filename_ext, 'w', 'UTF-8')
 
+        lineno = 0
+        for line in infp:
+            lineno = lineno + 1
+            [source, target] = line.split(u'\t')
+            source = self.urlclean_line(source, lineno)
+            target = self.urlclean_line(target, lineno)
+            outfp.write(u'\t'.join([source.strip(), target.strip()]) + os.linesep )
+
+        infp.close()
+        outfp.close()
+
+    def prepare_pattern(self):
         # prepare the re pattern.
         proto_list = "|".join(self.PROTOCAL)
         groot_list = "|".join(self.GENERAL_ROOT)
@@ -109,25 +125,19 @@ class URLClean(object):
         suffix = ur"""(?=([{}<>'"()\[\]|]|[.,;?!](?=(\s|$|[{}<>'"()\[\]|]))|(?<![.,;?!])(\s|$)))"""
 
         url_pattern = ''.join([domain, user, port, path, suffix])
-        pattern = re.compile(url_pattern)
+        self.pattern = re.compile(url_pattern)
 
-        infp = codecs.open(infile, 'r', 'utf-8')
-        outfp = codecs.open(outfile, 'w', 'utf-8')
 
-        lineno = 0
-        for line in infp:
-            lineno = lineno + 1
-            if self.log is not None and pattern.search(line):
-                if self.log == u'detail':
-                    for match in pattern.finditer(line):
-                        self.logger.info(
-                            "Line {ln}: {match}".format(ln=lineno,
-                                                        match=match.group(0).encode('utf-8'))
-                        )
-                elif self.log == u'lineno':
-                    self.logger.info("Line {ln}".format(ln=lineno))
+    def urlclean_line(self, line, lineno):     # pylint: disable=I0011,R0914
 
-            outfp.write(pattern.sub(self.repl, line))
+        if self.log is not None and self.pattern.search(line):
+            if self.log == u'detail':
+                for match in self.pattern.finditer(line):
+                    self.logger.info(
+                        "Line {ln}: {match}".format(ln=lineno,
+                                                    match=match.group(0).encode('utf-8'))
+                    )
+            elif self.log == u'lineno':
+                self.logger.info("Line {ln}".format(ln=lineno))
 
-        infp.close()
-        outfp.close()
+        return self.pattern.sub(self.repl, line)

@@ -3,7 +3,7 @@
 
 # License: FreeBSD License or The BSD 2-Clause License
 
-# Copyright (c) 2012, Leo Jiang
+# Copyright (c) 2012, 2013 Leo Jiang
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -34,19 +34,24 @@
 
 """Corpus Clean Tool
 
-Clean the aligned corpus files according to user specified configuration. User specify the directory and basename
-of corpus files, the language pairs in command line, and the last argument is the configuration of clean steps.
-A working directory as well as output directory can be specified in command line, otherwise all intermediate
-result files will be put in same folder as input corpus files.
+Clean a bitext file according to clean steps. The corpus file should be like 'path/filename.en-zhcn.bitext'.
+The config file of clean steps is a json style file. A working directory as well as output directory can be
+specified in command line, otherwise all intermediate result files will be put in same folder as bitext file.
 
-User can implement own clean modules with python language, and put them into folder "corpustools.clean".
+Users can implement their own cleanup modules with python language, and put modules into folder "corpustools.clean".
 Most of cleanup steps can be implemented as regular expression clean, some of them can be implemented as
-predicate clean. Generally, we would run tokenization and lowercasing on corpus files also.
-Tokenization is implemented by calling external tools.
+predicate clean. Sometimes, we need to run tokenization and lowercasing in cleanup steps. These steps are implemented
+by calling external tools.
+
+Current support external tools:
+    - Tokenizer : Stanford Chinese Segmentor (Chinese)
+    - Tokenizer : Chasen (Japanese)
+    - Tokenizer : Moses tokenizer (multilingual European languages)
+    - Caser     : Moses case tool
 
 Command line Syntax::
 
-    Usage: clean-corpus.py [options] corpus_directory corpus_basename source_lang target_lang clean_step_config
+    Usage: clean-corpus.py [options] corpus_file clean_steps
 
     Options:
       --version             show program's version number and exit
@@ -59,11 +64,8 @@ Command line Syntax::
                             output directory
 
     Args:
-        corpus_directory:   Directory in which corpus files are placed.
-        corpus_basename:    Basename of corpus files, e.g. corpus is the basename of file corpus.en.
-        source_lang:        Source corpus language, for example 'en'.
-        target_lang:        Target corpus language, for example 'zh'.
-        clean_step_config:  Configuration file for clean steps.
+        corpus_file:    The path to corpus file.
+        clean_steps:    Configuration file of clean steps.
 """
 
 import codecs
@@ -71,49 +73,49 @@ import errno
 from itertools import izip
 import logging
 import os
+import os.path
 import shutil
 import sys
-from os import path
 
 from optparse import OptionParser
-from corpustools.config.corpustools_config import CorpusToolsConfig
-from corpustools.config.clean_config import CleanConfig
-from corpustools.lines import eq_lines
+from corpustools.config.corpustools import CorpusToolsConfig
+from corpustools.config.corpusclean import CorpusCleanConfig
 
-__version__ = 1.0
-__years__ = "2012"
+__version__ = 2.0
+__years__ = "2013"
 __author__ = "Leo Jiang <leo.jiang.dev@gmail.com>"
 
 def main(argv):    # pylint: disable=I0011,W0102
     """entry function."""
-    tools, clean = argv2conf(argv)
-    clean_corpus(tools, clean)
+    corpustools_config, corpusclean_config = argv2conf(argv)
+    clean_corpus(corpustools_config, corpusclean_config)
 
 
 def argv2conf(argv):
-    """Parse command line arguments, and construct the clean and external tools configuration.
+    """Parse command line arguments, and construct the corpus clean and external corpus tools configuration.
 
     For external tools configuration, read the system-wide and user default configuration file first.
-    If specified a configuration file in command line, read it.
-    A configuration file for clean steps must be provided in command line.
+    If user give a configuration file of external tool in command line, it will be loaded also.
+    A configuration file for cleanup steps must be provided as second argument in command line.
 
     :param argv:    command line arguments.
 
     :returns:
-        Exit program if arguments wrong, or constructing configuration failed. Else return a tuple,
-        tools configuration and clean configuration, (tools_config, clean_config).
+        Exit program if arguments wrong, or failed to construct configuration files. Else return a tuple,
+        corpus tools configuration and cleanup configuration, (corpustools_config, corpusclean_config).
 
     """
-    usage = "Usage: %prog [options] corpus_directory corpus_basename source_lang target_lang clean_step_config"
-    num_args = 5
+    usage = "Usage: %prog [options] corpus_file clean_steps"
+    num_args = 2
     version = "%prog {version} (c) {years} {author}".format(version=__version__,
                                                             years=__years__,
                                                             author=__author__
                                                             )
+    # Option parser could normalize the path, i.e. expanduser and absolute the path.
     parser = OptionParser(usage=usage, version=version)
 
     parser.add_option("-c", "--config", metavar="FILE", dest="config",
-                      type="string", help="specified corpus tools config")
+                      type="string", help="external corpus tools config")
     parser.add_option("-w", "--working-dir", metavar="DIR", dest="working_dir",
                       type="string", help="working directory")
     parser.add_option("-o", "--output-dir", metavar="DIR", dest="output_dir",
@@ -123,154 +125,132 @@ def argv2conf(argv):
     if len(args) != num_args:
         parser.error("Too few/many arguments. Expected {num_args}".format(num_args=num_args))
 
-    # corpus tools config(tools_config) is initialized with system and user config,
-    # then some settings are overrode by config file specified thru command line option.
-    tools_config = CorpusToolsConfig()
     if options.config is not None:
-        tools_config.readfile(path.abspath(path.expanduser(options.config)))
+        options.config = os.path.abspath(options.config)
+        if not os.path.isfile(options.config):
+            parser.error("-c --config should be followed by a corpus tools config file.")
 
-    # clean tool depends on external tools/scripts, at least moses scripts.
-    if len(tools_config.sections()) == 0:
-        sys.stderr.write("Corpus tools config files not exist or broken. Please check the system and user config files." + os.linesep)
-        sys.stderr.write("System: " + tools_config.SYSTEM_CONFIG + os.linesep)
-        sys.stderr.write("User:   " + tools_config.USER_CONFIG + os.linesep)
-        sys.exit(errno.EINVAL)
+    if options.working_dir is not None:
+        options.working_dir = os.path.abspath(options.working_dir)
+        if not os.path.isdir(options.working_dir):
+            parser.error("-w --working-dir should be followed by an existed directory.")
 
-    steps_filename = args[4]
-    clean_config = CleanConfig(path.abspath(path.expanduser(steps_filename)))
+    if options.output_dir is not None:
+        options.output_dir = os.path.abspath(options.output_dir)
+        if not os.path.isdir(options.output_dir):
+            parser.error("-o --output-dir should be followed by an existed directory.")
+
+    # corpus tools config is initialized with system and user config.
+    # if specified in command line, read the config from this file. Just ignore it if failed to load.
+    corpustools_config = CorpusToolsConfig()
+    if options.config is not None:
+        corpustools_config.readfile(options.config)
+
+    path = args[0]
+    path = os.path.abspath(path)
+    steps_filename = args[1]
+    steps_filename = os.path.abspath(steps_filename)
+
+    clean_config = CorpusCleanConfig()
+    clean_config.infile_dir = os.path.dirname(path)
+    clean_config.outfile_dir = clean_config.infile_dir if options.output_dir is None else options.output_dir
+    clean_config.working_dir = clean_config.infile_dir if options.working_dir is None else options.working_dir
+
+    filename = os.path.basename(path)
+    namelist = filename.split('.')
+    if len(namelist) != 3 :
+        parser.error("The corpus filename isn't correct. The pattern of filename should be filename.en-zhcn.bitext .")
+    basename, langpair, ext = tuple(namelist)
+
+    clean_config.corpus_name = basename
+    [clean_config.source_lang, clean_config.target_lang] = langpair.split('-')
+
+    clean_config.read_cleansteps(steps_filename)
     if clean_config.validate_steps() is False:
-        sys.stderr.write("Failed to read clean steps definition." + os.linesep)
         sys.exit(errno.EINVAL)
 
-    clean_config.corpus_name = args[1]
-    clean_config.source_lang = args[2]
-    clean_config.target_lang = args[3]
-    clean_config.infile_dir  = path.abspath(path.expanduser(args[0]))
-    clean_config.outfile_dir = clean_config.infile_dir if options.output_dir is None \
-                                else path.abspath(path.expanduser(options.output_dir))
-    clean_config.working_dir = clean_config.infile_dir if options.working_dir is None \
-                                else path.abspath(path.expanduser(options.working_dir))
-    if clean_config.validate_paths() is False:
-        sys.exit(errno.ENOENT)
+    return (corpustools_config, clean_config)
 
-    return (tools_config, clean_config)
-
-
-def clean_corpus(tools, clean):
+def clean_corpus(corpustools_config, clean_config):
     """
-    Clean corpus files.
+    Clean the bitext file.
 
-    Copy the corpus files into working directory, run the user-specified clean steps, keep the result for
-    every steps, finally put the cleaned corpus files into output directory. Exit program if can't find the
-    corresponding module for clean step.
-
-    :param tools:   configuration of external tools, e.g. tokenizers.
-    :param clean:   clean configuration, include filenames, directories, source and target languages,
-                    clean steps, etc.
+    Copy the corpus file into working directory, run the user-specified clean steps, keep the result for
+    every steps, finally put the clean corpus file into output directory.
 
     """
-    # prepare the corpus in working directory.
-    if not path.samefile(clean.infile_dir, clean.working_dir):
-        source_in = path.join(clean.infile_dir, '.'.join([clean.corpus_name, clean.source_lang]))
-        target_in = path.join(clean.infile_dir, '.'.join([clean.corpus_name, clean.target_lang]))
-        shutil.copy(source_in, clean.working_dir)
-        shutil.copy(target_in, clean.working_dir)
+    # copy the corpus into working directory.
+    if not os.path.samefile(clean_config.infile_dir, clean_config.working_dir):
+        shutil.copy(os.path.join(clean_config.infile_dir, clean_config.corpus_filename()), clean_config.working_dir)
 
-    # backup the original corpus.
-    source_corpus = clean.corpus_w(clean.source_lang)
-    target_corpus = clean.corpus_w(clean.target_lang)
-    shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'orig'))
-    shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'orig'))
+    # backup the corpus to keep an original version.
+    filename = os.path.join(clean_config.working_dir, clean_config.corpus_filename())
+    filename_orig = os.path.join(clean_config.working_dir, clean_config.corpus_filename('orig'))
+    shutil.copy(filename, filename_orig)
 
     # initialize root logger.
-    logging.basicConfig(filename=os.path.join(clean.working_dir, "clean.log"),
+    logging.basicConfig(filename=os.path.join(clean_config.working_dir, "clean.log"),
                         filemode="w",
                         level=logging.INFO,
                         format="%(levelname)s: %(asctime)s %(message)s",
                         datefmt="%Y-%m-%d %I:%M:%S %p")
 
     logging.info("START cleaning corpus ...")
-    # every clean step works on source_corpus and target_corpus ( corpus.{en,fr} ).
+    # every clean step works on the bitext file except for some steps need the plain text, e.g. tokenization.
     # output corpus suffix with ext name, then copy output corpus into input corpus files for next steps.
-    for step in clean.steps:
+    for step in clean_config.steps:
         logging.info("START " + step["description"])
-        step["logger"] = clean.logger(step["ext"])
+        step["logger"] = clean_config.logger(step["ext"])
 
+        # The module must can be imported as I had validated them in config validation.
         module_name = "corpustools.clean." + step["name"]
-        try:
-            __import__(module_name)
-        except ImportError as e:
-            print e
-            sys.exit(errno.EPERM)
+        __import__(module_name)
 
         module = sys.modules[module_name]
-        if 'predicate' in module.__dict__:
-            predicate_clean(clean, step, module.predicate)
-        else:
-            module.run(clean, tools, step)
-        # Check the line number for every step if you are sure the result should have identical lines.
-        # Anything can occurred!
-        if not eq_lines(clean.corpus_w(clean.source_lang, step["ext"]),
-                        clean.corpus_w(clean.target_lang, step["ext"])):
-            logging.critical("Line number of corpus isn't identical after step '{0}'.".format(step["name"]))
-            #sys.stderr.write("Error: Line number of corpus is not identical after step '{0}'.".format(step["name"]) + os.linesep)
-            sys.exit(1)
+        if hasattr(module, 'predicate'):
+            predicate_clean(clean_config, step, module.predicate)
+        elif hasattr(module, 'run'):
+            module.run(clean_config, corpustools_config, step)
 
         logging.info("END " + step["description"])
 
-        # Copy the corpus.ext.en to corpus.en for next step.
-        prepare_corpus(clean, step)
+        # prepare the bitext for next step: copy the output ext version of corpus file to no ext version.
+        filename_ext = os.path.join(clean_config.working_dir, clean_config.corpus_filename(step["ext"]))
+        shutil.copy(filename_ext, filename)
 
     logging.info("END cleaning corpus.")
     # Suffix the final output with ext name 'clean'.
-    shutil.copy(source_corpus, clean.corpus_w(clean.source_lang, 'clean'))
-    shutil.copy(target_corpus, clean.corpus_w(clean.target_lang, 'clean'))
+    filename_clean = os.path.join(clean_config.working_dir, clean_config.corpus_filename('clean'))
+    shutil.copy(filename, filename_clean)
 
     # Copy the final cleaned corpus into output directory.
-    if not path.samefile(clean.working_dir, clean.outfile_dir):
-        shutil.copy(clean.corpus_w(clean.source_lang, 'clean'), clean.outfile_dir)
-        shutil.copy(clean.corpus_w(clean.target_lang, 'clean'), clean.outfile_dir)
+    if not os.path.samefile(clean_config.working_dir, clean_config.outfile_dir):
+        shutil.copy(filename_clean, clean_config.outfile_dir)
 
 
-def prepare_corpus(clean, step):
-    """Prepare corpus for next step."""
-    ext = step["ext"]
-    for lang in [clean.source_lang, clean.target_lang]:
-        shutil.copyfile(clean.corpus_w(lang, ext), clean.corpus_w(lang))
-
-
-def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
-    """Clean the corpus files in a way called 'predicate clean'.
+def predicate_clean(clean_config, step, predicate):   # pylint: disable=I0011,R0914
+    """Clean the corpus in a way called 'predicate clean'.
 
     Predicate clean can be invoked for those clean rules which only accept or drop
-    the align sentences from corpus according result returned by a predicate function
+    the TUs from corpus according result returned by a predicate function
     (a function return True or False). Drop the align if predicate is True.
-
-    :param clean:       clean configuration.
-    :param step:        clean step.
-    :param predicate:   predicate function.
 
     """
     ext = step["ext"]
-    source_corpus = clean.corpus_w(clean.source_lang)
-    target_corpus = clean.corpus_w(clean.target_lang)
-    source_ext_corpus = clean.corpus_w(clean.source_lang, ext)
-    target_ext_corpus = clean.corpus_w(clean.target_lang, ext)
+    filename = os.path.join(clean_config.working_dir, clean_config.corpus_filename())
+    filename_ext = os.path.join(clean_config.working_dir, clean_config.corpus_filename(ext))
 
-    source_fp = codecs.open(source_corpus, 'r', encoding="utf-8")
-    target_fp = codecs.open(target_corpus, 'r', encoding="utf-8")
-    source_ext_fp = codecs.open(source_ext_corpus, 'w', encoding="utf-8")
-    target_ext_fp = codecs.open(target_ext_corpus, 'w', encoding="utf-8")
+    infp = codecs.open(filename, 'r', encoding="UTF-8")
+    outfp = codecs.open(filename_ext, 'w', encoding="UTF-8")
 
     lineno = 0
     droplines = 0
 
     # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
-    for source_line, target_line in izip(source_fp, target_fp):
+    for line in infp:
         lineno = lineno + 1
-        if not predicate(source_line, target_line, step):
-            source_ext_fp.write(source_line)
-            target_ext_fp.write(target_line)
+        if not predicate(line, step):
+            outfp.write(line)
         else:
             droplines = droplines + 1
             if "log" in step and step["log"] == "lineno":
@@ -278,10 +258,8 @@ def predicate_clean(clean, step, predicate):   # pylint: disable=I0011,R0914
 
     logging.info("Totally {drop} lines are removed in step of {step}".format(drop=droplines, step=step["name"]))
 
-    source_ext_fp.close()
-    target_ext_fp.close()
-    source_fp.close()
-    target_fp.close()
+    infp.close()
+    outfp.close()
 
 
 if __name__ == "__main__":

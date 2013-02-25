@@ -42,9 +42,9 @@ import re
 def validate(step):
     return True
 
-def run(clean, tools, step):                # pylint: disable=I0011,W0613
+def run(clean_config, corpustools_config, step):                # pylint: disable=I0011,W0613
     """entry function."""
-    reclean = RegexClean(clean, step)
+    reclean = RegexClean(clean_config, step)
     reclean.run()
 
 
@@ -63,23 +63,27 @@ class RegexClean(object):
         """clean the corpus."""
         self.compile_relist()
 
-        source_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang), 'r', 'utf-8')
-        target_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang), 'r', 'utf-8')
-        source_ext_fp = codecs.open(self.clean.corpus_w(self.clean.source_lang, self.ext), 'w', 'utf-8')
-        target_ext_fp = codecs.open(self.clean.corpus_w(self.clean.target_lang, self.ext), 'w', 'utf-8')
+        filename = os.path.join(self.clean.working_dir, self.clean.corpus_filename())
+        filename_ext = os.path.join(self.clean.working_dir, self.clean.corpus_filename(self.ext))
 
-        # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
-        for source_line, target_line in izip(source_fp, target_fp):
+        infp = codecs.open(filename, 'r', 'UTF-8')
+        outfp = codecs.open(filename_ext, 'w', 'UTF-8')
+
+        for line in infp:
             self.lineno = self.lineno + 1
-            source_line, target_line = self.relist_clean(source_line, target_line)
-            if len(source_line) != 0 and len(target_line) != 0:
-                source_ext_fp.write(source_line + os.linesep)
-                target_ext_fp.write(target_line + os.linesep)
+            cleanline = self.relist_clean(line)
+            outfp.write(cleanline + os.linesep)
 
-        source_fp.close()
-        target_fp.close()
-        source_ext_fp.close()
-        target_ext_fp.close()
+        # # Don't use built-in function zip(). Use the iterator version izip() to avoid the MemoryError.
+        # for source_line, target_line in izip(source_fp, target_fp):
+        #     self.lineno = self.lineno + 1
+        #     source_line, target_line = self.relist_clean(source_line, target_line)
+        #     if len(source_line) != 0 and len(target_line) != 0:
+        #         source_ext_fp.write(source_line + os.linesep)
+        #         target_ext_fp.write(target_line + os.linesep)
+
+        infp.close()
+        outfp.close()
 
 
     def compile_relist(self):
@@ -96,21 +100,16 @@ class RegexClean(object):
                 flag = flag | re.IGNORECASE
             item["pattern"] = re.compile(pattern, flag)
 
-    def relist_clean(self, source, target):
-        """Clean source and target sentences with a list of re steps.
+    def relist_clean(self, line):
+        """Clean the line with a list of re steps."""
+        [source, target] = line.split(u'\t')
 
-        :param source: source corpus sentence.
-        :param target: target corpus sentence.
-
-        :return: (source, target), cleaned corpus align.
-
-        """
         for re_step in self.relist:
             self.restep = re_step
             source = source.strip()
             target = target.strip()
             if len(source) == 0 or len(target) == 0:
-                return source, target
+                return u'\t'.join([source, target])
 
             if 'apply_to' in re_step:
                 if re_step["apply_to"] == u"source":
@@ -120,7 +119,7 @@ class RegexClean(object):
             else:
                 source = self.re_clean(source)
                 target = self.re_clean(target)
-        return source.strip(), target.strip()
+        return u'\t'.join([source.strip(), target.strip()])
 
     def re_clean(self, sentence):
         """Clean the sentence with clean step, return cleaned corpus sentence.

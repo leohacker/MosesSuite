@@ -47,30 +47,36 @@ import HTMLParser
 def validate(step):
     return True
 
-def run(clean, tools, step):        # pylint: disable=I0011,W0613
+def run(clean_config, corpustools_config, step):        # pylint: disable=I0011,W0613
     """entry function."""
-    ext = step["ext"]
+    filename = os.path.join(clean_config.working_dir, clean_config.corpus_filename())
+    filename_ext = os.path.join(clean_config.working_dir, clean_config.corpus_filename(step["ext"]))
 
-    for lang in [clean.source_lang, clean.target_lang]:
-        clean_html(clean.corpus_w(lang), clean.corpus_w(lang, ext))
+    infp = codecs.open(filename, 'r', 'UTF-8')
+    outfp = codecs.open(filename_ext, 'w', 'UTF-8')
 
-
-def clean_html(infile, outfile):
-    """Unescape xml escape sequences, html entities and clean html tags."""
-    infp = codecs.open(infile, 'r', 'utf-8')
-    outfp = codecs.open(outfile, 'w', 'utf-8')
-    htmlparser = HTMLParser.HTMLParser()
+    parser = HTMLParser.HTMLParser()
 
     for line in infp:
-        # We need to use saxutils unescape() to convert the &amp; first.
-        # use case: &amp;nbsp;
-        line = saxutils.unescape(line)
-        line = u" ".join(htmlparser.unescape(line).splitlines())
-        line = clean_htmltag(line)
-        outfp.write(line.strip() + os.linesep)
+        [source, target] = line.split(u'\t')
+        source = clean_html(parser, source)
+        target = clean_html(parser, target)
+        cleanline = u'\t'.join([source, target]) + os.linesep
+        outfp.write(cleanline)
 
     infp.close()
     outfp.close()
+
+
+def clean_html(parser, line):
+    """Unescape xml escape sequences, html entities and clean html tags."""
+
+    # We need to use saxutils unescape() to convert the &amp; first.
+    # use case: &amp;nbsp;
+    line = saxutils.unescape(line)
+    line = u" ".join(parser.unescape(line).splitlines())
+    line = clean_htmltag(line)
+    return line.strip()
 
 
 # remove table, form, frame, embedded object.

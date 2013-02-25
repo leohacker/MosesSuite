@@ -186,7 +186,7 @@ class CorpusCleanConfig(object):
         logger = logging.getLogger(ext)     # ext name is unique for each step.
         logger.propagate = False
         logger.setLevel(logging.INFO)
-        handler = logging.FileHandler(filename=path.join(self.working_dir, ext + '.log'),
+        handler = logging.FileHandler(filename=os.path.join(self.working_dir, ext + '.log'),
                                       mode='w', encoding='utf-8', delay=True)
         formatter = logging.Formatter('%(message)s')
         handler.setFormatter(formatter)
